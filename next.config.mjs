@@ -6,3 +6,5 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
+// telemetry opt-out
