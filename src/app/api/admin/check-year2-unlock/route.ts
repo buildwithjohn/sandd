@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 
 // POST /api/admin/check-year2-unlock
@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     const { studentId } = await req.json()
     if (!studentId) return NextResponse.json({ error: 'studentId required' }, { status: 400 })
 
-    const supabase = createServerSupabaseClient()
+    const supabase = await createServerSupabaseClient()
 
     // Get all published Year 1 courses
     const { data: year1Courses } = await supabase

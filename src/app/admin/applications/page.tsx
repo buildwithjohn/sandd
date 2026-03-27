@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = 'force-dynamic';
 import { useState } from "react";
 import Link from "next/link";
 import { BookOpen, Bell, CheckCircle, XCircle, Clock, Eye, X, ChevronDown } from "lucide-react";
