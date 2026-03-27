@@ -61,6 +61,12 @@ export default function VideoPlayer({
         setIsCompleted(true);
         saveProgress(100);
         onComplete?.();
+        // Check if student just completed Year 1 → unlock Year 2
+        fetch("/api/admin/check-year2-unlock", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ studentId }),
+        }).catch(() => {});
       }
     }
 

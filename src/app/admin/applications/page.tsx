@@ -64,13 +64,26 @@ export default function ApplicationsPage() {
   async function updateStatus(id: string, status: string) {
     setUpdating(true);
     try {
-      const supabase = createClient();
-      await supabase.from("applications").update({
-        status,
-        admin_notes: notes,
-        reviewed_at: new Date().toISOString(),
-      }).eq("id", id);
-      toast.success(`Application ${status}`);
+      if (status === "accepted") {
+        // Full accept flow: create account, enroll, send welcome email
+        const res = await fetch("/api/admin/accept-student", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ applicationId: id }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        toast.success(`${data.message} — welcome email sent.`);
+      } else {
+        // Reject — just update status
+        const supabase = createClient();
+        await supabase.from("applications").update({
+          status,
+          admin_notes: notes,
+          reviewed_at: new Date().toISOString(),
+        }).eq("id", id);
+        toast.success("Application rejected.");
+      }
       setSelected(null);
     } catch (err: any) {
       toast.error(err.message);

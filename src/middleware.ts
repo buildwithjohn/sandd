@@ -67,5 +67,6 @@ export const config = {
     '/admin/:path*',
     '/auth/login',
     '/auth/register',
+    '/auth/reset-password',
   ],
 }
