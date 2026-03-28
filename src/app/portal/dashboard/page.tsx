@@ -49,6 +49,8 @@ export default function StudentDashboard() {
   const [initials, setInitials] = useState("ST");
   const [stats, setStats] = useState({ courses: 0, lessons: 0, quiz_avg: 0, credits: 0 });
 
+  const [welcomeLessonId, setWelcomeLessonId] = useState<string | null>(null);
+
   useEffect(() => {
     async function load() {
       const supabase = createClient();
@@ -62,6 +64,14 @@ export default function StudentDashboard() {
       const ini = name.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase();
       setStudent({ name, church: profile.church ?? "", enrolled: new Date(profile.created_at).toLocaleDateString("en-NG", { month: "long", year: "numeric" }) });
       setInitials(ini);
+
+      // Fetch welcome lesson ID
+      const { data: welcomeLesson } = await supabase
+        .from("lessons")
+        .select("id")
+        .eq("title", "Welcome to S&D Prophetic School")
+        .single();
+      if (welcomeLesson) setWelcomeLessonId(welcomeLesson.id);
 
       const { count: courses } = await supabase.from("enrollments").select("*", { count: "exact", head: true }).eq("student_id", user.id);
       const { data: progress } = await supabase.from("lesson_progress").select("status").eq("student_id", user.id);
@@ -156,10 +166,16 @@ export default function StudentDashboard() {
               <h3 className="font-display text-white text-lg font-medium">Welcome from Prophet Abiodun Sule</h3>
               <p className="text-brand-400 text-sm mt-0.5">Watch this before starting any course.</p>
             </div>
-            <Link href="/portal/lessons/welcome"
-              className="bg-brand-500 hover:bg-brand-400 text-white font-medium text-sm px-4 py-2.5 rounded-xl flex-shrink-0 flex items-center gap-2 transition-colors">
-              <Play className="w-4 h-4" fill="currentColor" /> Watch
-            </Link>
+            {welcomeLessonId ? (
+              <Link href={`/portal/lessons/${welcomeLessonId}`}
+                className="bg-brand-500 hover:bg-brand-400 text-white font-medium text-sm px-4 py-2.5 rounded-xl flex-shrink-0 flex items-center gap-2 transition-colors">
+                <Play className="w-4 h-4" fill="currentColor" /> Watch
+              </Link>
+            ) : (
+              <div className="bg-brand-800 text-brand-400 font-medium text-sm px-4 py-2.5 rounded-xl flex-shrink-0">
+                Loading...
+              </div>
+            )}
           </div>
 
           {/* Recent Lessons */}
