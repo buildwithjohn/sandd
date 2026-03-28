@@ -133,8 +133,14 @@ export default function HomePage() {
       {/* ABOUT PROPHET */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 mt-10">
         <div className="bg-white rounded-2xl border border-blue-100 shadow-card p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start">
-          <div className="w-16 h-16 rounded-2xl bg-brand-700 flex items-center justify-center font-display text-2xl text-white font-bold flex-shrink-0">
-            AS
+          <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border-2 border-brand-100">
+            <Image
+              src="/assets/prophet-sule.png"
+              alt="Prophet Abiodun Sule"
+              width={96}
+              height={96}
+              className="w-full h-full object-cover object-top"
+            />
           </div>
           <div>
             <div className="text-brand-500 text-xs font-medium uppercase tracking-wider mb-1">Founder & Dean</div>

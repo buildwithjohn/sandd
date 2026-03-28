@@ -74,8 +74,9 @@ export default function AdminDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 bg-gray-800 rounded-xl px-3 py-1.5 border border-gray-700">
-              <div className="w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center text-white text-[10px] font-bold">
-                {adminName.slice(0,2).toUpperCase()}
+              <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                <img src="/assets/prophet-sule.png" alt="Prophet Abiodun Sule"
+                  className="w-full h-full object-cover object-top" />
               </div>
               <span className="text-gray-300 text-xs font-medium">{adminName}</span>
               <span className="text-[10px] bg-brand-900 text-brand-300 px-1.5 py-0.5 rounded-full border border-brand-800">Admin</span>
