@@ -24,7 +24,22 @@ function LoginForm() {
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      router.push(next);
+
+      // Check role and redirect accordingly
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .single();
+
+        if (profile?.role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push(next);
+        }
+      }
       router.refresh();
     } catch (err: any) {
       toast.error(err.message || "Login failed. Check your credentials.");
