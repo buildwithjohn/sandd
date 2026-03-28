@@ -117,6 +117,7 @@ export default function AdminDashboard() {
               { href: "/admin/assignments",       icon: "📝", label: "Assignments"  },
               { href: "/admin/certificates",      icon: "🏅", label: "Certificates" },
               { href: "/admin/announcements/new", icon: "📢", label: "Announce"     },
+              { href: "/admin/profile",           icon: "👤", label: "My Profile"   },
             ].map(l => (
               <Link key={l.href} href={l.href}
                 className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
