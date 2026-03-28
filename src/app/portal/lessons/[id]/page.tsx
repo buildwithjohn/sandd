@@ -131,7 +131,7 @@ export default function LessonPage() {
             {activeTab === "video" && (
               <div>
                 <VideoPlayer
-                  bunnyVideoId={mockLesson.bunny_video_id}
+                  youtubeVideoId={mockLesson.bunny_video_id}
                   lessonId={mockLesson.id}
                   studentId={studentId}
                   initialProgress={0}

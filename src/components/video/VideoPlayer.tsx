@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { upsertLessonProgress } from "@/lib/db";
-import { Play, Pause, Volume2, VolumeX, Maximize, CheckCircle } from "lucide-react";
+import { CheckCircle, ExternalLink } from "lucide-react";
 
 interface VideoPlayerProps {
-  bunnyVideoId: string;
+  youtubeVideoId: string;
   lessonId: string;
   studentId: string;
   initialProgress?: number;
@@ -13,103 +13,111 @@ interface VideoPlayerProps {
 }
 
 export default function VideoPlayer({
-  bunnyVideoId,
+  youtubeVideoId,
   lessonId,
   studentId,
   initialProgress = 0,
   onComplete,
   title,
 }: VideoPlayerProps) {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
   const [watchPercent, setWatchPercent] = useState(initialProgress);
   const [isCompleted, setIsCompleted] = useState(initialProgress >= 90);
-  const [lastSaved, setLastSaved] = useState(0);
-  const saveThrottle = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [duration, setDuration] = useState(0);
+  const playerRef = useRef<any>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastSavedRef = useRef(initialProgress);
 
-  // Bunny.net embed URL
-  // Format: https://iframe.mediadelivery.net/embed/{libraryId}/{videoId}
-  // Library ID comes from env var
-  const libraryId = process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID ?? "YOUR_LIBRARY_ID";
-  const embedUrl = `https://iframe.mediadelivery.net/embed/${libraryId}/${bunnyVideoId}?autoplay=false&responsive=true`;
-
-  // Listen for Bunny.net player events via postMessage
+  // Load YouTube IFrame API
   useEffect(() => {
-    function handleMessage(event: MessageEvent) {
-      // Bunny.net sends timeupdate and ended events
-      if (event.data?.type === "timeupdate") {
-        const { currentTime, duration } = event.data;
-        if (duration && duration > 0) {
-          const percent = Math.round((currentTime / duration) * 100);
-          setWatchPercent(percent);
+    if (typeof window === "undefined") return;
 
-          // Mark as completed when 90%+ watched
-          if (percent >= 90 && !isCompleted) {
-            setIsCompleted(true);
-            onComplete?.();
-          }
+    const loadPlayer = () => {
+      if (!(window as any).YT) return;
+      playerRef.current = new (window as any).YT.Player(`yt-player-${lessonId}`, {
+        videoId: youtubeVideoId,
+        playerVars: {
+          rel: 0,         // no related videos
+          modestbranding: 1,
+          origin: window.location.origin,
+        },
+        events: {
+          onReady: (e: any) => {
+            setDuration(e.target.getDuration());
+          },
+          onStateChange: (e: any) => {
+            const YT = (window as any).YT;
+            if (e.data === YT.PlayerState.PLAYING) {
+              // Poll progress every 5 seconds
+              intervalRef.current = setInterval(() => {
+                const player = playerRef.current;
+                if (!player) return;
+                const current = player.getCurrentTime();
+                const total = player.getDuration();
+                if (total > 0) {
+                  const pct = Math.round((current / total) * 100);
+                  setWatchPercent(pct);
+                  if (pct >= 90 && !isCompleted) {
+                    setIsCompleted(true);
+                    onComplete?.();
+                  }
+                  // Save every 10%
+                  if (pct - lastSavedRef.current >= 10) {
+                    lastSavedRef.current = pct;
+                    upsertLessonProgress(studentId, lessonId, pct).catch(() => {});
+                  }
+                }
+              }, 5000);
+            } else {
+              if (intervalRef.current) clearInterval(intervalRef.current);
+            }
+            // Mark complete on video end
+            if (e.data === YT.PlayerState.ENDED) {
+              setWatchPercent(100);
+              setIsCompleted(true);
+              upsertLessonProgress(studentId, lessonId, 100).catch(() => {});
+              onComplete?.();
+            }
+          },
+        },
+      });
+    };
 
-          // Save progress every 10 percentage points
-          if (percent - lastSaved >= 10) {
-            setLastSaved(percent);
-            saveProgress(percent);
-          }
-        }
+    if ((window as any).YT && (window as any).YT.Player) {
+      loadPlayer();
+    } else {
+      // Load the API script once
+      if (!document.getElementById("yt-api-script")) {
+        const tag = document.createElement("script");
+        tag.id = "yt-api-script";
+        tag.src = "https://www.youtube.com/iframe_api";
+        document.body.appendChild(tag);
       }
-
-      if (event.data?.type === "ended") {
-        setWatchPercent(100);
-        setIsCompleted(true);
-        saveProgress(100);
-        onComplete?.();
-        // Check if student just completed Year 1 → unlock Year 2
-        fetch("/api/admin/check-year2-unlock", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ studentId }),
-        }).catch(() => {});
-      }
+      (window as any).onYouTubeIframeAPIReady = loadPlayer;
     }
 
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [isCompleted, lastSaved]);
-
-  const saveProgress = useCallback(
-    async (percent: number) => {
-      if (saveThrottle.current) clearTimeout(saveThrottle.current);
-      saveThrottle.current = setTimeout(async () => {
-        await upsertLessonProgress(studentId, lessonId, percent);
-      }, 1000);
-    },
-    [studentId, lessonId]
-  );
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [youtubeVideoId, lessonId]);
 
   // Save on unmount
   useEffect(() => {
     return () => {
       if (watchPercent > 0) {
-        upsertLessonProgress(studentId, lessonId, watchPercent);
+        upsertLessonProgress(studentId, lessonId, watchPercent).catch(() => {});
       }
     };
   }, [watchPercent, studentId, lessonId]);
 
   return (
     <div className="w-full">
-      {/* Player container */}
-      <div className="relative w-full bg-black rounded-2xl overflow-hidden shadow-blue"
+      {/* Player */}
+      <div className="relative w-full bg-black rounded-2xl overflow-hidden"
         style={{ aspectRatio: "16/9" }}>
-        <iframe
-          ref={iframeRef}
-          src={embedUrl}
-          className="absolute inset-0 w-full h-full"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          loading="lazy"
-          title={title ?? "Lesson Video"}
-        />
+        <div id={`yt-player-${lessonId}`} className="absolute inset-0 w-full h-full" />
       </div>
 
-      {/* Progress bar beneath player */}
+      {/* Progress bar */}
       <div className="mt-3 flex items-center gap-3">
         <div className="flex-1 h-1.5 bg-blue-100 rounded-full overflow-hidden">
           <div
@@ -117,11 +125,10 @@ export default function VideoPlayer({
             style={{ width: `${watchPercent}%` }}
           />
         </div>
-        <div className="flex items-center gap-1.5 flex-shrink-0">
+        <div className="flex-shrink-0">
           {isCompleted ? (
             <span className="flex items-center gap-1 text-green-600 text-xs font-medium">
-              <CheckCircle className="w-3.5 h-3.5" />
-              Completed
+              <CheckCircle className="w-3.5 h-3.5" /> Completed
             </span>
           ) : (
             <span className="text-slate-400 text-xs">{watchPercent}% watched</span>
