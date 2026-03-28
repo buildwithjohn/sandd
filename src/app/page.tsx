@@ -92,22 +92,41 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* WELCOME MODULE CTA */}
+      {/* WELCOME VIDEO — visible to everyone */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 mt-10">
-        <div className="bg-brand-700 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-4 justify-between">
-          <div>
-            <div className="text-brand-100 text-xs font-medium uppercase tracking-wider mb-1">Before You Begin</div>
+        <div className="bg-brand-950 rounded-2xl overflow-hidden">
+          <div className="px-6 pt-6 pb-4">
+            <div className="text-brand-400 text-xs font-medium uppercase tracking-wider mb-1">
+              A Message from the Dean
+            </div>
             <h3 className="font-display text-white text-xl font-medium">
-              A Welcome from Prophet Abiodun Sule
+              Welcome from Prophet Abiodun Sule
             </h3>
-            <p className="text-brand-200 text-sm mt-1">Watch the Dean introduce the heart and vision of S&D School.</p>
+            <p className="text-brand-400 text-sm mt-1">
+              Watch Prophet Sule introduce the heart and vision of the S&D Prophetic School.
+            </p>
           </div>
-          <Link
-            href="/portal/dashboard"
-            className="bg-white text-brand-700 font-medium text-sm px-5 py-2.5 rounded-xl flex-shrink-0 hover:bg-brand-50 transition-colors"
-          >
-            Watch Welcome Video
-          </Link>
+          {/* Embedded YouTube player */}
+          <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
+            <iframe
+              src="https://www.youtube.com/embed/Ipph21Exp8k?rel=0&modestbranding=1"
+              title="Welcome from Prophet Abiodun Sule"
+              className="absolute inset-0 w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          <div className="px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-brand-400 text-sm">
+              Inspired? Apply now — tuition is completely free.
+            </p>
+            <Link
+              href="/apply"
+              className="bg-brand-500 hover:bg-brand-400 text-white font-medium text-sm px-5 py-2.5 rounded-xl flex-shrink-0 transition-colors flex items-center gap-2"
+            >
+              Apply for 2026 Cohort <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
