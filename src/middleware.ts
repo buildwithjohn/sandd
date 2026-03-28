@@ -48,7 +48,7 @@ export async function middleware(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    if (!profile || profile.role !== 'admin') {
+    if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
       return NextResponse.redirect(new URL('/portal/dashboard', request.url))
     }
   }

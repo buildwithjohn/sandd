@@ -31,6 +31,8 @@ const statusMap: Record<string, { label: string; icon: typeof Clock; cls: string
 export default function AdminDashboard() {
   const router = useRouter();
   const [adminName, setAdminName] = useState("Admin");
+  const [adminRole, setAdminRole] = useState("admin");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [stats, setStats] = useState({ students: 0, videos: 0, applications: 0, cohorts: 1 });
 
   useEffect(() => {
@@ -38,9 +40,11 @@ export default function AdminDashboard() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { router.push("/auth/login"); return; }
-      const { data: profile } = await supabase.from("profiles").select("full_name, role").eq("id", user.id).single();
-      if (profile?.role !== "admin") { router.push("/portal/dashboard"); return; }
+      const { data: profile } = await supabase.from("profiles").select("full_name, role, avatar_url").eq("id", user.id).single();
+      if (!profile || !['admin', 'super_admin'].includes(profile.role)) { router.push("/portal/dashboard"); return; }
       setAdminName(profile.full_name?.split(" ")[0] ?? "Admin");
+      setAdminRole(profile.role);
+      setAvatarUrl(profile.avatar_url ?? null);
       const [{ count: students }, { count: videos }, { count: applications }] = await Promise.all([
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
         supabase.from("lessons").select("*", { count: "exact", head: true }).eq("is_published", true),
@@ -74,12 +78,23 @@ export default function AdminDashboard() {
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 bg-gray-800 rounded-xl px-3 py-1.5 border border-gray-700">
-              <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                <img src="/assets/prophet-sule.png" alt="Prophet Abiodun Sule"
-                  className="w-full h-full object-cover object-top" />
+              <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-brand-600">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={adminName} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white text-[10px] font-bold">
+                    {adminName.slice(0,2).toUpperCase()}
+                  </div>
+                )}
               </div>
               <span className="text-gray-300 text-xs font-medium">{adminName}</span>
-              <span className="text-[10px] bg-brand-900 text-brand-300 px-1.5 py-0.5 rounded-full border border-brand-800">Admin</span>
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full border ${
+                adminRole === 'super_admin'
+                  ? 'bg-amber-900 text-amber-300 border-amber-700'
+                  : 'bg-brand-900 text-brand-300 border-brand-800'
+              }`}>
+                {adminRole === 'super_admin' ? 'Super Admin' : 'Admin'}
+              </span>
             </div>
             <button onClick={handleSignOut}
               className="flex items-center gap-1.5 text-gray-400 hover:text-red-400 text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-red-950 border border-gray-700 hover:border-red-800 transition-colors">

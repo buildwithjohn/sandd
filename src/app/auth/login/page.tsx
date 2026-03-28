@@ -35,7 +35,7 @@ function LoginForm() {
           .eq("id", user.id)
           .single();
 
-        if (profile?.role === "admin") {
+        if (profile?.role === "admin" || profile?.role === "super_admin") {
           router.push("/admin/dashboard");
         } else {
           router.push(next);
