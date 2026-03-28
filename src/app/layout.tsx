@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description:
     "A two-year prophetic training school raising New Testament prophets — rooted in the Word, led by the Spirit, and accountable to the Body of Christ. Treasures in Clay Ministries.",
   metadataBase: new URL("https://sandd.abiodunsule.uk"),
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
   openGraph: {
     title: "S&D Prophetic School",
     description: "Raising New Testament Prophets for This Age",

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "@/components/layout/Navbar";
 import {
   BookOpen, Users, Award, Clock, ChevronRight,
@@ -32,6 +33,16 @@ export default function HomePage() {
           style={{ backgroundImage: "radial-gradient(circle at 30% 50%, #3B82F6 0%, transparent 60%), radial-gradient(circle at 80% 20%, #60A5FA 0%, transparent 50%)" }}
         />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-24 relative z-10 text-center">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/assets/logo.png"
+              alt="Sons and Daughters of Prophets"
+              width={100}
+              height={100}
+              className="rounded-2xl"
+            />
+          </div>
           <div className="inline-flex items-center gap-2 bg-brand-800/60 border border-brand-700/50 text-brand-200 text-xs font-medium px-4 py-2 rounded-full mb-6 tracking-wider uppercase">
             <span>Treasures in Clay Ministries</span>
             <span className="w-1 h-1 rounded-full bg-brand-400 inline-block" />

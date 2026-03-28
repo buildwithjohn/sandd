@@ -2,10 +2,11 @@
 export const dynamic = 'force-dynamic';
 import { Suspense, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
-import { BookOpen, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 function LoginForm() {
   const router = useRouter();
@@ -118,9 +119,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFF] flex flex-col items-center justify-center px-4">
       <Link href="/" className="flex items-center gap-2.5 mb-8">
-        <div className="w-10 h-10 rounded-xl bg-brand-700 flex items-center justify-center">
-          <BookOpen className="w-5 h-5 text-white" />
-        </div>
+        <Image src="/assets/logo.png" alt="S&D Prophetic School" width={48} height={48} className="rounded-xl" />
         <div>
           <div className="font-display text-brand-900 text-base font-semibold">S&D Prophetic School</div>
           <div className="text-[10px] text-brand-400 tracking-wide uppercase">Student Portal</div>
