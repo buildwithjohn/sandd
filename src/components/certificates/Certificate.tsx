@@ -121,7 +121,7 @@ export default function Certificate({
             fontSize: "10px", color: "#64748B", letterSpacing: "0.1em",
             marginBottom: "24px", textTransform: "uppercase",
           }}>
-            Celestial Church of Christ
+            Treasures in Clay Ministries
           </p>
 
           {/* This is to certify */}

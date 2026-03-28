@@ -16,10 +16,10 @@ const quickActions = [
 ];
 
 const recentApplications = [
-  { initials: "OA", name: "Oluwaseun Adeyemi", church: "CCC Lagos",         date: "3 days ago", status: "pending"  },
-  { initials: "CF", name: "Chiamaka Festus",   church: "CCC Ibadan",        date: "5 days ago", status: "accepted" },
-  { initials: "BI", name: "Babatunde Ige",     church: "CCC Abuja",         date: "1 week ago", status: "accepted" },
-  { initials: "EM", name: "Esther Madu",       church: "CCC Port Harcourt", date: "Today",      status: "pending"  },
+  { initials: "OA", name: "Oluwaseun Adeyemi", church: "Treasures in Clay Lagos",         date: "3 days ago", status: "pending"  },
+  { initials: "CF", name: "Chiamaka Festus",   church: "Treasures in Clay Ibadan",        date: "5 days ago", status: "accepted" },
+  { initials: "BI", name: "Babatunde Ige",     church: "Treasures in Clay Abuja",         date: "1 week ago", status: "accepted" },
+  { initials: "EM", name: "Esther Madu",       church: "Treasures in Clay Port Harcourt", date: "Today",      status: "pending"  },
 ];
 
 const statusMap: Record<string, { label: string; icon: typeof Clock; cls: string }> = {

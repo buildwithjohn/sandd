@@ -94,7 +94,7 @@ export default function ApplyPage() {
             Apply to S&D Prophetic School
           </h1>
           <p className="text-brand-300 text-sm leading-relaxed">
-            Applications open for the 2025 cohort (20–50 students).
+            Applications open for the 2026 cohort (20–50 students).
             <br />Tuition is completely free. All you need is a genuine calling.
           </p>
         </div>
@@ -148,7 +148,7 @@ export default function ApplyPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">Church / Parish</label>
-                <input {...register("church")} placeholder="CCC Lagos Parish"
+                <input {...register("church")} placeholder="Treasures in Clay Lagos Parish"
                   className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:border-brand-400 transition-colors"
                 />
                 {errors.church && <p className="text-red-400 text-xs mt-1">{errors.church.message}</p>}

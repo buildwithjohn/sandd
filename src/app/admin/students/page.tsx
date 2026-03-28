@@ -7,11 +7,11 @@ import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
 
 const students = [
-  { id: "s1", name: "Chiamaka Festus",  initials: "CF", email: "chiamaka.f@yahoo.com",   phone: "+234 803 456 7890", church: "CCC Ibadan",        city: "Ibadan",       year: 1, status: "active",    enrolled: "March 1, 2025",  progress: 72, lessons_done: 14, quiz_avg: 88 },
-  { id: "s2", name: "Babatunde Ige",    initials: "BI", email: "btige@email.com",          phone: "+234 806 789 0123", church: "CCC Abuja",         city: "Abuja",        year: 1, status: "active",    enrolled: "March 1, 2025",  progress: 65, lessons_done: 12, quiz_avg: 79 },
-  { id: "s3", name: "Adeyemi Ogunlade", initials: "AO", email: "a.ogunlade@gmail.com",     phone: "+234 801 234 5678", church: "CCC Lagos",         city: "Lagos",        year: 1, status: "active",    enrolled: "March 1, 2025",  progress: 48, lessons_done: 9,  quiz_avg: 82 },
-  { id: "s4", name: "Esther Madu",      initials: "EM", email: "esther.madu@gmail.com",    phone: "+234 809 012 3456", church: "CCC Port Harcourt", city: "Port Harcourt",year: 1, status: "active",    enrolled: "March 5, 2025",  progress: 30, lessons_done: 6,  quiz_avg: 75 },
-  { id: "s5", name: "Funmi Adeleke",    initials: "FA", email: "funmi.adeleke@outlook.com",phone: "+234 802 345 6789", church: "CCC Kano",          city: "Kano",         year: 1, status: "suspended", enrolled: "March 1, 2025",  progress: 10, lessons_done: 2,  quiz_avg: 60 },
+  { id: "s1", name: "Chiamaka Festus",  initials: "CF", email: "chiamaka.f@yahoo.com",   phone: "+234 803 456 7890", church: "Treasures in Clay Ibadan",        city: "Ibadan",       year: 1, status: "active",    enrolled: "March 1, 2026",  progress: 72, lessons_done: 14, quiz_avg: 88 },
+  { id: "s2", name: "Babatunde Ige",    initials: "BI", email: "btige@email.com",          phone: "+234 806 789 0123", church: "Treasures in Clay Abuja",         city: "Abuja",        year: 1, status: "active",    enrolled: "March 1, 2026",  progress: 65, lessons_done: 12, quiz_avg: 79 },
+  { id: "s3", name: "Adeyemi Ogunlade", initials: "AO", email: "a.ogunlade@gmail.com",     phone: "+234 801 234 5678", church: "Treasures in Clay Lagos",         city: "Lagos",        year: 1, status: "active",    enrolled: "March 1, 2026",  progress: 48, lessons_done: 9,  quiz_avg: 82 },
+  { id: "s4", name: "Esther Madu",      initials: "EM", email: "esther.madu@gmail.com",    phone: "+234 809 012 3456", church: "Treasures in Clay Port Harcourt", city: "Port Harcourt",year: 1, status: "active",    enrolled: "March 5, 2026",  progress: 30, lessons_done: 6,  quiz_avg: 75 },
+  { id: "s5", name: "Funmi Adeleke",    initials: "FA", email: "funmi.adeleke@outlook.com",phone: "+234 802 345 6789", church: "Treasures in Clay Kano",          city: "Kano",         year: 1, status: "suspended", enrolled: "March 1, 2026",  progress: 10, lessons_done: 2,  quiz_avg: 60 },
 ];
 
 const statusConfig: Record<string, { label: string; className: string }> = {

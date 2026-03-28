@@ -6,18 +6,18 @@ import { BookOpen, Bell, Pin, Calendar } from "lucide-react";
 const announcements = [
   {
     id: "1",
-    title: "Welcome to the S&D 2025 Cohort!",
+    title: "Welcome to the S&D 2026 Cohort!",
     body: "Beloved sons and daughters, welcome to the Sons and Daughters of Prophets Prophetic Training School. We are delighted to have you on this journey. Please begin with the Welcome Module in your dashboard before accessing any course material. Let us approach this training with prayer, humility, and a hunger for God's Word.",
     author: "Prophet Abiodun Sule",
-    date: "March 1, 2025",
+    date: "March 1, 2026",
     is_pinned: true,
   },
   {
     id: "2",
     title: "First Practical Session — Saturday, March 15",
-    body: "Our first monthly prophetic activation session will hold on Saturday, March 15, 2025 via Zoom. All Year 1 students are expected to attend. The Zoom link has been shared on the Telegram group. Please come prepared with your notes from Lessons 1–3 of Introduction to NT Prophecy.",
+    body: "Our first monthly prophetic activation session will hold on Saturday, March 15, 2026 via Zoom. All Year 1 students are expected to attend. The Zoom link has been shared on the Telegram group. Please come prepared with your notes from Lessons 1–3 of Introduction to NT Prophecy.",
     author: "Admin",
-    date: "March 8, 2025",
+    date: "March 8, 2026",
     is_pinned: true,
   },
   {
@@ -25,15 +25,15 @@ const announcements = [
     title: "New Lessons Uploaded — Biblical Hermeneutics",
     body: "Lessons 1 through 4 of Biblical Hermeneutics have been published. Students enrolled in Year 1 can now access them from their course dashboard. Lesson notes (PDF) are available for download within each lesson.",
     author: "Admin",
-    date: "March 12, 2025",
+    date: "March 12, 2026",
     is_pinned: false,
   },
   {
     id: "4",
     title: "Assignment 1 Due — Introduction to NT Prophecy",
-    body: "The first written assignment for Introduction to NT Prophecy is now available in your Assignments tab. The topic is: 'How does 1 Corinthians 14:3 shape your understanding of the prophetic ministry in your local church?' Minimum 800 words. Submission deadline: March 28, 2025.",
+    body: "The first written assignment for Introduction to NT Prophecy is now available in your Assignments tab. The topic is: 'How does 1 Corinthians 14:3 shape your understanding of the prophetic ministry in your local church?' Minimum 800 words. Submission deadline: March 28, 2026.",
     author: "Admin",
-    date: "March 14, 2025",
+    date: "March 14, 2026",
     is_pinned: false,
   },
 ];

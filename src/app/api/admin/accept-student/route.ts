@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     )
 
     // Generate a temporary password
-    const tempPassword = `SandD-${Math.random().toString(36).slice(2, 8).toUpperCase()}-2025`
+    const tempPassword = `SandD-${Math.random().toString(36).slice(2, 8).toUpperCase()}-2026`
 
     // Create the auth user
     const { data: newUser, error: createError } = await adminSupabase.auth.admin.createUser({
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
                   Welcome to S&D Prophetic School
                 </h1>
                 <p style="color: #BFDBFE; font-size: 13px; margin: 8px 0 0;">
-                  Sons &amp; Daughters of Prophets · Celestial Church of Christ
+                  Sons &amp; Daughters of Prophets · Treasures in Clay Ministries
                 </p>
               </div>
               <div style="background: #F8FAFF; padding: 28px; border: 1px solid #BFDBFE; border-top: none; border-radius: 0 0 12px 12px;">

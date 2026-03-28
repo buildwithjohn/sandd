@@ -53,7 +53,7 @@ export default function ProfilePage() {
   // Fallback mock for dev (when auth context not hydrated)
   const [fullName, setFullName]   = useState(profile?.full_name ?? "Adeyemi Ogunlade");
   const [phone, setPhone]         = useState(profile?.phone ?? "+234 801 234 5678");
-  const [church, setChurch]       = useState(profile?.church ?? "CCC Lagos");
+  const [church, setChurch]       = useState(profile?.church ?? "Treasures in Clay Lagos");
   const [city, setCity]           = useState(profile?.city ?? "Lagos");
   const [saving, setSaving]       = useState(false);
   const [pwCurrent, setPwCurrent] = useState("");

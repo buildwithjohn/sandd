@@ -33,7 +33,7 @@ export default function HomePage() {
         />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-24 relative z-10 text-center">
           <div className="inline-flex items-center gap-2 bg-brand-800/60 border border-brand-700/50 text-brand-200 text-xs font-medium px-4 py-2 rounded-full mb-6 tracking-wider uppercase">
-            <span>Celestial Church of Christ</span>
+            <span>Treasures in Clay Ministries</span>
             <span className="w-1 h-1 rounded-full bg-brand-400 inline-block" />
             <span>Prophetic Training School</span>
           </div>
@@ -52,7 +52,7 @@ export default function HomePage() {
               href="/apply"
               className="bg-brand-500 hover:bg-brand-400 text-white font-medium text-sm px-6 py-3 rounded-xl transition-colors flex items-center gap-2"
             >
-              Apply for 2025 Cohort <ChevronRight className="w-4 h-4" />
+              Apply for 2026 Cohort <ChevronRight className="w-4 h-4" />
             </Link>
             <Link
               href="/courses"
@@ -112,7 +112,7 @@ export default function HomePage() {
               Prophet Abiodun Sule
             </h2>
             <p className="text-slate-500 text-sm leading-relaxed max-w-2xl">
-              Under the authority of the Celestial Church of Christ, Prophet Abiodun Sule
+              Under the authority of the Treasures in Clay Ministries, Prophet Abiodun Sule
               founded the Sons and Daughters of Prophets Prophetic Training School with one
               conviction: that the church needs prophets who are not merely gifted, but
               biblically grounded, spiritually discerning, and deeply accountable.
@@ -173,7 +173,7 @@ export default function HomePage() {
             Is God calling you to be a prophet?
           </h2>
           <p className="text-brand-300 text-sm mb-6 max-w-md mx-auto">
-            Applications are open for the 2025 cohort. Tuition is free. All you need is a genuine calling and a willing heart.
+            Applications are open for the 2026 cohort. Tuition is free. All you need is a genuine calling and a willing heart.
           </p>
           <Link
             href="/apply"

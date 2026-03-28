@@ -6,7 +6,7 @@ import { AuthProvider } from "@/lib/auth";
 export const metadata: Metadata = {
   title: "S&D Prophetic School | Sons and Daughters of Prophets",
   description:
-    "A two-year prophetic training school raising New Testament prophets — rooted in the Word, led by the Spirit, and accountable to the Body of Christ. Celestial Church of Christ.",
+    "A two-year prophetic training school raising New Testament prophets — rooted in the Word, led by the Spirit, and accountable to the Body of Christ. Treasures in Clay Ministries.",
   metadataBase: new URL("https://sandd.abiodunsule.uk"),
   openGraph: {
     title: "S&D Prophetic School",

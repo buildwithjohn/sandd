@@ -6,9 +6,9 @@ import { BookOpen, Award, Search } from "lucide-react";
 import Certificate from "@/components/certificates/Certificate";
 
 const eligibleStudents = [
-  { id: "s1", name: "Chiamaka Festus",    church: "CCC Ibadan",        year: 1 as const, completed: "March 30, 2025", cert_no: "SANDP-2025-001" },
-  { id: "s2", name: "Babatunde Ige",      church: "CCC Abuja",         year: 1 as const, completed: "March 30, 2025", cert_no: "SANDP-2025-002" },
-  { id: "s3", name: "Adeyemi Ogunlade",   church: "CCC Lagos",         year: 1 as const, completed: "April 5, 2025",  cert_no: "SANDP-2025-003" },
+  { id: "s1", name: "Chiamaka Festus",    church: "Treasures in Clay Ibadan",        year: 1 as const, completed: "March 30, 2026", cert_no: "SANDP-2026-001" },
+  { id: "s2", name: "Babatunde Ige",      church: "Treasures in Clay Abuja",         year: 1 as const, completed: "March 30, 2026", cert_no: "SANDP-2026-002" },
+  { id: "s3", name: "Adeyemi Ogunlade",   church: "Treasures in Clay Lagos",         year: 1 as const, completed: "April 5, 2026",  cert_no: "SANDP-2026-003" },
 ];
 
 function AdminSidebar({ active }: { active: string }) {
