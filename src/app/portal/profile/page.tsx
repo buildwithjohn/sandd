@@ -2,6 +2,7 @@
 export const dynamic = 'force-dynamic';
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BookOpen, Bell, Save, LogOut, Camera } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { createClient } from "@/lib/supabase";
@@ -39,7 +40,15 @@ function PortalSidebar({ active }: { active: string }) {
 }
 
 export default function ProfilePage() {
-  const { profile, signOut } = useAuth();
+  const { profile } = useAuth();
+  const router = useRouter();
+
+  async function signOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/auth/login");
+    router.refresh();
+  }
 
   // Fallback mock for dev (when auth context not hydrated)
   const [fullName, setFullName]   = useState(profile?.full_name ?? "Adeyemi Ogunlade");

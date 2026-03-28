@@ -2,17 +2,28 @@
 export const dynamic = 'force-dynamic';
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { BookOpen, CheckCircle, TrendingUp, Award, Play, Bell } from "lucide-react";
 
 // Sidebar component inline for portal
 function PortalSidebar({ active }: { active: string }) {
+  const router = useRouter();
   const links = [
     { href: "/portal/dashboard", icon: "🏠", label: "Dashboard" },
     { href: "/portal/courses", icon: "📚", label: "My Courses" },
+    { href: "/portal/assignments", icon: "📝", label: "Assignments" },
     { href: "/portal/announcements", icon: "📢", label: "Announcements" },
     { href: "/portal/profile", icon: "👤", label: "Profile" },
   ];
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/auth/login");
+    router.refresh();
+  }
+
   return (
     <aside className="w-56 flex-shrink-0 hidden lg:block">
       <div className="bg-white rounded-2xl border border-blue-100 shadow-card p-4 sticky top-24">
@@ -36,8 +47,14 @@ function PortalSidebar({ active }: { active: string }) {
             {l.label}
           </Link>
         ))}
-        <div className="mt-4 pt-3 border-t border-blue-50">
-          <button className="flex items-center gap-2 px-2 py-2 text-sm text-slate-400 hover:text-slate-600 w-full">
+        <div className="mt-4 pt-3 border-t border-blue-50 space-y-1">
+          <Link href="/admin/dashboard"
+            className="flex items-center gap-2 px-2 py-2 text-sm text-brand-600 hover:text-brand-800 font-medium w-full hover:bg-brand-50 rounded-lg">
+            <span>🛡️</span> Admin Panel
+          </Link>
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-2 px-2 py-2 text-sm text-slate-400 hover:text-red-500 w-full rounded-lg hover:bg-red-50 transition-colors">
             <span>🚪</span> Sign Out
           </button>
         </div>
