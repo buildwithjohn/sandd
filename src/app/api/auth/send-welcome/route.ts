@@ -1,105 +1,166 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
+
+export const dynamic = 'force-dynamic';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+const LOGO_URL = "https://sandd.abiodunsule.uk/assets/logo.png";
+
+function welcomeEmailHtml(name: string, verifyUrl: string): string {
+  const firstName = name.split(" ")[0];
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to S&D Prophetic School</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background-color: #f0f4ff; font-family: Arial, sans-serif; color: #1e293b; }
+    .wrapper { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .header { background-color: #1e3a8a; padding: 40px 32px; text-align: center; }
+    .header img { width: 80px; height: 80px; border-radius: 16px; margin-bottom: 16px; }
+    .header h1 { color: #ffffff; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .header p { color: #bfdbfe; font-size: 13px; }
+    .badge { display: inline-block; background-color: #b8860b; color: #ffffff; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 14px; border-radius: 20px; margin-top: 12px; }
+    .body { padding: 40px 32px; }
+    .greeting { font-size: 18px; font-weight: 700; color: #1e3a8a; margin-bottom: 20px; }
+    .text { font-size: 15px; line-height: 1.8; color: #334155; margin-bottom: 16px; }
+    .verse-box { background: #eff6ff; border-left: 4px solid #1e3a8a; border-radius: 8px; padding: 16px 20px; margin: 24px 0; }
+    .verse-box p { font-size: 14px; font-style: italic; color: #1e40af; line-height: 1.7; }
+    .verse-box span { display: block; font-size: 13px; font-weight: 700; color: #b8860b; margin-top: 8px; }
+    .btn-wrap { text-align: center; margin: 32px 0; }
+    .btn { display: inline-block; background-color: #1e3a8a; color: #ffffff !important; font-size: 15px; font-weight: 700; padding: 16px 40px; border-radius: 12px; text-decoration: none; letter-spacing: 0.3px; }
+    .btn:hover { background-color: #1e40af; }
+    .note { background: #fff8e7; border: 1px solid #f0d080; border-radius: 8px; padding: 14px 18px; margin: 24px 0; }
+    .note p { font-size: 13px; color: #78350f; line-height: 1.6; }
+    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 32px 0; }
+    .prophet { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .prophet img { width: 60px; height: 72px; border-radius: 10px; object-fit: cover; object-position: top; }
+    .prophet-info h3 { font-size: 15px; font-weight: 700; color: #1e3a8a; }
+    .prophet-info p { font-size: 12px; color: #64748b; margin-top: 2px; }
+    .signature { font-size: 14px; color: #334155; line-height: 1.7; }
+    .footer { background-color: #1e3a8a; padding: 24px 32px; text-align: center; }
+    .footer p { color: #bfdbfe; font-size: 12px; line-height: 1.7; }
+    .footer a { color: #93c5fd; text-decoration: none; }
+    @media (max-width: 600px) {
+      .body { padding: 28px 20px; }
+      .header { padding: 28px 20px; }
+      .prophet { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- HEADER -->
+    <div class="header">
+      <img src="${LOGO_URL}" alt="S&D Prophetic School Logo" />
+      <h1>Sons and Daughters of Prophets</h1>
+      <p>Prophetic Training School &mdash; Treasures in Clay Ministries</p>
+      <span class="badge">2026 Cohort</span>
+    </div>
+
+    <!-- BODY -->
+    <div class="body">
+      <p class="greeting">Beloved ${firstName},</p>
+
+      <p class="text">
+        Grace and peace to you in the name of our Lord Jesus Christ.
+      </p>
+
+      <p class="text">
+        It is with great joy in my heart that I welcome you into the <strong>Sons and Daughters of Prophets Prophetic Training School</strong>. We believe that God has placed a prophetic calling upon your life, and this school exists to ensure that gift is not wasted through ignorance, pride or lack of accountability.
+      </p>
+
+      <p class="text">
+        We are here to help you become the kind of prophet the New Testament describes &mdash; humble, accurate, accountable, and deeply rooted in the Word of God.
+      </p>
+
+      <div class="verse-box">
+        <p>&ldquo;But the one who prophesies speaks to people for their strengthening, encouraging and comfort.&rdquo;</p>
+        <span>&mdash; 1 Corinthians 14:3 (NIV)</span>
+      </div>
+
+      <p class="text">
+        The journey ahead will require discipline, honesty and a genuine hunger for God. Come with an open heart. Come willing to be corrected. Come ready to grow. And above all, come expecting to encounter the living God in a fresh and transforming way.
+      </p>
+
+      <p class="text">
+        <strong>One step before you begin:</strong> Please verify your email address by clicking the button below. This confirms your account and takes you straight into your student portal.
+      </p>
+
+      <div class="btn-wrap">
+        <a href="${verifyUrl}" class="btn">Verify My Email &amp; Enter Portal &rarr;</a>
+      </div>
+
+      <div class="note">
+        <p>&#9888; If the button above does not work, copy and paste this link into your browser:<br />
+        <strong>${verifyUrl}</strong></p>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- PROPHET SIGNATURE -->
+      <div class="prophet">
+        <img src="https://sandd.abiodunsule.uk/assets/prophet-sule.png" alt="Prophet Abiodun Sule" />
+        <div class="prophet-info">
+          <h3>Prophet Abiodun Sule</h3>
+          <p>Founder &amp; Dean<br />S&D Prophetic Training School<br />Treasures in Clay Ministries</p>
+        </div>
+      </div>
+
+      <p class="signature">
+        I am believing God for great things through your life.<br /><br />
+        In His service,<br />
+        <strong>Prophet Abiodun Sule</strong>
+      </p>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>
+        Sons and Daughters of Prophets Prophetic Training School<br />
+        Treasures in Clay Ministries &mdash; 2026<br />
+        <a href="https://sandd.abiodunsule.uk">sandd.abiodunsule.uk</a>
+      </p>
+      <p style="margin-top: 10px; font-size: 11px; color: #6b9fd4;">
+        You received this email because you registered at S&D Prophetic School.<br />
+        If this was not you, please ignore this email.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+  `;
+}
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, full_name, confirmation_url } = await req.json()
-    const RESEND_API_KEY = process.env.RESEND_API_KEY
-    if (!RESEND_API_KEY) return NextResponse.json({ error: 'Resend not configured' }, { status: 500 })
+    const { name, email, verifyUrl } = await req.json();
 
-    const html = `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#F0F4FF;font-family:Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#F0F4FF;padding:40px 20px;">
-<tr><td align="center">
-<table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+    if (!name || !email || !verifyUrl) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
 
-  <!-- Header -->
-  <tr><td align="center" style="padding-bottom:24px;">
-    <img src="https://sandd.abiodunsule.uk/assets/logo.png" width="80" height="80"
-      style="border-radius:16px;display:block;margin:0 auto 12px;" alt="S&D Logo"/>
-    <p style="margin:0;font-size:18px;font-weight:bold;color:#1E3A8A;">SONS AND DAUGHTERS OF PROPHETS</p>
-    <p style="margin:4px 0 0;font-size:13px;color:#B8860B;">Prophetic Training School — Treasures in Clay Ministries</p>
-  </td></tr>
+    const { data, error } = await resend.emails.send({
+      from: "S&D Prophetic School <noreply@sandd.abiodunsule.uk>",
+      to: email,
+      subject: "Welcome to S&D Prophetic School — Please Verify Your Email",
+      html: welcomeEmailHtml(name, verifyUrl),
+    });
 
-  <!-- Card -->
-  <tr><td style="background:#fff;border-radius:20px;padding:40px;box-shadow:0 2px 12px rgba(30,58,138,0.08);">
-    <p style="margin:0 0 20px;font-size:22px;font-weight:bold;color:#1E3A8A;font-family:Georgia,serif;">Welcome, ${full_name}</p>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#334155;">Grace and peace to you in the name of our Lord Jesus Christ.</p>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#334155;">
-      It is with great joy in my heart that I welcome you into the <strong>Sons and Daughters of Prophets Prophetic Training School.</strong>
-      We believe that God has placed a prophetic calling upon your life, and we are honoured to walk this journey with you.
-    </p>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#334155;">
-      This school exists for one purpose — to ensure that the gift God has placed within you is not wasted through ignorance, pride or lack of accountability.
-      We are here to help you become the kind of prophet the New Testament describes: humble, accurate, accountable, and deeply rooted in the Word of God.
-    </p>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.7;color:#334155;">
-      Come with an open heart. Come willing to be corrected. Come ready to grow.
-      And above all, come expecting to encounter the living God in a fresh and transforming way.
-    </p>
-    <p style="margin:0 0 32px;font-size:15px;line-height:1.7;color:#334155;">
-      Please verify your email address to access your student portal:
-    </p>
+    if (error) {
+      console.error("Resend error:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
-    <!-- Button -->
-    <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding-bottom:32px;">
-      <a href="${confirmation_url}"
-        style="display:inline-block;background:#1D4ED8;color:#fff;font-size:15px;font-weight:bold;
-               padding:14px 36px;border-radius:12px;text-decoration:none;">
-        Verify My Email &amp; Access Portal →
-      </a>
-    </td></tr></table>
-
-    <p style="margin:0 0 6px;font-size:12px;color:#94A3B8;text-align:center;">Link not working? Copy and paste:</p>
-    <p style="margin:0 0 32px;font-size:11px;color:#3B82F6;text-align:center;word-break:break-all;">${confirmation_url}</p>
-
-    <!-- Signature -->
-    <table cellpadding="0" cellspacing="0" style="border-top:1px solid #EFF6FF;padding-top:24px;width:100%;"><tr>
-      <td style="padding-right:14px;vertical-align:top;">
-        <img src="https://sandd.abiodunsule.uk/assets/prophet-sule.png" width="56" height="68"
-          style="border-radius:10px;object-fit:cover;display:block;" alt="Prophet Abiodun Sule"/>
-      </td>
-      <td style="vertical-align:top;">
-        <p style="margin:0 0 3px;font-size:15px;font-weight:bold;color:#1E3A8A;font-family:Georgia,serif;">Prophet Abiodun Sule</p>
-        <p style="margin:0 0 2px;font-size:13px;color:#64748B;">Founder &amp; Dean</p>
-        <p style="margin:0;font-size:13px;color:#64748B;">S&amp;D Prophetic Training School</p>
-        <p style="margin:4px 0 0;font-size:12px;color:#B8860B;">Treasures in Clay Ministries</p>
-      </td>
-    </tr></table>
-  </td></tr>
-
-  <!-- Footer -->
-  <tr><td align="center" style="padding-top:20px;">
-    <p style="margin:0;font-size:12px;color:#94A3B8;">
-      S&amp;D Prophetic Training School &nbsp;|&nbsp;
-      <a href="https://sandd.abiodunsule.uk" style="color:#3B82F6;text-decoration:none;">sandd.abiodunsule.uk</a>
-    </p>
-    <p style="margin:6px 0 0;font-size:11px;color:#CBD5E1;">You received this because you registered at S&amp;D Prophetic School.</p>
-  </td></tr>
-
-</table>
-</td></tr>
-</table>
-</body>
-</html>`
-
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${RESEND_API_KEY}` },
-      body: JSON.stringify({
-        from: 'S&D Prophetic School <noreply@sandd.abiodunsule.uk>',
-        to: [email],
-        subject: 'Welcome to S&D Prophetic School — Please Verify Your Email',
-        html,
-      }),
-    })
-
-    if (!res.ok) throw new Error(await res.text())
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, id: data?.id });
   } catch (err: any) {
-    console.error('send-welcome error:', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    console.error("Send welcome error:", err);
+    return NextResponse.json({ error: err.message || "Failed to send email" }, { status: 500 });
   }
 }
