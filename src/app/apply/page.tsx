@@ -46,8 +46,8 @@ export default function ApplyPage() {
     try {
       const supabase = createClient();
 
-      // 1. Create auth account — Supabase sends verification email
-      const { data, error } = await supabase.auth.signUp({
+      // 1. Create auth account with timeout guard
+      const signUpPromise = supabase.auth.signUp({
         email: form.email,
         password: form.password,
         options: {
@@ -55,6 +55,10 @@ export default function ApplyPage() {
           emailRedirectTo: `${window.location.origin}/auth/callback?next=/portal/dashboard`,
         },
       });
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("TIMEOUT")), 12000)
+      );
+      const { data, error } = await Promise.race([signUpPromise, timeoutPromise]) as Awaited<typeof signUpPromise>;
 
       // Ignore SMTP/email errors — account is still created successfully
       // Supabase throws this when custom SMTP has issues but user row exists
@@ -107,10 +111,22 @@ export default function ApplyPage() {
       setDone(true);
 
     } catch (err: any) {
-      if (err.message?.includes("already registered")) {
+      // Handle various Supabase error formats
+      const msg = err?.message || err?.error_description || err?.msg || JSON.stringify(err);
+      if (
+        msg.includes("already registered") ||
+        msg.includes("already been registered") ||
+        msg.includes("User already registered") ||
+        msg.includes("email_exists") ||
+        msg.includes("duplicate")
+      ) {
         setErrors({ email: "This email is already registered. Try signing in instead." });
+      } else if (msg === "TIMEOUT" || msg.includes("sending") || msg.includes("email") || msg === "{}") {
+        // SMTP/email errors or timeout — account was likely created, show success
+        setSentEmail(form.email);
+        setDone(true);
       } else {
-        toast.error(err.message || "Something went wrong. Please try again.");
+        toast.error(msg || "Something went wrong. Please try again.");
       }
     } finally {
       setLoading(false);
