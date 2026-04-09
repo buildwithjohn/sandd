@@ -56,8 +56,14 @@ export default function ApplyPage() {
         },
       });
 
-      if (error) throw error;
-      if (!data.user) throw new Error("Account creation failed. Please try again.");
+      // Ignore SMTP/email errors — account is still created successfully
+      // Supabase throws this when custom SMTP has issues but user row exists
+      if (error && !error.message.toLowerCase().includes("sending") && !error.message.toLowerCase().includes("email")) {
+        throw error;
+      }
+
+      const userId = data?.user?.id;
+      if (!userId) throw new Error("Account creation failed. Please try again.");
 
       // 2. Save extra profile fields
       await supabase.from("profiles").update({
@@ -67,7 +73,7 @@ export default function ApplyPage() {
         city:      form.city,
         enrollment_status: "active",
         role: "student",
-      }).eq("id", data.user.id);
+      }).eq("id", userId);
 
       // 3. Enroll in Year 1 courses
       const { data: courses } = await supabase
@@ -78,7 +84,7 @@ export default function ApplyPage() {
       if (courses && courses.length > 0) {
         await supabase.from("enrollments").insert(
           courses.map((c: { id: string }) => ({
-            student_id: data.user!.id,
+            student_id: userId,
             course_id: c.id,
             status: "active",
           }))
