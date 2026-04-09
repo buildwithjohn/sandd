@@ -85,19 +85,17 @@ export default function ApplyPage() {
         );
       }
 
-      // 4. Send branded welcome + verification email via Resend
-      // Get the verification URL Supabase generated
+      // 4. Send branded welcome email via Resend (non-blocking — don't fail signup if email fails)
       const verifyUrl = `${window.location.origin}/auth/callback?next=/portal/dashboard`;
-
-      await fetch("/api/auth/send-welcome", {
+      fetch("/api/auth/send-welcome", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name:      form.full_name,
           email:     form.email,
-          verifyUrl, // Supabase also sends its own verification — this is the branded wrapper
+          verifyUrl,
         }),
-      });
+      }).catch(err => console.error("Welcome email failed (non-critical):", err));
 
       setSentEmail(form.email);
       setDone(true);
