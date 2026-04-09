@@ -4,14 +4,16 @@ import Navbar from "@/components/layout/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
-import { Eye, EyeOff, CheckCircle, Mail } from "lucide-react";
+import { Eye, EyeOff, CheckCircle, Mail, ArrowRight } from "lucide-react";
 
 export default function ApplyPage() {
-  const [loading, setLoading]   = useState(false);
-  const [done, setDone]         = useState(false);
-  const [showPw, setShowPw]     = useState(false);
+  const router = useRouter();
+  const [loading, setLoading]     = useState(false);
+  const [done, setDone]           = useState(false);
+  const [showPw, setShowPw]       = useState(false);
   const [sentEmail, setSentEmail] = useState("");
 
   const [form, setForm] = useState({
@@ -46,30 +48,28 @@ export default function ApplyPage() {
     try {
       const supabase = createClient();
 
-      // 1. Create auth account with timeout guard
-      const signUpPromise = supabase.auth.signUp({
+      // 1. Create auth account (email confirmation is OFF in Supabase)
+      const { data, error } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
         options: {
           data: { full_name: form.full_name },
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/portal/dashboard`,
         },
       });
-      const timeoutPromise = new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error("TIMEOUT")), 12000)
-      );
-      const { data, error } = await Promise.race([signUpPromise, timeoutPromise]) as Awaited<typeof signUpPromise>;
 
-      // Ignore SMTP/email errors — account is still created successfully
-      // Supabase throws this when custom SMTP has issues but user row exists
-      if (error && !error.message.toLowerCase().includes("sending") && !error.message.toLowerCase().includes("email")) {
+      if (error) {
+        if (error.message.toLowerCase().includes("already registered") ||
+            error.message.toLowerCase().includes("already been registered")) {
+          setErrors({ email: "This email is already registered. Try signing in instead." });
+          return;
+        }
         throw error;
       }
 
       const userId = data?.user?.id;
       if (!userId) throw new Error("Account creation failed. Please try again.");
 
-      // 2. Save extra profile fields
+      // 2. Save profile fields
       await supabase.from("profiles").update({
         full_name: form.full_name,
         phone:     form.phone,
@@ -79,7 +79,7 @@ export default function ApplyPage() {
         role: "student",
       }).eq("id", userId);
 
-      // 3. Enroll in Year 1 courses
+      // 3. Enroll in all Year 1 courses
       const { data: courses } = await supabase
         .from("courses")
         .select("id")
@@ -89,45 +89,28 @@ export default function ApplyPage() {
         await supabase.from("enrollments").insert(
           courses.map((c: { id: string }) => ({
             student_id: userId,
-            course_id: c.id,
-            status: "active",
+            course_id:  c.id,
+            status:     "active",
           }))
         );
       }
 
-      // 4. Send branded welcome email via Resend (non-blocking — don't fail signup if email fails)
-      const verifyUrl = `${window.location.origin}/auth/callback?next=/portal/dashboard`;
+      // 4. Send branded welcome email via Resend (fire and forget)
       fetch("/api/auth/send-welcome", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name:      form.full_name,
-          email:     form.email,
-          verifyUrl,
+          name:  form.full_name,
+          email: form.email,
         }),
-      }).catch(err => console.error("Welcome email failed (non-critical):", err));
+      }).catch(err => console.error("Welcome email error:", err));
 
       setSentEmail(form.email);
       setDone(true);
 
     } catch (err: any) {
-      // Handle various Supabase error formats
-      const msg = err?.message || err?.error_description || err?.msg || JSON.stringify(err);
-      if (
-        msg.includes("already registered") ||
-        msg.includes("already been registered") ||
-        msg.includes("User already registered") ||
-        msg.includes("email_exists") ||
-        msg.includes("duplicate")
-      ) {
-        setErrors({ email: "This email is already registered. Try signing in instead." });
-      } else if (msg === "TIMEOUT" || msg.includes("sending") || msg.includes("email") || msg === "{}") {
-        // SMTP/email errors or timeout — account was likely created, show success
-        setSentEmail(form.email);
-        setDone(true);
-      } else {
-        toast.error(msg || "Something went wrong. Please try again.");
-      }
+      const msg = err?.message || "Something went wrong. Please try again.";
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -144,36 +127,36 @@ export default function ApplyPage() {
               <Mail className="w-8 h-8 text-green-600" />
             </div>
             <h1 className="font-display text-brand-900 text-2xl font-semibold mb-3">
-              Check your email!
+              Welcome to S&D School! 🎉
             </h1>
             <p className="text-slate-500 text-sm leading-relaxed mb-2">
-              We sent a verification email to:
+              Your account has been created successfully. A welcome message from Prophet Abiodun Sule has been sent to:
             </p>
-            <p className="font-medium text-brand-700 text-sm mb-6">{sentEmail}</p>
-            <p className="text-slate-400 text-sm leading-relaxed mb-8">
-              Click the <strong>Verify My Email</strong> button in the email to confirm your account and access your student portal. The email contains a personal welcome from Prophet Abiodun Sule.
-            </p>
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-slate-400 text-xs">
-                <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                Account created successfully
+            <p className="font-medium text-brand-700 text-sm mb-8">{sentEmail}</p>
+
+            <div className="space-y-3 mb-8 text-left">
+              <div className="flex items-center gap-3 bg-green-50 rounded-xl p-3">
+                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                <span className="text-sm text-slate-600">Account created successfully</span>
               </div>
-              <div className="flex items-center gap-2 text-slate-400 text-xs">
-                <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                Enrolled in all Year 1 courses
+              <div className="flex items-center gap-3 bg-green-50 rounded-xl p-3">
+                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                <span className="text-sm text-slate-600">Enrolled in all Year 1 courses</span>
               </div>
-              <div className="flex items-center gap-2 text-slate-400 text-xs">
-                <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                Welcome email sent from Prophet Sule
+              <div className="flex items-center gap-3 bg-green-50 rounded-xl p-3">
+                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                <span className="text-sm text-slate-600">Welcome email sent from Prophet Sule</span>
               </div>
             </div>
-            <p className="text-slate-400 text-xs mt-8">
-              Didn&apos;t receive the email? Check your spam folder, or{" "}
-              <button
-                onClick={() => { setDone(false); setForm({ full_name: "", email: "", password: "", phone: "", church: "", city: "" }); }}
-                className="text-brand-600 font-medium hover:underline">
-                try again
-              </button>.
+
+            <button
+              onClick={() => router.push("/auth/login")}
+              className="w-full bg-brand-700 hover:bg-brand-800 text-white font-medium text-sm py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
+              Sign In to Your Portal <ArrowRight className="w-4 h-4" />
+            </button>
+
+            <p className="text-slate-400 text-xs mt-4">
+              Use the email and password you just created to sign in.
             </p>
           </div>
         </div>
@@ -187,7 +170,6 @@ export default function ApplyPage() {
       <Navbar />
       <div className="max-w-lg mx-auto px-4 py-12">
 
-        {/* Header */}
         <div className="text-center mb-8">
           <Image src="/assets/logo.png" alt="S&D Logo" width={64} height={64} className="rounded-xl mx-auto mb-4" />
           <h1 className="font-display text-brand-900 text-3xl font-semibold">Join the School</h1>
@@ -199,11 +181,9 @@ export default function ApplyPage() {
           </div>
         </div>
 
-        {/* Form card */}
         <div className="bg-white rounded-2xl border border-blue-100 shadow-card p-6 sm:p-8">
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
 
-            {/* Full Name */}
             <div>
               <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">Full Name *</label>
               <input value={form.full_name} onChange={e => update("full_name", e.target.value)}
@@ -212,7 +192,6 @@ export default function ApplyPage() {
               {errors.full_name && <p className="text-red-400 text-xs mt-1">{errors.full_name}</p>}
             </div>
 
-            {/* Email */}
             <div>
               <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">Email Address *</label>
               <input value={form.email} onChange={e => update("email", e.target.value)}
@@ -221,7 +200,6 @@ export default function ApplyPage() {
               {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
             </div>
 
-            {/* Password */}
             <div>
               <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">Password *</label>
               <div className="relative">
@@ -236,7 +214,6 @@ export default function ApplyPage() {
               {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
             </div>
 
-            {/* Phone */}
             <div>
               <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">Phone Number *</label>
               <input value={form.phone} onChange={e => update("phone", e.target.value)}
@@ -245,7 +222,6 @@ export default function ApplyPage() {
               {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
             </div>
 
-            {/* Church + City */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">Church / Ministry *</label>
@@ -263,7 +239,6 @@ export default function ApplyPage() {
               </div>
             </div>
 
-            {/* Submit */}
             <button type="submit" disabled={loading}
               className="w-full bg-brand-700 hover:bg-brand-800 disabled:opacity-60 text-white font-medium text-sm py-3 rounded-xl transition-colors mt-2 flex items-center justify-center gap-2">
               {loading ? (
