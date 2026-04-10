@@ -1,126 +1,241 @@
+"use client";
 import Navbar from "@/components/layout/Navbar";
 import Link from "next/link";
-import { Lock } from "lucide-react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { ArrowRight, Lock } from "lucide-react";
+
+const rise = (delay = 0) => ({
+  hidden:  { opacity: 0, y: 28, filter: "blur(4px)" },
+  visible: { opacity: 1, y: 0,  filter: "blur(0px)",
+    transition: { duration: 0.7, delay, ease: [0.25, 0.46, 0.45, 0.94] as [number,number,number,number] }
+  }
+});
 
 const year1 = [
-  { icon: "📖", slug: "intro-nt-prophecy", title: "Introduction to NT Prophecy", desc: "Covers differences between Old and New Testament prophecy and the role of prophecy in the church.", credits: 3, scripture: "1 Cor. 14:3" },
-  { icon: "🕊️", slug: "person-holy-spirit", title: "The Person & Work of the Holy Spirit", desc: "Explores the Holy Spirit's role in prophecy and discernment.", credits: 3, scripture: "John 14–16" },
-  { icon: "📜", slug: "biblical-hermeneutics", title: "Biblical Hermeneutics", desc: "Teaches sound Bible interpretation to avoid reading meaning into the text.", credits: 3, scripture: "2 Tim. 2:15" },
-  { icon: "⚠️", slug: "spirituality-vs-spiritism", title: "Spirituality vs. Spiritism", desc: "Addresses biblical warnings against spiritism and how to guard against it.", credits: 2, scripture: "1 John 4:1–6" },
-  { icon: "🙏", slug: "prayer-intimacy", title: "Prayer & Intimacy with God", desc: "Cultivates a lifestyle of prayer, fasting, and worship as the foundation for prophetic ministry.", credits: 2, scripture: "Ps. 27:4" },
-  { icon: "⚖️", slug: "character-ethics", title: "Character & Ethics in Prophetic Ministry", desc: "Emphasizes integrity, accountability, and holiness as requirements for prophetic service.", credits: 2, scripture: "1 Tim. 3:1–7" },
+  { num: "01", slug: "intro-nt-prophecy",         title: "Introduction to NT Prophecy",          desc: "Covers the differences between Old and New Testament prophecy, the role of the prophetic gift in the local church, and the 1 Corinthians 14:3 charter.", credits: 3, scripture: "1 Cor. 14:3" },
+  { num: "02", slug: "person-holy-spirit",         title: "The Person & Work of the Holy Spirit", desc: "Explores the Holy Spirit's nature, His role in prophecy, the gifts of the Spirit, and how to maintain a Spirit-filled lifestyle of sensitivity and obedience.", credits: 3, scripture: "John 14–16" },
+  { num: "03", slug: "biblical-hermeneutics",       title: "Biblical Hermeneutics",                desc: "Teaches sound Bible interpretation principles — how to read Scripture in context, avoid eisegesis, and handle the Word of God accurately.", credits: 3, scripture: "2 Tim. 2:15" },
+  { num: "04", slug: "spirituality-vs-spiritism",  title: "Spirituality vs. Spiritism",           desc: "Addresses biblical warnings against divination and occult practices, and equips students to discern between the Spirit of God and counterfeit spirits.", credits: 2, scripture: "1 John 4:1–6" },
+  { num: "05", slug: "prayer-intimacy",            title: "Prayer & Intimacy with God",           desc: "Cultivates a lifestyle of prayer, fasting, and worship as the irreplaceable foundation for accurate and accountable prophetic ministry.", credits: 2, scripture: "Ps. 27:4" },
+  { num: "06", slug: "character-ethics",           title: "Character & Ethics in Prophetic Ministry", desc: "Emphasises integrity, accountability, financial ethics, and holiness as prerequisites to prophetic service — not optional extras.", credits: 2, scripture: "1 Tim. 3:1–7" },
 ];
 
 const year2 = [
-  { icon: "🔥", slug: "advanced-prophetic", title: "Advanced Prophetic Ministry", desc: "Covers prophetic intercession, visions, and corporate prophecy in depth.", credits: 3, scripture: null },
-  { icon: "🛡️", slug: "discernment-deliverance", title: "Discernment & Deliverance", desc: "Teaches spiritual warfare and the ministry of deliverance.", credits: 3, scripture: "Mark 16:17" },
-  { icon: "✝️", slug: "new-covenant-theology", title: "Theology of the New Covenant", desc: "Explores grace, freedom in Christ, and the superiority of the New Covenant.", credits: 3, scripture: "Heb. 8:6–13" },
-  { icon: "👑", slug: "leadership-prophetic", title: "Leadership in Prophetic Ministry", desc: "Prepares students to mentor others and serve alongside church leadership.", credits: 2, scripture: null },
-  { icon: "🌍", slug: "prophetic-evangelism", title: "Prophetic Evangelism", desc: "Equips students to use prophetic gifts in outreach and evangelism.", credits: 2, scripture: "Acts 8:26–40" },
+  { num: "07", slug: "advanced-prophetic",         title: "Advanced Prophetic Ministry",          desc: "Covers prophetic intercession, visions, dreams, corporate prophecy, and navigating the prophetic in the local church with wisdom and authority.", credits: 3, scripture: "Acts 13:1–3" },
+  { num: "08", slug: "discernment-deliverance",    title: "Discernment & Deliverance",            desc: "Teaches spiritual warfare, the gift of discerning of spirits, and the ministry of deliverance — including aftercare and accountability.", credits: 3, scripture: "Mark 16:17" },
+  { num: "09", slug: "new-covenant-theology",      title: "Theology of the New Covenant",         desc: "Explores grace, freedom in Christ, the superiority of the New Covenant, and how covenant theology shapes every dimension of prophetic ministry.", credits: 3, scripture: "Heb. 8:6–13" },
+  { num: "10", slug: "leadership-prophetic",       title: "Leadership in Prophetic Ministry",     desc: "Prepares students to mentor others, serve alongside church leadership, build prophetic teams, and sustain ministry without burning out.", credits: 2, scripture: "Eph. 4:11–12" },
+  { num: "11", slug: "prophetic-evangelism",       title: "Prophetic Evangelism",                 desc: "Equips students to use prophetic gifts in outreach — word of knowledge, healing, and Spirit-led evangelism beyond the walls of the church.", credits: 2, scripture: "Acts 8:26–40" },
 ];
 
 export default function CoursesPage() {
   return (
-    <div className="min-h-screen bg-[#F8FAFF]">
+    <div className="bg-[#080C14] text-white min-h-screen" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>
       <Navbar />
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-        <div className="mb-10">
-          <h1 className="font-display text-brand-900 text-4xl font-medium mb-3">Curriculum</h1>
-          <p className="text-slate-500 text-base max-w-xl">
-            A structured two-year program. Year 1 builds your biblical and spiritual
-            foundation. Year 2 takes you into advanced prophetic ministry and leadership.
-          </p>
-        </div>
 
-        {/* Year 1 */}
-        <div className="mb-10">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="bg-brand-700 text-white text-xs font-medium px-3 py-1.5 rounded-full">
-              Year 1
+      {/* ── PAGE HERO ─────────────────────────────────────────────────── */}
+      <section className="relative pt-28 pb-20 px-6 overflow-hidden">
+        {/* Background texture */}
+        <div className="absolute inset-0 opacity-5"
+          style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #D4A85C 0%, transparent 50%), radial-gradient(circle at 80% 20%, #D4A85C 0%, transparent 40%)" }} />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/8" />
+
+        <div className="max-w-5xl mx-auto">
+          <motion.div variants={rise(0.1)} initial="hidden" animate="visible">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px w-10 bg-[#D4A85C]/40" />
+              <span className="text-[#D4A85C] text-xs tracking-[0.25em] uppercase font-sans">The Curriculum</span>
             </div>
-            <div className="text-slate-400 text-sm">Certificate in Prophetic Ministry · 15 credits</div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {year1.map((c) => (
-              <div key={c.slug} className="bg-white rounded-xl border border-blue-100 shadow-card hover:shadow-card-hover hover:border-brand-200 transition-all p-5">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-brand-50 border border-brand-100 flex items-center justify-center text-xl">
-                    {c.icon}
-                  </div>
-                  <span className="bg-brand-50 text-brand-600 text-[11px] font-medium px-2.5 py-1 rounded-full">
-                    {c.credits} credits
-                  </span>
-                </div>
-                <h3 className="text-brand-900 font-medium text-sm mb-1.5">{c.title}</h3>
-                <p className="text-slate-400 text-xs leading-relaxed mb-3">{c.desc}</p>
-                {c.scripture && (
-                  <div className="text-brand-400 text-[11px] font-medium border-t border-blue-50 pt-2.5">
-                    {c.scripture}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+            <h1 className="text-5xl sm:text-6xl font-medium tracking-tight mb-5 leading-[1.04]"
+              style={{ letterSpacing: "-0.02em" }}>
+              Two Years.<br />Eleven Courses.
+            </h1>
+            <p className="text-white/45 text-lg font-sans font-light max-w-xl leading-relaxed">
+              A comprehensive, Scripture-centred curriculum designed to ground, equip
+              and activate every student in New Testament prophetic ministry.
+            </p>
+          </motion.div>
 
-        {/* Year 2 */}
-        <div>
-          <div className="flex items-center gap-3 mb-5">
-            <div className="bg-slate-200 text-slate-600 text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5">
-              <Lock className="w-3 h-3" /> Year 2
-            </div>
-            <div className="text-slate-400 text-sm">Diploma in NT Prophecy · 13 credits · Unlocks after Year 1</div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {year2.map((c) => (
-              <div key={c.slug} className="bg-white rounded-xl border border-slate-100 shadow-card p-5 opacity-70">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-xl grayscale">
-                    {c.icon}
-                  </div>
-                  <span className="bg-slate-50 text-slate-400 text-[11px] font-medium px-2.5 py-1 rounded-full">
-                    {c.credits} credits
-                  </span>
-                </div>
-                <h3 className="text-slate-500 font-medium text-sm mb-1.5">{c.title}</h3>
-                <p className="text-slate-400 text-xs leading-relaxed mb-3">{c.desc}</p>
-                {c.scripture && (
-                  <div className="text-slate-300 text-[11px] font-medium border-t border-slate-50 pt-2.5">
-                    {c.scripture}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Practical components */}
-        <div className="mt-10 bg-brand-950 rounded-2xl p-6">
-          <h2 className="font-display text-brand-200 text-xl font-medium mb-4">Practical Components</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Summary bar */}
+          <motion.div variants={rise(0.25)} initial="hidden" animate="visible"
+            className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-px bg-white/8 rounded-2xl overflow-hidden">
             {[
-              { label: "Weekly", desc: "Prayer & worship sessions alongside video lessons" },
-              { label: "Monthly", desc: "Prophetic activation exercises under supervision" },
-              { label: "Annual", desc: "Prophetic retreat and conference" },
-            ].map((p) => (
-              <div key={p.label} className="bg-brand-900/50 border border-brand-800/50 rounded-xl p-4">
-                <div className="text-brand-300 font-medium text-sm mb-1">{p.label}</div>
-                <div className="text-brand-400 text-xs leading-relaxed">{p.desc}</div>
+              { value: "2", label: "Years" },
+              { value: "11", label: "Courses" },
+              { value: "28", label: "Total Credits" },
+              { value: "Free", label: "Tuition" },
+            ].map(s => (
+              <div key={s.label} className="bg-[#080C14] px-6 py-5 text-center">
+                <div className="text-2xl font-medium text-[#D4A85C] mb-1"
+                  style={{ fontFamily: "'Georgia', serif" }}>{s.value}</div>
+                <div className="text-white/30 text-xs tracking-widest uppercase font-sans">{s.label}</div>
               </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── YEAR 1 ────────────────────────────────────────────────────── */}
+      <section className="px-6 py-20 border-t border-white/8">
+        <div className="max-w-5xl mx-auto">
+          <motion.div variants={rise()} initial="hidden" whileInView="visible" viewport={{ once: true }}
+            className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-px w-8 bg-[#D4A85C]/40" />
+                <span className="text-[#D4A85C] text-xs tracking-[0.25em] uppercase font-sans">Year One</span>
+              </div>
+              <h2 className="text-3xl font-medium tracking-tight" style={{ letterSpacing: "-0.01em" }}>
+                Certificate in Prophetic Ministry
+              </h2>
+            </div>
+            <span className="text-white/25 text-sm font-sans">15 credits · 6 courses</span>
+          </motion.div>
+
+          <div className="space-y-3">
+            {year1.map((course, i) => (
+              <motion.div key={course.num}
+                variants={rise(i * 0.07)} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                <div className="group relative rounded-2xl overflow-hidden transition-all duration-300
+                  hover:bg-white/[0.03] cursor-default"
+                  style={{ border: "1px solid rgba(255,255,255,0.07)" }}>
+                  <div className="flex items-start gap-5 p-6">
+                    {/* Number */}
+                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20
+                      flex items-center justify-center">
+                      <span className="text-[#D4A85C] text-xs font-mono font-medium">{course.num}</span>
+                    </div>
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-4 mb-2">
+                        <h3 className="text-base font-medium text-white/90 leading-snug"
+                          style={{ fontFamily: "'Georgia', serif" }}>
+                          {course.title}
+                        </h3>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          {course.scripture && (
+                            <span className="text-[#D4A85C]/60 text-xs font-sans hidden sm:block">
+                              {course.scripture}
+                            </span>
+                          )}
+                          <span className="text-white/25 text-xs font-sans whitespace-nowrap">
+                            {course.credits} cr
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-white/40 text-sm font-sans leading-relaxed">{course.desc}</p>
+                    </div>
+                  </div>
+                  {/* Hover gold left border effect */}
+                  <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#D4A85C]/0 group-hover:bg-[#D4A85C]/50 transition-all duration-300 rounded-l-full" />
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
+      </section>
 
-        {/* Apply CTA */}
-        <div className="mt-6 flex items-center justify-center">
-          <Link
-            href="/apply"
-            className="bg-brand-700 hover:bg-brand-800 text-white font-medium text-sm px-6 py-3 rounded-xl transition-colors"
-          >
-            Apply Now — Tuition is Free
-          </Link>
+      {/* ── YEAR 2 ────────────────────────────────────────────────────── */}
+      <section className="px-6 py-20 border-t border-white/8">
+        <div className="max-w-5xl mx-auto">
+          <motion.div variants={rise()} initial="hidden" whileInView="visible" viewport={{ once: true }}
+            className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-px w-8 bg-[#D4A85C]/40" />
+                <span className="text-[#D4A85C] text-xs tracking-[0.25em] uppercase font-sans">Year Two</span>
+              </div>
+              <h2 className="text-3xl font-medium tracking-tight" style={{ letterSpacing: "-0.01em" }}>
+                Diploma in New Testament Prophecy
+              </h2>
+            </div>
+            <div className="flex items-center gap-3">
+              <Lock className="w-3.5 h-3.5 text-white/20" />
+              <span className="text-white/25 text-sm font-sans">13 credits · 5 courses · Unlocks after Year 1</span>
+            </div>
+          </motion.div>
+
+          <div className="space-y-3">
+            {year2.map((course, i) => (
+              <motion.div key={course.num}
+                variants={rise(i * 0.07)} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                <div className="group relative rounded-2xl overflow-hidden transition-all duration-300
+                  hover:bg-[#D4A85C]/[0.03] cursor-default"
+                  style={{ border: "1px solid rgba(212,168,92,0.12)" }}>
+                  <div className="flex items-start gap-5 p-6">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#D4A85C]/8 border border-[#D4A85C]/15
+                      flex items-center justify-center">
+                      <span className="text-[#D4A85C]/70 text-xs font-mono font-medium">{course.num}</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-4 mb-2">
+                        <h3 className="text-base font-medium text-white/80 leading-snug"
+                          style={{ fontFamily: "'Georgia', serif" }}>
+                          {course.title}
+                        </h3>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          {course.scripture && (
+                            <span className="text-[#D4A85C]/50 text-xs font-sans hidden sm:block">
+                              {course.scripture}
+                            </span>
+                          )}
+                          <span className="text-[#D4A85C]/30 text-xs font-sans whitespace-nowrap">
+                            {course.credits} cr
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-white/35 text-sm font-sans leading-relaxed">{course.desc}</p>
+                    </div>
+                  </div>
+                  <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#D4A85C]/0 group-hover:bg-[#D4A85C]/40 transition-all duration-300 rounded-l-full" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* ── CTA ───────────────────────────────────────────────────────── */}
+      <section className="border-t border-white/8 py-24 px-6">
+        <motion.div variants={rise()} initial="hidden" whileInView="visible" viewport={{ once: true }}
+          className="max-w-2xl mx-auto text-center">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="h-px w-10 bg-[#D4A85C]/40" />
+            <span className="text-[#D4A85C] text-xs tracking-[0.25em] uppercase font-sans">2026 Cohort — Now Open</span>
+            <div className="h-px w-10 bg-[#D4A85C]/40" />
+          </div>
+          <h2 className="text-4xl font-medium tracking-tight mb-4" style={{ letterSpacing: "-0.02em" }}>
+            Ready to Begin?
+          </h2>
+          <p className="text-white/40 text-base font-sans leading-relaxed mb-10">
+            All 11 courses are included in your free enrolment. No selection required —
+            Year 1 begins immediately, Year 2 unlocks after completion.
+          </p>
+          <Link href="/apply"
+            className="inline-flex items-center gap-2.5 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14]
+              font-bold text-sm px-9 py-4 rounded-full transition-all duration-300 font-sans
+              hover:shadow-[0_0_40px_rgba(212,168,92,0.35)] hover:-translate-y-0.5">
+            Apply Now — It&apos;s Free
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </motion.div>
+      </section>
+
+      {/* ── FOOTER ────────────────────────────────────────────────────── */}
+      <footer className="border-t border-white/[0.05] bg-[#050810] py-8 px-6">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Image src="/assets/logo.png" alt="S&D" width={28} height={28} className="rounded-lg opacity-70" />
+            <span className="text-white/25 text-xs font-sans">S&D Prophetic Training School · Treasures in Clay Ministries</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <Link href="/" className="text-white/25 hover:text-white/60 text-xs font-sans transition-colors">Home</Link>
+            <Link href="/apply" className="text-white/25 hover:text-[#D4A85C] text-xs font-sans transition-colors">Apply</Link>
+            <Link href="/auth/login" className="text-white/25 hover:text-white/60 text-xs font-sans transition-colors">Student Login</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

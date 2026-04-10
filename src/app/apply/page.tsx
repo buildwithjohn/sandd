@@ -1,31 +1,34 @@
 "use client";
 export const dynamic = "force-dynamic";
-import Navbar from "@/components/layout/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
+import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Eye, EyeOff, CheckCircle, ArrowRight, Loader2 } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, CheckCircle, Loader2, Mail } from "lucide-react";
+
+const rise = (delay = 0) => ({
+  hidden:  { opacity: 0, y: 24, filter: "blur(3px)" },
+  visible: { opacity: 1, y: 0,  filter: "blur(0px)",
+    transition: { duration: 0.65, delay, ease: [0.25, 0.46, 0.45, 0.94] as [number,number,number,number] }
+  }
+});
 
 interface FormState {
-  full_name: string;
-  email: string;
-  password: string;
-  phone: string;
-  church: string;
-  city: string;
+  full_name: string; email: string; password: string;
+  phone: string; church: string; city: string;
 }
 
 export default function ApplyPage() {
   const router = useRouter();
-  const [step, setStep] = useState<"form" | "success">("form");
+  const [step, setStep]     = useState<"form" | "success">("form");
   const [loading, setLoading] = useState(false);
-  const [showPw, setShowPw] = useState(false);
-  const [registeredEmail, setRegisteredEmail] = useState("");
-  const [errors, setErrors] = useState<Partial<FormState>>({});
-  const [form, setForm] = useState<FormState>({
+  const [showPw, setShowPw]   = useState(false);
+  const [doneEmail, setDoneEmail] = useState("");
+  const [errors, setErrors]   = useState<Partial<FormState>>({});
+  const [form, setForm]       = useState<FormState>({
     full_name: "", email: "", password: "",
     phone: "", church: "", city: "",
   });
@@ -37,18 +40,12 @@ export default function ApplyPage() {
 
   function validate(): boolean {
     const e: Partial<FormState> = {};
-    if (form.full_name.trim().length < 3)
-      e.full_name = "Full name is required";
-    if (!form.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/))
-      e.email = "Enter a valid email address";
-    if (form.password.length < 8)
-      e.password = "Password must be at least 8 characters";
-    if (form.phone.trim().length < 7)
-      e.phone = "Enter a valid phone number";
-    if (form.church.trim().length < 2)
-      e.church = "Church / ministry name is required";
-    if (form.city.trim().length < 2)
-      e.city = "City is required";
+    if (form.full_name.trim().length < 3)             e.full_name = "Full name required";
+    if (!form.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) e.email = "Enter a valid email";
+    if (form.password.length < 8)                     e.password  = "Min 8 characters";
+    if (form.phone.trim().length < 7)                 e.phone     = "Enter a valid phone number";
+    if (form.church.trim().length < 2)                e.church    = "Church / ministry required";
+    if (form.city.trim().length < 2)                  e.city      = "City required";
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -57,318 +54,295 @@ export default function ApplyPage() {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-
     try {
       const supabase = createClient();
 
-      // Step 1 — Create Supabase auth account
-      // Email confirmation is OFF so user can log in immediately
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: form.email.trim().toLowerCase(),
         password: form.password,
-        options: {
-          data: { full_name: form.full_name.trim() },
-        },
+        options: { data: { full_name: form.full_name.trim() } },
       });
 
       if (authError) {
-        if (authError.message.includes("already registered") ||
-            authError.message.includes("User already registered")) {
-          setErrors({ email: "This email is already registered. Sign in instead." });
+        if (authError.message.toLowerCase().includes("already registered")) {
+          setErrors({ email: "Email already registered. Sign in instead." });
           return;
         }
         throw new Error(authError.message);
       }
 
       const userId = authData.user?.id;
-      if (!userId) throw new Error("Failed to create account. Please try again.");
+      if (!userId) throw new Error("Account creation failed. Please try again.");
 
-      // Step 2 — Save profile details
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({
-          full_name:         form.full_name.trim(),
-          phone:             form.phone.trim(),
-          church:            form.church.trim(),
-          city:              form.city.trim(),
-          role:              "student",
-          enrollment_status: "active",
-          current_year:      1,
-        })
-        .eq("id", userId);
+      await supabase.from("profiles").update({
+        full_name: form.full_name.trim(), phone: form.phone.trim(),
+        church: form.church.trim(), city: form.city.trim(),
+        role: "student", enrollment_status: "active", current_year: 1,
+      }).eq("id", userId);
 
-      if (profileError) console.error("Profile update error:", profileError);
-
-      // Step 3 — Enroll in all Year 1 courses
-      const { data: courses } = await supabase
-        .from("courses")
-        .select("id")
-        .eq("year", 1);
-
+      const { data: courses } = await supabase.from("courses").select("id").eq("year", 1);
       if (courses && courses.length > 0) {
-        const { error: enrollError } = await supabase
-          .from("enrollments")
-          .insert(courses.map((c: { id: string }) => ({
-            student_id: userId,
-            course_id:  c.id,
-            status:     "active",
-          })));
-        if (enrollError) console.error("Enrollment error:", enrollError);
+        await supabase.from("enrollments").insert(
+          courses.map((c: { id: string }) => ({ student_id: userId, course_id: c.id, status: "active" }))
+        );
       }
 
-      // Step 4 — Send branded welcome email via Resend
-      const emailRes = await fetch("/api/auth/send-welcome", {
+      fetch("/api/auth/send-welcome", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name:  form.full_name.trim(),
-          email: form.email.trim().toLowerCase(),
-        }),
-      });
+        body: JSON.stringify({ name: form.full_name.trim(), email: form.email.trim().toLowerCase() }),
+      }).catch(err => console.error("Welcome email error:", err));
 
-      if (!emailRes.ok) {
-        const emailErr = await emailRes.json();
-        console.error("Welcome email failed:", emailErr);
-        // Don't block the user — account is created successfully
-      }
-
-      // Step 5 — Show success
-      setRegisteredEmail(form.email.trim().toLowerCase());
+      setDoneEmail(form.email.trim().toLowerCase());
       setStep("success");
-
     } catch (err: any) {
-      console.error("Signup error:", err);
       toast.error(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
-  // ── SUCCESS SCREEN ────────────────────────────────────────────────────────
+  // ── SUCCESS ───────────────────────────────────────────────────────────────
   if (step === "success") {
     return (
-      <div className="min-h-screen bg-[#F0F4FF]">
-        <Navbar />
-        <div className="max-w-md mx-auto px-4 py-16 text-center">
-          <div className="bg-white rounded-2xl border border-blue-100 shadow-card p-10">
-            <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-10 h-10 text-green-600" />
-            </div>
-            <h1 className="font-display text-brand-900 text-2xl font-semibold mb-2">
-              You&apos;re In! Welcome 🎉
-            </h1>
-            <p className="text-slate-500 text-sm leading-relaxed mb-6">
-              A welcome message from Prophet Abiodun Sule has been sent to{" "}
-              <span className="font-semibold text-brand-700">{registeredEmail}</span>.
-              Check your inbox — and your spam folder just in case.
-            </p>
+      <div className="bg-[#080C14] min-h-screen flex flex-col items-center justify-center px-6 py-20"
+        style={{ fontFamily: "'Georgia', serif" }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="w-full max-w-md text-center">
 
-            <div className="space-y-2 mb-8 text-left">
-              {[
-                "Account created successfully",
-                "Enrolled in all Year 1 courses",
-                "Welcome email sent from Prophet Sule",
-              ].map(item => (
-                <div key={item} className="flex items-center gap-3 bg-green-50 border border-green-100 rounded-xl px-4 py-3">
-                  <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                  <span className="text-sm text-slate-600">{item}</span>
-                </div>
-              ))}
+          {/* Glow ring */}
+          <div className="relative flex items-center justify-center mb-8">
+            <div className="absolute w-24 h-24 rounded-full bg-[#D4A85C]/15 blur-xl" />
+            <div className="relative w-16 h-16 rounded-full border border-[#D4A85C]/30 bg-[#D4A85C]/10
+              flex items-center justify-center">
+              <Mail className="w-7 h-7 text-[#D4A85C]" />
             </div>
-
-            <button
-              onClick={() => router.push("/auth/login")}
-              className="w-full bg-brand-700 hover:bg-brand-800 text-white font-medium text-sm py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2">
-              Sign In to Your Portal <ArrowRight className="w-4 h-4" />
-            </button>
-            <p className="text-slate-400 text-xs mt-3">
-              Use your email and the password you just created.
-            </p>
           </div>
-        </div>
+
+          <h1 className="text-4xl font-medium mb-3 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
+            You&apos;re In.
+          </h1>
+          <p className="text-white/45 text-sm font-sans leading-relaxed mb-2">
+            Welcome to the 2026 Cohort. A personal message from Prophet Abiodun Sule has been sent to:
+          </p>
+          <p className="text-[#D4A85C] text-sm font-sans mb-10">{doneEmail}</p>
+
+          <div className="space-y-2 mb-10 text-left">
+            {[
+              "Account created & activated",
+              "Enrolled in all Year 1 courses",
+              "Welcome message sent from Prophet Sule",
+            ].map(item => (
+              <div key={item} className="flex items-center gap-3 bg-white/[0.03] border border-white/[0.07] rounded-xl px-4 py-3">
+                <CheckCircle className="w-4 h-4 text-[#D4A85C] flex-shrink-0" />
+                <span className="text-white/60 text-sm font-sans">{item}</span>
+              </div>
+            ))}
+          </div>
+
+          <button onClick={() => router.push("/auth/login")}
+            className="w-full bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] font-bold text-sm
+              py-4 rounded-full transition-all duration-300 font-sans flex items-center justify-center gap-2
+              hover:shadow-[0_0_40px_rgba(212,168,92,0.35)]">
+            Sign In to Your Portal <ArrowRight className="w-4 h-4" />
+          </button>
+          <p className="text-white/20 text-xs font-sans mt-4">
+            Use your email and the password you just created
+          </p>
+        </motion.div>
       </div>
     );
   }
 
   // ── FORM ──────────────────────────────────────────────────────────────────
-  const inputClass = (field: keyof FormState) =>
-    `w-full border rounded-xl px-3.5 py-2.5 text-sm text-slate-700 focus:outline-none transition-colors ${
-      errors[field]
-        ? "border-red-300 bg-red-50 focus:border-red-400"
-        : "border-slate-200 focus:border-brand-400"
-    }`;
+  const inp = (field: keyof FormState) =>
+    `w-full bg-white/[0.04] border rounded-xl px-4 py-3 text-sm text-white/90 font-sans
+    placeholder-white/20 focus:outline-none transition-all duration-200
+    ${errors[field]
+      ? "border-red-500/50 focus:border-red-400/70 focus:bg-red-500/[0.04]"
+      : "border-white/10 focus:border-[#D4A85C]/50 focus:bg-[#D4A85C]/[0.03]"}`;
 
   return (
-    <div className="min-h-screen bg-[#F0F4FF]">
-      <Navbar />
-      <div className="max-w-lg mx-auto px-4 py-12">
+    <div className="bg-[#080C14] min-h-screen" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>
 
-        {/* Header */}
-        <div className="text-center mb-8">
-          <Image
-            src="/assets/logo.png" alt="S&D Logo"
-            width={72} height={72}
-            className="rounded-2xl mx-auto mb-4 shadow-sm"
-          />
-          <h1 className="font-display text-brand-900 text-3xl font-semibold">
-            Join the School
-          </h1>
-          <p className="text-slate-500 text-sm mt-2 max-w-sm mx-auto leading-relaxed">
-            Create your free account and start your prophetic training journey today.
-          </p>
-          <div className="inline-flex items-center gap-2 mt-3 bg-green-50 border border-green-200 text-green-700 text-xs font-medium px-3 py-1.5 rounded-full">
-            <CheckCircle className="w-3.5 h-3.5" />
-            Tuition is completely free — no credit card required
+      <div className="min-h-screen flex">
+
+        {/* ── LEFT — Hero panel ─────────────────────────────────────── */}
+        <div className="hidden lg:flex lg:w-[45%] relative flex-col justify-between p-12 overflow-hidden">
+          {/* Background */}
+          <div className="absolute inset-0">
+            <Image src="/assets/hero-bg.jpg" alt="" fill className="object-cover object-center opacity-60" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#080C14]/70 via-[#080C14]/50 to-[#080C14]/80" />
+            <div className="absolute inset-0"
+              style={{ background: "radial-gradient(ellipse 60% 50% at 40% 60%, rgba(212,168,92,0.15) 0%, transparent 70%)" }} />
+          </div>
+
+          {/* Logo */}
+          <div className="relative z-10">
+            <div className="flex items-center gap-3">
+              <Image src="/assets/logo.png" alt="S&D Logo" width={40} height={40} className="rounded-xl" />
+              <div>
+                <div className="text-white text-sm font-medium">S&D Prophetic School</div>
+                <div className="text-white/40 text-xs font-sans">Treasures in Clay Ministries</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Center quote */}
+          <div className="relative z-10 py-12">
+            <div className="h-px w-12 bg-[#D4A85C]/40 mb-6" />
+            <blockquote className="text-2xl font-medium leading-[1.35] tracking-tight text-white mb-5"
+              style={{ letterSpacing: "-0.01em" }}>
+              &ldquo;But the one who prophesies speaks to people for their strengthening,
+              encouraging and comfort.&rdquo;
+            </blockquote>
+            <cite className="text-[#D4A85C] text-xs font-sans tracking-[0.15em] uppercase not-italic">
+              — 1 Corinthians 14:3
+            </cite>
+
+            <div className="mt-12 space-y-3">
+              {[
+                "Completely free — no tuition",
+                "Online · Weekly classes",
+                "Two years · 11 courses",
+                "Certificate & Diploma awarded",
+              ].map(item => (
+                <div key={item} className="flex items-center gap-2.5">
+                  <div className="w-1 h-1 rounded-full bg-[#D4A85C]/60" />
+                  <span className="text-white/50 text-sm font-sans">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Prophet image bottom */}
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="w-10 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-white/10">
+              <Image src="/assets/prophet-sule.png" alt="Prophet Sule" width={40} height={48}
+                className="w-full h-full object-cover object-top" />
+            </div>
+            <div>
+              <div className="text-white/70 text-xs font-sans">Founded by</div>
+              <div className="text-white text-sm font-medium" style={{ fontFamily: "'Georgia', serif" }}>
+                Prophet Abiodun Sule
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Form */}
-        <div className="bg-white rounded-2xl border border-blue-100 shadow-card p-6 sm:p-8">
-          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+        {/* ── RIGHT — Form ──────────────────────────────────────────── */}
+        <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-16 py-16 overflow-y-auto">
 
-            {/* Full Name */}
+          {/* Mobile logo */}
+          <div className="lg:hidden flex items-center gap-3 mb-10">
+            <Image src="/assets/logo.png" alt="S&D" width={36} height={36} className="rounded-lg" />
             <div>
-              <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">
-                Full Name *
-              </label>
-              <input
-                type="text"
-                value={form.full_name}
-                onChange={e => update("full_name", e.target.value)}
-                placeholder="e.g. Oluwaseun Adeyemi"
-                className={inputClass("full_name")}
-                disabled={loading}
-              />
-              {errors.full_name && (
-                <p className="text-red-400 text-xs mt-1">{errors.full_name}</p>
-              )}
+              <div className="text-white text-sm font-medium">S&D Prophetic School</div>
+              <div className="text-white/30 text-xs font-sans">Treasures in Clay Ministries</div>
             </div>
+          </div>
 
-            {/* Email */}
-            <div>
-              <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">
-                Email Address *
-              </label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={e => update("email", e.target.value)}
-                placeholder="your@email.com"
-                className={inputClass("email")}
-                disabled={loading}
-              />
-              {errors.email && (
-                <p className="text-red-400 text-xs mt-1">{errors.email}</p>
-              )}
-            </div>
+          <motion.div variants={rise(0.1)} initial="hidden" animate="visible" className="max-w-sm w-full mx-auto">
 
-            {/* Password */}
-            <div>
-              <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">
-                Password *
-              </label>
-              <div className="relative">
-                <input
-                  type={showPw ? "text" : "password"}
-                  value={form.password}
-                  onChange={e => update("password", e.target.value)}
-                  placeholder="Min 8 characters"
-                  className={`${inputClass("password")} pr-10`}
-                  disabled={loading}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPw(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-px w-8 bg-[#D4A85C]/40" />
+                <span className="text-[#D4A85C] text-xs tracking-[0.2em] uppercase font-sans">2026 Cohort</span>
               </div>
-              {errors.password && (
-                <p className="text-red-400 text-xs mt-1">{errors.password}</p>
-              )}
+              <h1 className="text-3xl font-medium tracking-tight mb-2" style={{ letterSpacing: "-0.02em" }}>
+                Join the School
+              </h1>
+              <p className="text-white/35 text-sm font-sans leading-relaxed">
+                Create your account and begin your prophetic training journey — completely free.
+              </p>
             </div>
 
-            {/* Phone */}
-            <div>
-              <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">
-                Phone Number *
-              </label>
-              <input
-                type="tel"
-                value={form.phone}
-                onChange={e => update("phone", e.target.value)}
-                placeholder="+234 801 234 5678"
-                className={inputClass("phone")}
-                disabled={loading}
-              />
-              {errors.phone && (
-                <p className="text-red-400 text-xs mt-1">{errors.phone}</p>
-              )}
-            </div>
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
 
-            {/* Church + City */}
-            <div className="grid grid-cols-2 gap-4">
+              {/* Full Name */}
               <div>
-                <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">
-                  Church / Ministry *
-                </label>
-                <input
-                  type="text"
-                  value={form.church}
-                  onChange={e => update("church", e.target.value)}
-                  placeholder="Your church"
-                  className={inputClass("church")}
-                  disabled={loading}
-                />
-                {errors.church && (
-                  <p className="text-red-400 text-xs mt-1">{errors.church}</p>
-                )}
+                <label className="text-white/40 text-xs tracking-[0.12em] uppercase font-sans block mb-2">Full Name</label>
+                <input type="text" value={form.full_name} onChange={e => update("full_name", e.target.value)}
+                  placeholder="Oluwaseun Adeyemi" className={inp("full_name")} disabled={loading} />
+                {errors.full_name && <p className="text-red-400/80 text-xs font-sans mt-1.5">{errors.full_name}</p>}
               </div>
+
+              {/* Email */}
               <div>
-                <label className="text-xs font-medium text-slate-400 uppercase tracking-wide block mb-1.5">
-                  City *
-                </label>
-                <input
-                  type="text"
-                  value={form.city}
-                  onChange={e => update("city", e.target.value)}
-                  placeholder="Lagos"
-                  className={inputClass("city")}
-                  disabled={loading}
-                />
-                {errors.city && (
-                  <p className="text-red-400 text-xs mt-1">{errors.city}</p>
-                )}
+                <label className="text-white/40 text-xs tracking-[0.12em] uppercase font-sans block mb-2">Email Address</label>
+                <input type="email" value={form.email} onChange={e => update("email", e.target.value)}
+                  placeholder="your@email.com" className={inp("email")} disabled={loading} />
+                {errors.email && <p className="text-red-400/80 text-xs font-sans mt-1.5">{errors.email}</p>}
               </div>
+
+              {/* Password */}
+              <div>
+                <label className="text-white/40 text-xs tracking-[0.12em] uppercase font-sans block mb-2">Password</label>
+                <div className="relative">
+                  <input type={showPw ? "text" : "password"} value={form.password}
+                    onChange={e => update("password", e.target.value)}
+                    placeholder="Min 8 characters" className={`${inp("password")} pr-11`} disabled={loading} />
+                  <button type="button" onClick={() => setShowPw(v => !v)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60 transition-colors">
+                    {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {errors.password && <p className="text-red-400/80 text-xs font-sans mt-1.5">{errors.password}</p>}
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="text-white/40 text-xs tracking-[0.12em] uppercase font-sans block mb-2">Phone Number</label>
+                <input type="tel" value={form.phone} onChange={e => update("phone", e.target.value)}
+                  placeholder="+234 801 234 5678" className={inp("phone")} disabled={loading} />
+                {errors.phone && <p className="text-red-400/80 text-xs font-sans mt-1.5">{errors.phone}</p>}
+              </div>
+
+              {/* Church + City */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-white/40 text-xs tracking-[0.12em] uppercase font-sans block mb-2">Church</label>
+                  <input type="text" value={form.church} onChange={e => update("church", e.target.value)}
+                    placeholder="Your church" className={inp("church")} disabled={loading} />
+                  {errors.church && <p className="text-red-400/80 text-xs font-sans mt-1.5">{errors.church}</p>}
+                </div>
+                <div>
+                  <label className="text-white/40 text-xs tracking-[0.12em] uppercase font-sans block mb-2">City</label>
+                  <input type="text" value={form.city} onChange={e => update("city", e.target.value)}
+                    placeholder="Lagos" className={inp("city")} disabled={loading} />
+                  {errors.city && <p className="text-red-400/80 text-xs font-sans mt-1.5">{errors.city}</p>}
+                </div>
+              </div>
+
+              {/* Submit */}
+              <button type="submit" disabled={loading}
+                className="w-full bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] font-bold text-sm
+                  py-4 rounded-full transition-all duration-300 font-sans flex items-center justify-center gap-2
+                  disabled:opacity-50 hover:shadow-[0_0_40px_rgba(212,168,92,0.3)] mt-2">
+                {loading
+                  ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating your account...</>
+                  : <>"Create Account — Free" <ArrowRight className="w-4 h-4" /></>
+                }
+              </button>
+            </form>
+
+            <div className="mt-8 pt-6 border-t border-white/[0.07] text-center">
+              <p className="text-white/25 text-xs font-sans">
+                Already have an account?{" "}
+                <Link href="/auth/login" className="text-[#D4A85C]/80 hover:text-[#D4A85C] transition-colors">
+                  Sign in
+                </Link>
+              </p>
             </div>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-brand-700 hover:bg-brand-800 disabled:opacity-60 text-white font-medium text-sm py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
-              {loading ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> Creating your account...</>
-              ) : (
-                "Create Account & Join — Free"
-              )}
-            </button>
-          </form>
-
-          <div className="mt-5 pt-5 border-t border-blue-50 text-center">
-            <p className="text-slate-400 text-sm">
-              Already have an account?{" "}
-              <Link href="/auth/login" className="text-brand-600 font-medium hover:text-brand-800">
-                Sign in
-              </Link>
+            <p className="text-white/15 text-xs font-sans text-center mt-4 leading-relaxed">
+              By joining you agree to uphold the code of conduct of S&D Prophetic School.
+              Tuition is free. No credit card required.
             </p>
-          </div>
+          </motion.div>
         </div>
-
-        <p className="text-center text-slate-400 text-xs mt-4 leading-relaxed">
-          By joining, you agree to uphold the code of conduct of S&D Prophetic School.<br />
-          Tuition is free. No credit card required.
-        </p>
       </div>
     </div>
   );
