@@ -2,162 +2,137 @@
 export const dynamic = 'force-dynamic';
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getCoursesWithProgress } from "@/lib/db";
-import type { Course } from "@/types";
-import { BookOpen, Bell, Lock, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase";
+import PortalShell from "@/components/portal/PortalShell";
+import { motion } from "framer-motion";
+import { BookOpen, Lock, ChevronRight, CheckCircle } from "lucide-react";
 
-function PortalSidebar({ active }: { active: string }) {
-  const links = [
-    { href: "/portal/dashboard", icon: "🏠", label: "Dashboard" },
-    { href: "/portal/courses", icon: "📚", label: "My Courses" },
-    { href: "/portal/announcements", icon: "📢", label: "Announcements" },
-    { href: "/portal/profile", icon: "👤", label: "Profile" },
-  ];
-  return (
-    <aside className="w-56 flex-shrink-0 hidden lg:block">
-      <div className="bg-white rounded-2xl border border-blue-100 shadow-card p-4 sticky top-24">
-        <div className="flex items-center gap-2.5 px-2 pb-4 mb-2 border-b border-blue-50">
-          <div className="w-8 h-8 rounded-lg bg-brand-700 flex items-center justify-center">
-            <BookOpen className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-display text-brand-900 text-sm font-medium">S&D School</span>
-        </div>
-        {links.map((l) => (
-          <Link key={l.href} href={l.href}
-            className={`flex items-center gap-2.5 px-2 py-2.5 rounded-lg text-sm transition-colors ${
-              active === l.label
-                ? "bg-brand-50 text-brand-700 font-medium"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-            }`}
-          >
-            <span className="text-base">{l.icon}</span>
-            {l.label}
-          </Link>
-        ))}
-      </div>
-    </aside>
-  );
-}
+const rise = (delay = 0) => ({
+  hidden:  { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay, ease: "easeOut" as const } }
+});
 
 export default function CoursesPortalPage() {
-  // Mock data — replace with: getCoursesWithProgress(studentId)
-  const year1Courses: Course[] = [
-    { id: "1", slug: "intro-nt-prophecy", title: "Introduction to NT Prophecy", year: 1, credits: 3, scripture_reference: "1 Cor. 14:3", icon: "📖", order_index: 1, is_published: true, created_at: "", progress: 60, lesson_count: 8, completed_lessons: 5 },
-    { id: "2", slug: "person-holy-spirit", title: "The Person & Work of the Holy Spirit", year: 1, credits: 3, scripture_reference: "John 14–16", icon: "🕊️", order_index: 2, is_published: true, created_at: "", progress: 30, lesson_count: 6, completed_lessons: 2 },
-    { id: "3", slug: "biblical-hermeneutics", title: "Biblical Hermeneutics", year: 1, credits: 3, scripture_reference: "2 Tim. 2:15", icon: "📜", order_index: 3, is_published: true, created_at: "", progress: 10, lesson_count: 5, completed_lessons: 1 },
-    { id: "4", slug: "spirituality-vs-spiritism", title: "Spirituality vs. Spiritism", year: 1, credits: 2, scripture_reference: "1 John 4:1–6", icon: "⚠️", order_index: 4, is_published: true, created_at: "", progress: 0, lesson_count: 4, completed_lessons: 0 },
-    { id: "5", slug: "prayer-intimacy", title: "Prayer & Intimacy with God", year: 1, credits: 2, scripture_reference: "Ps. 27:4", icon: "🙏", order_index: 5, is_published: true, created_at: "", progress: 0, lesson_count: 4, completed_lessons: 0 },
-    { id: "6", slug: "character-ethics", title: "Character & Ethics", year: 1, credits: 2, scripture_reference: "1 Tim. 3:1–7", icon: "⚖️", order_index: 6, is_published: true, created_at: "", progress: 0, lesson_count: 5, completed_lessons: 0 },
-  ];
+  const router = useRouter();
+  const [courses, setCourses] = useState<any[]>([]);
+  const [currentYear, setCurrentYear] = useState(1);
+  const [loading, setLoading] = useState(true);
 
-  const year2Courses = [
-    { icon: "🔥", title: "Advanced Prophetic Ministry", credits: 3 },
-    { icon: "🛡️", title: "Discernment & Deliverance", credits: 3 },
-    { icon: "✝️", title: "Theology of the New Covenant", credits: 3 },
-    { icon: "👑", title: "Leadership in Prophetic Ministry", credits: 2 },
-    { icon: "🌍", title: "Prophetic Evangelism", credits: 2 },
-  ];
+  useEffect(() => {
+    async function load() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { router.push("/auth/login"); return; }
+      const { data: profile } = await supabase.from("profiles").select("current_year").eq("id", user.id).single();
+      setCurrentYear(profile?.current_year ?? 1);
+      const { data: enrollments } = await supabase
+        .from("enrollments")
+        .select("courses(id, title, slug, year, description)")
+        .eq("student_id", user.id)
+        .order("course_id");
+      setCourses(enrollments?.map((e: any) => e.courses).filter(Boolean) ?? []);
+      setLoading(false);
+    }
+    load();
+  }, []);
 
-  const getProgressColor = (p: number) =>
-    p === 100 ? "bg-green-500" : p > 0 ? "bg-brand-600" : "bg-slate-200";
+  const year1 = courses.filter(c => c.year === 1);
+  const year2 = courses.filter(c => c.year === 2);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF]">
-      <nav className="bg-white border-b border-blue-100 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-brand-700 flex items-center justify-center">
-              <BookOpen className="w-3.5 h-3.5 text-white" />
-            </div>
-            <span className="font-display text-brand-900 text-sm font-semibold">S&D Student Portal</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button className="w-8 h-8 rounded-lg border border-blue-100 flex items-center justify-center text-slate-400">
-              <Bell className="w-4 h-4" />
-            </button>
-            <div className="w-8 h-8 rounded-full bg-brand-700 flex items-center justify-center text-white font-medium text-xs">AO</div>
-          </div>
-        </div>
-      </nav>
+    <PortalShell>
+      <div className="space-y-6">
+        <motion.div variants={rise()} initial="hidden" animate="visible">
+          <h1 className="text-2xl font-semibold text-[#1A1A2E] mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+            My Courses
+          </h1>
+          <p className="text-[#9B9B9B] text-sm font-sans">Your enrolled courses for Year {currentYear}</p>
+        </motion.div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex gap-6">
-        <PortalSidebar active="My Courses" />
-
-        <main className="flex-1 min-w-0">
-          <div className="mb-6">
-            <h1 className="font-display text-brand-900 text-2xl font-medium">My Courses</h1>
-            <p className="text-slate-400 text-sm mt-0.5">Year 1 — Certificate in Prophetic Ministry</p>
+        {loading ? (
+          <div className="bg-white rounded-2xl border border-[#E8E2D9] p-12 text-center">
+            <p className="text-[#9B9B9B] text-sm font-sans">Loading courses...</p>
           </div>
+        ) : (
+          <>
+            {/* Year 1 */}
+            <motion.div variants={rise(0.1)} initial="hidden" animate="visible">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-px flex-1 bg-[#E8E2D9]" />
+                <span className="text-[#D4A85C] text-xs tracking-[0.2em] uppercase font-sans px-3">Year One · Certificate</span>
+                <div className="h-px flex-1 bg-[#E8E2D9]" />
+              </div>
+              <div className="space-y-2">
+                {year1.map((course, i) => (
+                  <motion.div key={course.id} variants={rise(i * 0.06)} initial="hidden" animate="visible">
+                    <Link href={`/portal/courses/${course.slug}`}
+                      className="group bg-white rounded-2xl border border-[#E8E2D9] p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all block"
+                      style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
+                      <div className="w-10 h-10 rounded-xl bg-[#F5F0E8] border border-[#E8E2D9] flex items-center justify-center flex-shrink-0">
+                        <span className="text-[#8B7355] text-xs font-mono font-semibold">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[#1A1A2E] text-sm font-semibold mb-0.5 group-hover:text-[#D4A85C] transition-colors"
+                          style={{ fontFamily: "'Georgia', serif" }}>{course.title}</div>
+                        {course.description && (
+                          <p className="text-[#9B9B9B] text-xs font-sans leading-relaxed line-clamp-1">{course.description}</p>
+                        )}
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:text-[#D4A85C] transition-colors flex-shrink-0" />
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
 
-          {/* Year 1 courses */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-            {year1Courses.map((course) => (
-              <Link
-                key={course.id}
-                href={`/portal/courses/${course.slug}`}
-                className="bg-white rounded-xl border border-blue-100 shadow-card hover:shadow-card-hover hover:border-brand-200 transition-all p-5 group"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-11 h-11 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center text-2xl">
-                    {course.icon}
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xs text-slate-400">{course.completed_lessons}/{course.lesson_count} lessons</div>
-                    <div className={`text-xs font-medium mt-0.5 ${
-                      (course.progress ?? 0) === 100 ? "text-green-600" :
-                      (course.progress ?? 0) > 0 ? "text-brand-600" : "text-slate-400"
-                    }`}>
-                      {(course.progress ?? 0) === 100 ? "Complete ✓" : `${course.progress ?? 0}%`}
-                    </div>
-                  </div>
+            {/* Year 2 */}
+            <motion.div variants={rise(0.25)} initial="hidden" animate="visible">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-px flex-1 bg-[#E8E2D9]" />
+                <span className="text-[#9B9B9B] text-xs tracking-[0.2em] uppercase font-sans px-3">Year Two · Diploma</span>
+                <div className="h-px flex-1 bg-[#E8E2D9]" />
+              </div>
+              {currentYear < 2 ? (
+                <div className="bg-white rounded-2xl border border-[#E8E2D9] p-8 text-center"
+                  style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
+                  <Lock className="w-8 h-8 text-[#D4D0C8] mx-auto mb-3" />
+                  <p className="text-[#1A1A2E] text-sm font-semibold mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+                    Year 2 Unlocks After Year 1
+                  </p>
+                  <p className="text-[#9B9B9B] text-xs font-sans">
+                    Complete all Year 1 courses to advance to the Diploma programme.
+                  </p>
                 </div>
-                <h3 className="text-brand-900 font-medium text-sm mb-1 group-hover:text-brand-700 transition-colors">
-                  {course.title}
-                </h3>
-                {course.scripture_reference && (
-                  <p className="text-slate-400 text-xs mb-3">{course.scripture_reference}</p>
-                )}
-                {/* Progress bar */}
-                <div className="h-1.5 bg-blue-50 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${getProgressColor(course.progress ?? 0)}`}
-                    style={{ width: `${course.progress ?? 0}%` }}
-                  />
+              ) : (
+                <div className="space-y-2">
+                  {year2.map((course, i) => (
+                    <Link key={course.id} href={`/portal/courses/${course.slug}`}
+                      className="group bg-white rounded-2xl border border-[#D4A85C]/15 p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all block"
+                      style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
+                      <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/8 border border-[#D4A85C]/15 flex items-center justify-center flex-shrink-0">
+                        <span className="text-[#D4A85C] text-xs font-mono font-semibold">
+                          {String(i + 7).padStart(2, "0")}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[#1A1A2E] text-sm font-semibold mb-0.5 group-hover:text-[#D4A85C] transition-colors"
+                          style={{ fontFamily: "'Georgia', serif" }}>{course.title}</div>
+                        {course.description && (
+                          <p className="text-[#9B9B9B] text-xs font-sans leading-relaxed line-clamp-1">{course.description}</p>
+                        )}
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:text-[#D4A85C] transition-colors flex-shrink-0" />
+                    </Link>
+                  ))}
                 </div>
-                <div className="flex items-center justify-between mt-3">
-                  <span className="bg-brand-50 text-brand-500 text-[11px] font-medium px-2 py-0.5 rounded-full">
-                    {course.credits} credits
-                  </span>
-                  <span className="text-brand-500 text-xs group-hover:text-brand-700 flex items-center gap-0.5">
-                    Continue <ChevronRight className="w-3 h-3" />
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          {/* Year 2 - locked */}
-          <div className="bg-slate-50 rounded-2xl border border-slate-200 p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <Lock className="w-4 h-4 text-slate-400" />
-              <h2 className="text-slate-500 font-medium text-sm">Year 2 — Locked until Year 1 is complete</h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {year2Courses.map((c) => (
-                <div key={c.title} className="bg-white rounded-xl border border-slate-200 p-4 opacity-60">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-lg grayscale">{c.icon}</div>
-                    <div>
-                      <div className="text-slate-500 text-sm font-medium">{c.title}</div>
-                      <div className="text-slate-400 text-xs mt-0.5">{c.credits} credits</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </main>
+              )}
+            </motion.div>
+          </>
+        )}
       </div>
-    </div>
+    </PortalShell>
   );
 }
