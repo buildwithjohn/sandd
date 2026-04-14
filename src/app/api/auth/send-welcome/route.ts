@@ -136,25 +136,43 @@ export async function POST(req: NextRequest) {
 </html>`;
 
     // Call Resend API directly using fetch — no SDK dependency issues
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "S&D Prophetic School <noreply@sandd.abiodunsule.uk>",
-        to: [email],
-        subject: "Welcome to S&D Prophetic School — You're In! 🔥",
-        html,
-      }),
-    });
+    // Retry up to 3 times with backoff for rate limit errors
+    let response: Response | null = null;
+    let result: any = null;
+    let attempt = 0;
 
-    const result = await response.json();
+    while (attempt < 3) {
+      response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "S&D Prophetic School <noreply@sandd.abiodunsule.uk>",
+          to: [email],
+          subject: "Welcome to S&D Prophetic School — You're In! 🔥",
+          html,
+        }),
+      });
 
-    if (!response.ok) {
-      console.error("Resend API error:", result);
-      return NextResponse.json({ error: result.message || "Email failed" }, { status: 500 });
+      result = await response.json();
+
+      // If rate limited, wait and retry
+      if (response.status === 429) {
+        attempt++;
+        if (attempt < 3) {
+          await new Promise(r => setTimeout(r, attempt * 2000)); // 2s, 4s backoff
+          continue;
+        }
+      }
+      break;
+    }
+
+    if (!response || !response.ok) {
+      console.error("Resend API error after retries:", result);
+      // Don't fail the user — account is already created
+      return NextResponse.json({ error: result?.message || "Email failed but account created" }, { status: 200 });
     }
 
     return NextResponse.json({ success: true, id: result.id });

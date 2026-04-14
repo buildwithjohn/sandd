@@ -64,15 +64,41 @@ export default function ApplyPage() {
       });
 
       if (authError) {
-        if (authError.message.toLowerCase().includes("already registered")) {
-          setErrors({ email: "Email already registered. Sign in instead." });
+        const msg = authError.message.toLowerCase();
+
+        if (msg.includes("already registered") || msg.includes("user already registered")) {
+          setErrors({ email: "This email is already registered. Sign in instead." });
+          return;
+        }
+        if (msg.includes("rate limit") || msg.includes("email rate") || msg.includes("too many")) {
+          toast.error("Too many registrations at once. Please wait 1 minute and try again.");
+          return;
+        }
+        if (msg.includes("invalid") && msg.includes("email")) {
+          setErrors({ email: "Please enter a valid email address." });
+          return;
+        }
+        if (msg.includes("password") && msg.includes("weak")) {
+          setErrors({ password: "Password is too weak. Use at least 8 characters with letters and numbers." });
           return;
         }
         throw new Error(authError.message);
       }
 
+      // When email confirmation is OFF, Supabase may return a user with
+      // identities=[] for duplicate emails — this is a silent duplicate
       const userId = authData.user?.id;
-      if (!userId) throw new Error("Account creation failed. Please try again.");
+      const isEmailDuplicate = authData.user?.identities?.length === 0;
+
+      if (!userId) {
+        toast.error("Account creation failed. Please try again.");
+        return;
+      }
+
+      if (isEmailDuplicate) {
+        setErrors({ email: "This email is already registered. Sign in instead." });
+        return;
+      }
 
       await supabase.from("profiles").update({
         full_name: form.full_name.trim(), phone: form.phone.trim(),
