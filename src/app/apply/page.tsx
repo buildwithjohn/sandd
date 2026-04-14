@@ -65,24 +65,62 @@ export default function ApplyPage() {
 
       if (authError) {
         const msg = authError.message.toLowerCase();
+        const code = (authError as any).code ?? "";
 
-        if (msg.includes("already registered") || msg.includes("user already registered")) {
+        // Log exact error for debugging
+        console.error("Supabase signup error:", authError.message, "code:", code);
+
+        if (
+          msg.includes("already registered") ||
+          msg.includes("user already registered") ||
+          code === "user_already_exists"
+        ) {
           setErrors({ email: "This email is already registered. Sign in instead." });
           return;
         }
-        if (msg.includes("rate limit") || msg.includes("email rate") || msg.includes("too many")) {
-          toast.error("Too many registrations at once. Please wait 1 minute and try again.");
+
+        // Email rate limit — Supabase sends this even with confirmation off
+        // The fix is to disable Supabase email entirely via SMTP settings
+        if (
+          msg.includes("email rate limit") ||
+          msg.includes("over_email_send_rate_limit") ||
+          code === "over_email_send_rate_limit" ||
+          code === "email_send_failed"
+        ) {
+          // Account IS created — just email notification failed. Proceed to success.
+          const userId = (authData as any)?.user?.id as string | undefined;
+          if (userId) {
+            await supabase.from("profiles").upsert({
+              id: userId,
+              email: form.email.trim().toLowerCase(),
+              full_name: form.full_name.trim(),
+              phone: form.phone.trim(),
+              church: form.church.trim(),
+              city: form.city.trim(),
+              role: "student",
+              enrollment_status: "active",
+              current_year: 1,
+            }, { onConflict: "id" });
+            setDoneEmail(form.email.trim().toLowerCase());
+            setStep("success");
+            return;
+          }
+          toast.error("Registration issue. Please try again or contact support.");
           return;
         }
+
         if (msg.includes("invalid") && msg.includes("email")) {
           setErrors({ email: "Please enter a valid email address." });
           return;
         }
-        if (msg.includes("password") && msg.includes("weak")) {
-          setErrors({ password: "Password is too weak. Use at least 8 characters with letters and numbers." });
+        if (msg.includes("password") && (msg.includes("weak") || msg.includes("short"))) {
+          setErrors({ password: "Password must be at least 8 characters." });
           return;
         }
-        throw new Error(authError.message);
+
+        // Show the real Supabase error for anything else
+        toast.error(authError.message || "Registration failed. Please try again.");
+        return;
       }
 
       // When email confirmation is OFF, Supabase may return a user with
