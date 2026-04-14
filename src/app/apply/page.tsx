@@ -100,11 +100,23 @@ export default function ApplyPage() {
         return;
       }
 
-      await supabase.from("profiles").update({
-        full_name: form.full_name.trim(), phone: form.phone.trim(),
-        church: form.church.trim(), city: form.city.trim(),
-        role: "student", enrollment_status: "active", current_year: 1,
-      }).eq("id", userId);
+      // Use upsert to handle cases where trigger hasn't created profile yet
+      const { error: profileError } = await supabase.from("profiles").upsert({
+        id: userId,
+        email: form.email.trim().toLowerCase(),
+        full_name: form.full_name.trim(),
+        phone: form.phone.trim(),
+        church: form.church.trim(),
+        city: form.city.trim(),
+        role: "student",
+        enrollment_status: "active",
+        current_year: 1,
+      }, { onConflict: "id" });
+
+      if (profileError) {
+        console.error("Profile upsert error:", profileError);
+        // Continue anyway — account is created, we'll fix profile via trigger
+      }
 
       const { data: courses } = await supabase.from("courses").select("id").eq("year", 1);
       if (courses && courses.length > 0) {

@@ -32,7 +32,7 @@ export default function StudentsPage() {
       const { data } = await supabase
         .from("profiles")
         .select("*")
-        .eq("role", "student")
+        .not("role", "in", '("admin","super_admin")')
         .order("created_at", { ascending: false });
       setStudents(data ?? []);
       setLoading(false);
