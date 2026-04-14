@@ -180,52 +180,110 @@ export default function ApplyPage() {
 
   // ── SUCCESS ───────────────────────────────────────────────────────────────
   if (step === "success") {
+    const firstName = doneEmail.split("@")[0];
     return (
-      <div className="bg-[#080C14] min-h-screen flex flex-col items-center justify-center px-6 py-20"
+      <div className="bg-[#080C14] min-h-screen flex flex-col items-center justify-center px-6 py-16"
         style={{ fontFamily: "'Georgia', serif" }}>
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="w-full max-w-md text-center">
+          className="w-full max-w-lg">
 
-          {/* Glow ring */}
-          <div className="relative flex items-center justify-center mb-8">
-            <div className="absolute w-24 h-24 rounded-full bg-[#D4A85C]/15 blur-xl" />
-            <div className="relative w-16 h-16 rounded-full border border-[#D4A85C]/30 bg-[#D4A85C]/10
-              flex items-center justify-center">
-              <Mail className="w-7 h-7 text-[#D4A85C]" />
+          {/* Prophet photo + logo */}
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-2xl blur-xl bg-[#D4A85C]/20 scale-110" />
+              <Image src="/assets/logo.png" alt="S&D Logo" width={52} height={52}
+                className="relative rounded-xl" />
+            </div>
+            <div className="w-px h-12 bg-white/10" />
+            <div className="w-14 h-16 rounded-xl overflow-hidden border border-[#D4A85C]/20 flex-shrink-0">
+              <Image src="/assets/prophet-sule.png" alt="Prophet Abiodun Sule"
+                width={56} height={64} className="w-full h-full object-cover object-top" />
             </div>
           </div>
 
-          <h1 className="text-4xl font-medium mb-3 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
-            You&apos;re In.
-          </h1>
-          <p className="text-white/45 text-sm font-sans leading-relaxed mb-2">
-            Welcome to the 2026 Cohort. A personal message from Prophet Abiodun Sule has been sent to:
-          </p>
-          <p className="text-[#D4A85C] text-sm font-sans mb-10">{doneEmail}</p>
-
-          <div className="space-y-2 mb-10 text-left">
-            {[
-              "Account created & activated",
-              "Enrolled in all Year 1 courses",
-              "Welcome message sent from Prophet Sule",
-            ].map(item => (
-              <div key={item} className="flex items-center gap-3 bg-white/[0.03] border border-white/[0.07] rounded-xl px-4 py-3">
-                <CheckCircle className="w-4 h-4 text-[#D4A85C] flex-shrink-0" />
-                <span className="text-white/60 text-sm font-sans">{item}</span>
-              </div>
-            ))}
+          {/* Welcome heading */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-10 bg-[#D4A85C]/40" />
+              <span className="text-[#D4A85C] text-xs tracking-[0.2em] uppercase font-sans">Welcome to the 2026 Cohort</span>
+              <div className="h-px w-10 bg-[#D4A85C]/40" />
+            </div>
+            <h1 className="text-4xl font-medium tracking-tight mb-2" style={{ letterSpacing: "-0.02em" }}>
+              You&apos;re In.
+            </h1>
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <CheckCircle className="w-4 h-4 text-[#D4A85C]" />
+              <CheckCircle className="w-4 h-4 text-[#D4A85C]" />
+              <CheckCircle className="w-4 h-4 text-[#D4A85C]" />
+              <span className="text-white/30 text-xs font-sans ml-1">Account · Courses · Active</span>
+            </div>
           </div>
 
+          {/* Prophet Sule welcome message */}
+          <div className="bg-[#0D1320] border border-[#D4A85C]/20 rounded-2xl p-7 mb-6"
+            style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
+            <p className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans mb-4">
+              A personal word from the Dean
+            </p>
+            <div className="space-y-4 text-white/80 text-sm leading-[1.85]">
+              <p>Beloved,</p>
+              <p>
+                Grace and peace to you in the name of our Lord Jesus Christ.
+              </p>
+              <p>
+                It is with great joy in my heart that I welcome you into the{" "}
+                <span className="text-[#D4A85C]">Sons and Daughters of Prophets Prophetic Training School</span>.
+                We believe that God has placed a prophetic calling upon your life, and this school
+                exists to ensure that gift is not wasted through ignorance, pride or lack of accountability.
+              </p>
+              <p>
+                The journey ahead will require discipline, honesty and a genuine hunger for God.
+                Come with an open heart. Come willing to be corrected. Come ready to grow.
+                And above all, come expecting to encounter the living God in a fresh and
+                transforming way.
+              </p>
+              <p>
+                I am believing God for great things through your life.
+              </p>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-white/[0.07] mt-6 pt-5 flex items-center gap-3">
+              <div className="w-9 h-11 rounded-lg overflow-hidden flex-shrink-0 border border-white/10">
+                <Image src="/assets/prophet-sule.png" alt="Prophet Sule"
+                  width={36} height={44} className="w-full h-full object-cover object-top" />
+              </div>
+              <div>
+                <div className="text-white text-sm font-medium">Prophet Abiodun Sule</div>
+                <div className="text-[#D4A85C]/70 text-xs font-sans mt-0.5">
+                  Founder & Dean · S&D Prophetic Training School
+                </div>
+              </div>
+            </div>
+
+            {/* Scripture */}
+            <div className="mt-5 bg-[#D4A85C]/[0.06] border border-[#D4A85C]/15 rounded-xl px-4 py-3 text-center">
+              <p className="text-white/50 text-xs italic leading-relaxed">
+                &ldquo;But the one who prophesies speaks to people for their strengthening,
+                encouraging and comfort.&rdquo;
+              </p>
+              <p className="text-[#D4A85C]/60 text-[10px] font-sans tracking-widest uppercase mt-1.5">
+                1 Corinthians 14:3
+              </p>
+            </div>
+          </div>
+
+          {/* CTA */}
           <button onClick={() => router.push("/auth/login")}
             className="w-full bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] font-bold text-sm
               py-4 rounded-full transition-all duration-300 font-sans flex items-center justify-center gap-2
-              hover:shadow-[0_0_40px_rgba(212,168,92,0.35)]">
-            Sign In to Your Portal <ArrowRight className="w-4 h-4" />
+              hover:shadow-[0_0_40px_rgba(212,168,92,0.35)] hover:-translate-y-0.5">
+            Enter Your Student Portal <ArrowRight className="w-4 h-4" />
           </button>
-          <p className="text-white/20 text-xs font-sans mt-4">
-            Use your email and the password you just created
+          <p className="text-white/20 text-xs font-sans text-center mt-3">
+            Sign in with <span className="text-white/40">{doneEmail}</span> and your password
           </p>
         </motion.div>
       </div>
