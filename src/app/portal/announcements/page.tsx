@@ -12,6 +12,24 @@ const rise = (delay = 0) => ({
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay, ease: "easeOut" as const } }
 });
 
+// Converts URLs in text into clickable links
+function linkify(text: string) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+  return parts.map((part, i) => {
+    if (urlRegex.test(part)) {
+      urlRegex.lastIndex = 0;
+      return (
+        <a key={i} href={part} target="_blank" rel="noopener noreferrer"
+          className="text-[#D4A85C] hover:text-[#C49848] underline underline-offset-2 break-all transition-colors">
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
 export default function AnnouncementsPage() {
   const router = useRouter();
   const [announcements, setAnnouncements] = useState<any[]>([]);
@@ -67,7 +85,9 @@ export default function AnnouncementsPage() {
                   <h2 className="text-[#1A1A2E] text-base font-semibold mb-2" style={{ fontFamily: "'Georgia', serif" }}>
                     {a.title}
                   </h2>
-                  <p className="text-[#6B6B6B] text-sm font-sans leading-relaxed mb-4 whitespace-pre-wrap">{a.body}</p>
+                  <p className="text-[#6B6B6B] text-sm font-sans leading-relaxed mb-4 whitespace-pre-wrap">
+                      {linkify(a.body)}
+                    </p>
                   <div className="flex items-center gap-1.5 text-[#C4BDB2] text-xs font-sans">
                     <Clock className="w-3 h-3" />
                     {new Date(a.published_at).toLocaleDateString("en-NG", { dateStyle: "long" })}
