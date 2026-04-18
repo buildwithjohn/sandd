@@ -17,12 +17,18 @@ export async function GET() {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Use admin client to bypass RLS and get ALL profiles
+    // Use admin client to bypass RLS
+    // Only return properly registered students:
+    // - role = 'student' (properly completed signup)
+    // - has an email (not a ghost profile)
+    // - has a full_name (filled the form)
     const admin = createAdminClient();
     const { data: students, error } = await admin
       .from("profiles")
       .select("*")
-      .not("role", "in", '("admin","super_admin")')
+      .eq("role", "student")
+      .not("email", "is", null)
+      .not("full_name", "is", null)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
