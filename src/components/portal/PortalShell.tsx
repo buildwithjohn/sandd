@@ -173,6 +173,28 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                 </button>
               </div>
             </div>
+
+            {/* Registrar card */}
+            <div className="bg-white rounded-2xl border border-[#E8E2D9] p-3 mt-3"
+              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+              <div className="text-[#C4BDB2] text-[9px] uppercase tracking-widest font-sans mb-2.5">
+                School Administration
+              </div>
+              <div className="flex items-center gap-2.5 mb-2">
+                <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 border border-[#E8E2D9]">
+                  <Image src="/assets/registrar.jpg" alt="Registrar"
+                    width={32} height={32} className="w-full h-full object-cover object-top" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[#1A1A2E] text-xs font-semibold truncate">John Ayomide Akinola</div>
+                  <div className="text-[#9B9B9B] text-[10px] font-sans">Registrar</div>
+                </div>
+              </div>
+              <a href="mailto:sandd@abiodunsule.uk"
+                className="block text-center text-[#8B7355] hover:text-[#D4A85C] text-[10px] font-sans transition-colors bg-[#F5F0E8] hover:bg-[#EDE8DF] rounded-lg py-1.5 px-2">
+                Contact Registrar
+              </a>
+            </div>
           </div>
         </aside>
 

@@ -361,6 +361,41 @@ export default function Home() {
       </section>
 
       {/* ════════════════════════════════════════════════
+          SCHOOL ADMINISTRATION
+      ════════════════════════════════════════════════ */}
+      <section className="py-16 px-6 border-t border-white/8">
+        <div className="max-w-5xl mx-auto">
+          <motion.div variants={rise()} initial="hidden" whileInView="visible" viewport={{ once: true }}
+            className="flex flex-col sm:flex-row items-center gap-6 bg-[#0D1320] rounded-2xl border border-white/[0.07] px-8 py-7">
+            {/* Small label */}
+            <div className="flex-shrink-0 hidden sm:block">
+              <div className="h-px w-8 bg-[#D4A85C]/40 mb-3" />
+              <span className="text-[#D4A85C] text-[10px] tracking-[0.25em] uppercase font-sans">School Administration</span>
+            </div>
+            <div className="w-px h-12 bg-white/8 hidden sm:block flex-shrink-0" />
+            {/* Registrar */}
+            <div className="flex items-center gap-4 flex-1">
+              <div className="w-14 h-14 rounded-xl overflow-hidden border border-white/10 flex-shrink-0">
+                <Image src="/assets/registrar.jpg" alt="John Ayomide Akinola"
+                  width={56} height={56} className="w-full h-full object-cover object-top" />
+              </div>
+              <div>
+                <div className="text-white text-sm font-medium" style={{ fontFamily: "\'Georgia\', serif" }}>
+                  John Ayomide Akinola
+                </div>
+                <div className="text-white/40 text-xs font-sans mt-0.5">Registrar, S&D Prophetic Training School</div>
+              </div>
+            </div>
+            {/* Contact */}
+            <a href="mailto:sandd@abiodunsule.uk"
+              className="text-[#D4A85C]/60 hover:text-[#D4A85C] text-xs font-sans transition-colors flex-shrink-0 border border-[#D4A85C]/20 hover:border-[#D4A85C]/50 px-4 py-2 rounded-full">
+              sandd@abiodunsule.uk
+            </a>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════
           FINAL CTA
       ════════════════════════════════════════════════ */}
       <section className="relative py-40 px-6 overflow-hidden border-t border-white/8">
