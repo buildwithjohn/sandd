@@ -3,14 +3,14 @@ export const dynamic = 'force-dynamic';
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import PortalShell from "@/components/portal/PortalShell";
 import { motion } from "framer-motion";
-import { Download, Printer } from "lucide-react";
+import { Printer } from "lucide-react";
 
 export default function AdmissionLetterPage() {
-  const router  = useRouter();
-  const printRef = useRef<HTMLDivElement>(null);
+  const router   = useRouter();
   const [student, setStudent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -27,10 +27,6 @@ export default function AdmissionLetterPage() {
     load();
   }, []);
 
-  function handlePrint() {
-    window.print();
-  }
-
   if (loading) return (
     <PortalShell>
       <div className="flex items-center justify-center py-20">
@@ -40,178 +36,187 @@ export default function AdmissionLetterPage() {
   );
 
   const admissionDate = new Date(student.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
-  const refNumber = `SANDD/2026/${String(student.full_name?.split(" ")[1]?.[0] ?? "X").toUpperCase()}/${new Date(student.created_at).getTime().toString().slice(-5)}`;
+  const studentNumber = student.student_number || "SANDD/2026/—";
 
   return (
     <PortalShell>
+      {/* Full-page print CSS — captures everything */}
       <style>{`
         @media print {
-          body * { visibility: hidden !important; }
-          #admission-letter, #admission-letter * { visibility: visible !important; }
-          #admission-letter { position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; padding: 40px !important; background: white !important; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          body > * { display: none !important; }
+          #print-root { display: block !important; position: fixed !important; inset: 0 !important; z-index: 99999 !important; background: white !important; overflow: visible !important; }
+          #print-root * { display: revert !important; }
           .no-print { display: none !important; }
+          @page { size: A4 portrait; margin: 0; }
         }
+        #print-root { display: none; }
+        @media print { #print-root { display: block; } }
       `}</style>
 
-      <div className="space-y-5">
+      {/* Hidden full-page print version */}
+      <div id="print-root">
+        <AdmissionLetterContent student={student} admissionDate={admissionDate} studentNumber={studentNumber} />
+      </div>
 
+      <div className="space-y-5">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-[#1A1A2E]" style={{ fontFamily: "'Georgia', serif" }}>
               Admission Letter
             </h1>
-            <p className="text-[#9B9B9B] text-sm font-sans mt-0.5">Your official admission letter — print or save as PDF</p>
+            <p className="text-[#9B9B9B] text-sm font-sans mt-0.5">
+              Student No: <span className="text-[#D4A85C] font-semibold">{studentNumber}</span>
+            </p>
           </div>
-          <div className="flex items-center gap-2 no-print">
-            <button onClick={handlePrint}
-              className="flex items-center gap-2 bg-[#1A1A2E] hover:bg-[#2A2A4E] text-white text-xs font-semibold font-sans px-4 py-2.5 rounded-xl transition-all">
-              <Printer className="w-3.5 h-3.5" /> Print / Save PDF
-            </button>
-          </div>
+          <button onClick={() => window.print()}
+            className="no-print flex items-center gap-2 bg-[#1A1A2E] hover:bg-[#2A2A4E] text-white text-xs font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">
+            <Printer className="w-3.5 h-3.5" /> Print / Save as PDF
+          </button>
         </div>
 
-        {/* Letter */}
-        <motion.div id="admission-letter" ref={printRef}
-          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl border border-[#E8E2D9] overflow-hidden"
-          style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.06)", fontFamily: "Georgia, serif" }}>
-
-          {/* Header bar */}
-          <div className="bg-[#1A1A2E] px-10 py-6 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Image src="/assets/logo.png" alt="S&D Logo" width={52} height={52} className="rounded-xl" />
-              <div>
-                <div className="text-white font-bold text-sm" style={{ fontFamily: "Georgia, serif" }}>
-                  Sons and Daughters of Prophets
-                </div>
-                <div className="text-white font-bold text-sm" style={{ fontFamily: "Georgia, serif" }}>
-                  Prophetic Training School
-                </div>
-                <div className="text-[#D4A85C] text-xs font-sans mt-0.5">Treasures in Clay Ministries</div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-white/40 text-[10px] font-sans uppercase tracking-widest">Reference</div>
-              <div className="text-[#D4A85C] text-sm font-mono mt-0.5">{refNumber}</div>
-            </div>
-          </div>
-
-          {/* Gold strip */}
-          <div className="h-1.5 bg-gradient-to-r from-[#D4A85C] via-[#F5D4A0] to-[#D4A85C]" />
-
-          {/* Body */}
-          <div className="px-10 py-10">
-
-            {/* Date */}
-            <p className="text-[#9B9B9B] text-sm font-sans mb-8">
-              {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
-            </p>
-
-            {/* Recipient */}
-            <p className="text-[#1A1A2E] font-bold text-base mb-1">{student.full_name}</p>
-            {student.church && <p className="text-[#6B6B6B] text-sm font-sans">{student.church}</p>}
-            {student.city && <p className="text-[#6B6B6B] text-sm font-sans mb-8">{student.city}</p>}
-
-            {/* Subject */}
-            <div className="border-l-4 border-[#D4A85C] pl-4 mb-8">
-              <p className="text-[#1A1A2E] font-bold text-base">
-                LETTER OF ADMISSION — 2026 COHORT
-              </p>
-              <p className="text-[#1A1A2E] font-bold text-base">
-                SONS AND DAUGHTERS OF PROPHETS PROPHETIC TRAINING SCHOOL
-              </p>
-            </div>
-
-            {/* Salutation */}
-            <p className="text-[#1A1A2E] text-sm leading-relaxed mb-5">
-              Dear <strong>{student.full_name?.split(" ")[0]}</strong>,
-            </p>
-
-            {/* Body paragraphs */}
-            <div className="space-y-4 text-[#333333] text-sm leading-[1.9]">
-              <p>
-                On behalf of the Founder and Dean, <strong>Prophet Abiodun Sule</strong>, and the entire faculty
-                of the Sons and Daughters of Prophets Prophetic Training School, I am delighted to formally
-                inform you that your application for admission into the <strong>2026 Cohort — Year 1</strong> has been
-                reviewed and approved.
-              </p>
-              <p>
-                You are hereby admitted as a student of this school with effect from
-                your registration date of <strong>{admissionDate}</strong>. You have been enrolled in the
-                Year 1 programme leading to the <strong>Certificate in Prophetic Ministry</strong>.
-              </p>
-
-              {/* Details table */}
-              <div className="my-6 border border-[#E8E2D9] rounded-xl overflow-hidden">
-                {[
-                  ["Student Name", student.full_name],
-                  ["Student Email", student.email],
-                  ["Programme", "Certificate in Prophetic Ministry — Year 1"],
-                  ["Cohort", "2026 Cohort"],
-                  ["Date of Admission", admissionDate],
-                  ["Mode of Study", "Online — Portal & Live Zoom Sessions"],
-                  ["Tuition", "Free of Charge"],
-                ].map(([label, value], i) => (
-                  <div key={label} className={`flex items-start gap-4 px-5 py-3 ${
-                    i % 2 === 0 ? "bg-[#F8F6F2]" : "bg-white"
-                  } ${i < 6 ? "border-b border-[#E8E2D9]" : ""}`}>
-                    <span className="text-[#8B7355] text-xs font-sans font-semibold w-36 flex-shrink-0 pt-0.5">{label}</span>
-                    <span className="text-[#1A1A2E] text-xs font-sans">{value}</span>
-                  </div>
-                ))}
-              </div>
-
-              <p>
-                School orientation will be held on <strong>Thursday, 7th May 2026</strong> via Zoom.
-                Your first module opens on <strong>Sunday, 10th May 2026 at 8:00am</strong>.
-                Please ensure you have logged in to your student portal and joined the official
-                community Telegram group before orientation.
-              </p>
-              <p>
-                This school is built on the conviction that God is raising a generation of New Testament
-                prophets who are biblically grounded, spiritually discerning, and humbly accountable.
-                We believe your admission is not by accident — God has a purpose for your prophetic calling,
-                and this school exists to help you fulfil it.
-              </p>
-              <p>
-                We look forward to journeying with you.
-              </p>
-            </div>
-
-            {/* Signature block */}
-            <div className="mt-10 grid grid-cols-1 gap-8">
-              <div>
-                <div className="mb-1">
-                  <Image src="/assets/john-signature.png" alt="Signature"
-                    width={120} height={56} className="object-contain" style={{ filter: "contrast(1.2)" }} />
-                </div>
-                <div className="border-t border-[#E8E2D9] pt-3">
-                  <p className="text-[#1A1A2E] font-bold text-sm">John Ayomide Akinola</p>
-                  <p className="text-[#6B6B6B] text-xs font-sans mt-0.5">Registrar</p>
-                  <p className="text-[#6B6B6B] text-xs font-sans">Sons and Daughters of Prophets Prophetic Training School</p>
-                  <p className="text-[#6B6B6B] text-xs font-sans">Treasures in Clay Ministries</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Official stamp area */}
-            <div className="mt-8 pt-6 border-t border-[#E8E2D9]">
-              <p className="text-[#C4BDB2] text-[10px] font-sans text-center">
-                This is an official letter of admission issued by S&D Prophetic Training School.
-                Reference: {refNumber} · sandd.abiodunsule.uk
-              </p>
-            </div>
-          </div>
-
-          {/* Footer bar */}
-          <div className="bg-[#1A1A2E] px-10 py-4 flex items-center justify-between">
-            <p className="text-white/30 text-[10px] font-sans">sandd.abiodunsule.uk</p>
-            <p className="text-[#D4A85C]/60 text-[10px] font-sans italic">
-              &ldquo;But the one who prophesies speaks to people for their strengthening, encouraging and comfort.&rdquo; — 1 Cor 14:3
-            </p>
-          </div>
+        {/* Preview */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl border border-[#E8E2D9] overflow-hidden shadow-sm">
+          <AdmissionLetterContent student={student} admissionDate={admissionDate} studentNumber={studentNumber} />
         </motion.div>
+
+        <p className="text-[#9B9B9B] text-xs font-sans text-center no-print">
+          Click &quot;Print / Save as PDF&quot; → choose &quot;Save as PDF&quot; in the print dialog to download your letter.
+        </p>
       </div>
     </PortalShell>
+  );
+}
+
+function AdmissionLetterContent({ student, admissionDate, studentNumber }: {
+  student: any; admissionDate: string; studentNumber: string;
+}) {
+  return (
+    <div style={{
+      fontFamily: "Georgia, 'Times New Roman', serif",
+      background: "white",
+      color: "#111",
+      width: "100%",
+    }}>
+      {/* Navy header */}
+      <div style={{ background: "#1A1A2E", padding: "28px 40px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <img src="/assets/logo.png" alt="Logo" style={{ width: "52px", height: "52px", borderRadius: "10px" }} />
+          <div>
+            <div style={{ color: "white", fontWeight: "700", fontSize: "14px" }}>Sons and Daughters of Prophets</div>
+            <div style={{ color: "white", fontWeight: "700", fontSize: "14px" }}>Prophetic Training School</div>
+            <div style={{ color: "#D4A85C", fontSize: "11px", fontFamily: "Arial, sans-serif", marginTop: "2px" }}>Treasures in Clay Ministries</div>
+          </div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "9px", fontFamily: "Arial", textTransform: "uppercase", letterSpacing: "2px" }}>Student Number</div>
+          <div style={{ color: "#D4A85C", fontSize: "13px", fontFamily: "monospace", marginTop: "2px" }}>{studentNumber}</div>
+        </div>
+      </div>
+
+      {/* Gold strip */}
+      <div style={{ height: "5px", background: "linear-gradient(to right, #D4A85C, #F5D4A0, #D4A85C)" }} />
+
+      {/* Body */}
+      <div style={{ padding: "36px 40px" }}>
+        {/* Date */}
+        <p style={{ color: "#888", fontSize: "13px", fontFamily: "Arial, sans-serif", marginBottom: "24px" }}>
+          {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+        </p>
+
+        {/* Recipient */}
+        <p style={{ fontWeight: "700", fontSize: "15px", marginBottom: "4px" }}>{student.full_name}</p>
+        {student.church && <p style={{ color: "#555", fontSize: "13px", fontFamily: "Arial", margin: "0 0 2px 0" }}>{student.church}</p>}
+        {student.city && <p style={{ color: "#555", fontSize: "13px", fontFamily: "Arial", margin: "0 0 24px 0" }}>{student.city}</p>}
+
+        {/* Subject */}
+        <div style={{ borderLeft: "4px solid #D4A85C", paddingLeft: "14px", marginBottom: "28px" }}>
+          <p style={{ fontWeight: "700", fontSize: "14px", margin: "0 0 4px 0" }}>LETTER OF ADMISSION — 2026 COHORT</p>
+          <p style={{ fontWeight: "700", fontSize: "14px", margin: "0" }}>SONS AND DAUGHTERS OF PROPHETS PROPHETIC TRAINING SCHOOL</p>
+        </div>
+
+        {/* Salutation */}
+        <p style={{ fontSize: "14px", marginBottom: "16px" }}>
+          Dear <strong>{student.full_name?.split(" ")[0]}</strong>,
+        </p>
+
+        {/* Paragraphs */}
+        <p style={{ fontSize: "13px", lineHeight: "1.9", marginBottom: "14px", textAlign: "justify" }}>
+          On behalf of the Founder and Dean, <strong>Prophet Abiodun Sule</strong>, and the entire faculty
+          of the Sons and Daughters of Prophets Prophetic Training School, I am delighted to formally
+          inform you that your application for admission into the <strong>2026 Cohort — Year 1</strong> has been
+          reviewed and approved.
+        </p>
+        <p style={{ fontSize: "13px", lineHeight: "1.9", marginBottom: "14px", textAlign: "justify" }}>
+          You are hereby admitted as a student of this school with effect from your registration date
+          of <strong>{admissionDate}</strong>. You have been enrolled in the Year 1 programme leading to
+          the <strong>Certificate in Prophetic Ministry</strong>. Your student number is <strong>{studentNumber}</strong> — please
+          quote this in all correspondence with the school.
+        </p>
+
+        {/* Details table */}
+        <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "18px", fontSize: "12px", fontFamily: "Arial, sans-serif" }}>
+          {[
+            ["Student Number", studentNumber],
+            ["Student Name", student.full_name],
+            ["Student Email", student.email],
+            ["Programme", "Certificate in Prophetic Ministry — Year 1"],
+            ["Cohort", "2026 Cohort"],
+            ["Date of Admission", admissionDate],
+            ["Mode of Study", "Online — Portal & Live Zoom Sessions"],
+            ["Tuition", "Free of Charge"],
+          ].map(([label, value], i) => (
+            <tr key={label} style={{ background: i % 2 === 0 ? "#F8F6F2" : "white" }}>
+              <td style={{ padding: "8px 14px", fontWeight: "600", color: "#8B7355", width: "38%", borderBottom: "1px solid #E8E2D9" }}>{label}</td>
+              <td style={{ padding: "8px 14px", color: "#111", borderBottom: "1px solid #E8E2D9" }}>{value}</td>
+            </tr>
+          ))}
+        </table>
+
+        <p style={{ fontSize: "13px", lineHeight: "1.9", marginBottom: "14px", textAlign: "justify" }}>
+          School orientation will be held on <strong>Thursday, 7th May 2026</strong> via Zoom.
+          Your first module opens on <strong>Sunday, 10th May 2026 at 8:00am</strong>.
+          Please ensure you have logged in to your student portal and joined the official
+          community Telegram group before orientation.
+        </p>
+        <p style={{ fontSize: "13px", lineHeight: "1.9", marginBottom: "14px", textAlign: "justify" }}>
+          This school is built on the conviction that God is raising a generation of New Testament
+          prophets who are biblically grounded, spiritually discerning, and humbly accountable.
+          We believe your admission is not by accident — God has a purpose for your prophetic calling,
+          and this school exists to help you fulfil it.
+        </p>
+        <p style={{ fontSize: "13px", lineHeight: "1.9", marginBottom: "28px" }}>
+          We look forward to journeying with you.
+        </p>
+
+        {/* Signature */}
+        <div style={{ marginBottom: "8px" }}>
+          <img src="/assets/john-signature.png" alt="Signature"
+            style={{ width: "110px", height: "52px", objectFit: "contain", filter: "contrast(1.3)" }} />
+        </div>
+        <div style={{ borderTop: "1px solid #E8E2D9", paddingTop: "10px" }}>
+          <p style={{ fontWeight: "700", fontSize: "14px", margin: "0 0 2px 0" }}>John Ayomide Akinola</p>
+          <p style={{ fontSize: "12px", color: "#666", fontFamily: "Arial", margin: "0 0 2px 0" }}>Registrar</p>
+          <p style={{ fontSize: "12px", color: "#666", fontFamily: "Arial", margin: "0 0 2px 0" }}>Sons and Daughters of Prophets Prophetic Training School</p>
+          <p style={{ fontSize: "12px", color: "#666", fontFamily: "Arial", margin: "0" }}>Treasures in Clay Ministries</p>
+        </div>
+
+        {/* Official note */}
+        <div style={{ marginTop: "28px", paddingTop: "14px", borderTop: "1px solid #E8E2D9", textAlign: "center" }}>
+          <p style={{ fontSize: "10px", color: "#AAA", fontFamily: "Arial", margin: "0" }}>
+            This is an official letter of admission. Student No: {studentNumber} · sandd.abiodunsule.uk
+          </p>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ background: "#1A1A2E", padding: "14px 40px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "10px", fontFamily: "Arial" }}>sandd.abiodunsule.uk</span>
+        <span style={{ color: "rgba(212,168,92,0.6)", fontSize: "10px", fontFamily: "Arial", fontStyle: "italic" }}>
+          &ldquo;But the one who prophesies speaks to people for their strengthening, encouraging and comfort.&rdquo; — 1 Cor 14:3
+        </span>
+      </div>
+    </div>
   );
 }
