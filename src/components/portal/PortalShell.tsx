@@ -4,13 +4,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
-import { LogOut, LayoutDashboard, BookOpen, FileText, Megaphone, User } from "lucide-react";
+import { LogOut, LayoutDashboard, BookOpen, FileText, Megaphone, User, Award } from "lucide-react";
 
 const navLinks = [
   { href: "/portal/dashboard",     icon: LayoutDashboard, label: "Dashboard"     },
   { href: "/portal/courses",       icon: BookOpen,        label: "My Courses"    },
   { href: "/portal/assignments",   icon: FileText,        label: "Assignments"   },
   { href: "/portal/announcements", icon: Megaphone,       label: "Announcements" },
+  { href: "/portal/admission",     icon: Award,           label: "Admission Letter" },
   { href: "/portal/profile",       icon: User,            label: "Profile"       },
 ];
 

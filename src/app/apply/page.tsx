@@ -2,12 +2,13 @@
 export const dynamic = "force-dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Eye, EyeOff, ArrowRight, CheckCircle, Loader2, Mail } from "lucide-react";
+import RegistrationClosed from "@/components/RegistrationClosed";
 
 const rise = (delay = 0) => ({
   hidden:  { opacity: 0, y: 24, filter: "blur(3px)" },
@@ -23,10 +24,30 @@ interface FormState {
 
 export default function ApplyPage() {
   const router = useRouter();
-  const [step, setStep]     = useState<"form" | "success">("form");
+  const [step, setStep]     = useState<"form" | "success" | "closed">("form");
+  const [checkingReg, setCheckingReg] = useState(true);
   const [loading, setLoading] = useState(false);
   const [showPw, setShowPw]   = useState(false);
   const [doneEmail, setDoneEmail] = useState("");
+
+  useEffect(() => {
+    async function checkRegistration() {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("school_settings")
+          .select("value")
+          .eq("key", "registration_open")
+          .single();
+        if (data?.value !== "true") setStep("closed");
+      } catch {
+        // If table doesn't exist yet, default to open
+      } finally {
+        setCheckingReg(false);
+      }
+    }
+    checkRegistration();
+  }, []);
   const [errors, setErrors]   = useState<Partial<FormState>>({});
   const [form, setForm]       = useState<FormState>({
     full_name: "", email: "", password: "",
@@ -176,6 +197,20 @@ export default function ApplyPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  // ── LOADING ───────────────────────────────────────────────────────────────
+  if (checkingReg) {
+    return (
+      <div className="bg-[#080C14] min-h-screen flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[#D4A85C]/30 border-t-[#D4A85C] rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // ── REGISTRATION CLOSED ────────────────────────────────────────────────────
+  if (step === "closed") {
+    return <RegistrationClosed />;
   }
 
   // ── SUCCESS ───────────────────────────────────────────────────────────────

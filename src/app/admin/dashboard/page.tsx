@@ -31,6 +31,9 @@ export default function AdminDashboard() {
   const [adminName, setAdminName] = useState("Admin");
   const [stats, setStats]         = useState({ students: 0, videos: 0, applications: 0 });
   const [recentApps, setRecentApps] = useState<any[]>([]);
+  const [regOpen, setRegOpen]     = useState(false);
+  const [waitlist, setWaitlist]   = useState<any[]>([]);
+  const [togglingReg, setTogglingReg] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -39,17 +42,33 @@ export default function AdminDashboard() {
       if (!user) return;
       const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", user.id).single();
       setAdminName(profile?.full_name?.split(" ")[0] ?? "Admin");
-      const [{ count: students }, { count: videos }, { count: applications }, { data: apps }] = await Promise.all([
+      const [{ count: students }, { count: videos }, { count: applications }, { data: apps }, { data: settings }, { data: wl }] = await Promise.all([
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
         supabase.from("lessons").select("*", { count: "exact", head: true }).eq("is_published", true),
         supabase.from("applications").select("*", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("applications").select("*").order("applied_at", { ascending: false }).limit(5),
+        supabase.from("school_settings").select("value").eq("key", "registration_open").single(),
+        supabase.from("waitlist").select("*").order("created_at", { ascending: false }).limit(10),
       ]);
       setStats({ students: students ?? 0, videos: videos ?? 0, applications: applications ?? 0 });
       setRecentApps(apps ?? []);
+      setRegOpen((settings as any)?.value === "true");
+      setWaitlist(wl ?? []);
     }
     load();
   }, []);
+
+  async function toggleRegistration() {
+    setTogglingReg(true);
+    try {
+      const supabase = createClient();
+      const newVal = (!regOpen).toString();
+      await supabase.from("school_settings")
+        .upsert({ key: "registration_open", value: newVal, updated_at: new Date().toISOString() }, { onConflict: "key" });
+      setRegOpen(!regOpen);
+    } catch (err) { console.error(err); }
+    finally { setTogglingReg(false); }
+  }
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
@@ -109,6 +128,66 @@ export default function AdminDashboard() {
             ))}
           </div>
         </motion.div>
+
+        {/* Registration Toggle */}
+        <motion.div variants={rise(0.25)} initial="hidden" animate="visible">
+          <div className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${
+            regOpen
+              ? "bg-green-500/5 border-green-500/20"
+              : "bg-red-500/5 border-red-500/20"
+          }`}>
+            <div className="flex items-center gap-3">
+              {regOpen
+                ? <span className="text-green-400 text-lg">●</span>
+                : <span className="text-red-400 text-lg">○</span>
+              }
+              <div>
+                <div className={`text-sm font-semibold font-sans ${regOpen ? "text-green-400" : "text-red-400"}`}>
+                  Registration is {regOpen ? "OPEN" : "CLOSED"}
+                </div>
+                <div className="text-white/30 text-xs font-sans mt-0.5">
+                  {regOpen ? "Students can currently register on the apply page" : "Apply page shows waitlist form only"}
+                </div>
+              </div>
+            </div>
+            <button onClick={toggleRegistration} disabled={togglingReg}
+              className={`text-xs font-semibold font-sans px-5 py-2.5 rounded-full transition-all disabled:opacity-50 ${
+                regOpen
+                  ? "bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20"
+                  : "bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20"
+              }`}>
+              {togglingReg ? "Saving..." : regOpen ? "Close Registration" : "Open Registration"}
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Waitlist */}
+        {waitlist.length > 0 && (
+          <motion.div variants={rise(0.28)} initial="hidden" animate="visible">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-white/25 text-xs tracking-[0.2em] uppercase font-sans flex items-center gap-2">
+                Waitlist ({waitlist.length})
+              </div>
+            </div>
+            <div className="bg-[#0D1320] rounded-2xl border border-white/[0.07] overflow-hidden">
+              {waitlist.map((w, i) => (
+                <div key={w.id} className={`flex items-center gap-4 px-5 py-3 hover:bg-white/[0.02] transition-colors
+                  ${i < waitlist.length - 1 ? "border-b border-white/[0.05]" : ""}`}>
+                  <div className="w-7 h-7 rounded-full bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-[#D4A85C] text-xs">✉</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-white/70 text-xs font-sans truncate">{w.full_name || "—"}</div>
+                    <div className="text-white/30 text-[10px] font-sans mt-0.5">{w.email}</div>
+                  </div>
+                  <div className="text-white/20 text-[10px] font-sans flex-shrink-0">
+                    {new Date(w.created_at).toLocaleDateString("en-NG", { dateStyle: "medium" })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Recent applications */}
         <motion.div variants={rise(0.3)} initial="hidden" animate="visible">
