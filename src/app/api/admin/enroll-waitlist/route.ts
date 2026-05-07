@@ -93,21 +93,6 @@ export async function POST() {
           await admin.from("enrollments").upsert(enrollments, { onConflict: "student_id,course_id" });
         }
 
-        // Send welcome email via Resend
-        await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: "S&D Prophetic School <noreply@sandd.abiodunsule.uk>",
-            to: [entry.email],
-            subject: "You Have Been Enrolled — S&D Prophetic Training School 2026",
-            html: buildEmail(entry.full_name || "Student", entry.email, password, studentNumber),
-          }),
-        });
-
         // Remove from waitlist
         await admin.from("waitlist").delete().eq("id", entry.id);
 

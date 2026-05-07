@@ -74,14 +74,14 @@ export default function AdminDashboard() {
   }
 
   async function enrollAllWaitlist() {
-    if (!confirm(`Enroll all ${waitlist.length} waitlist members? They will each receive an email with their login details.`)) return;
+    if (!confirm(`Enroll all ${waitlist.length} waitlist members? Their login details will be shown on screen for you to email manually.`)) return;
     setEnrollingAll(true);
     try {
       const res = await fetch("/api/admin/enroll-waitlist", { method: "POST" });
       const data = await res.json();
       setEnrollResult(data);
       setWaitlist([]);
-      toast.success(`${data.total} students enrolled and emailed successfully!`);
+      toast.success(`${data.total} students enrolled! Login details ready to copy below.`);
     } catch (err: any) {
       toast.error("Enrollment failed: " + err.message);
     } finally {
@@ -208,6 +208,42 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Enrollment results */}
+        {enrollResult && enrollResult.enrolled && enrollResult.enrolled.length > 0 && (
+          <motion.div variants={rise(0.3)} initial="hidden" animate="visible">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-green-400 text-xs tracking-[0.2em] uppercase font-sans">
+                ✓ {enrollResult.enrolled.length} Enrolled — Send them these login details
+              </div>
+              <button onClick={() => setEnrollResult(null)}
+                className="text-white/30 hover:text-white/60 text-xs font-sans transition-colors">
+                Dismiss
+              </button>
+            </div>
+            <div className="bg-[#0D1320] rounded-2xl border border-green-500/20 overflow-hidden">
+              {enrollResult.enrolled.map((s: any, i: number) => (
+                <div key={s.email} className={`px-5 py-4 ${i < enrollResult.enrolled.length - 1 ? "border-b border-white/[0.05]" : ""}`}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-white/80 text-sm font-medium font-sans">{s.name || "—"}</div>
+                      <div className="text-white/40 text-xs font-sans mt-0.5">{s.email}</div>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <div className="text-[#D4A85C] text-xs font-mono">{s.studentNumber}</div>
+                      <div className="text-white/50 text-xs font-mono mt-1 bg-white/[0.05] px-2 py-0.5 rounded">{s.password}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div className="px-5 py-3 border-t border-white/[0.05] bg-[#D4A85C]/[0.05]">
+                <p className="text-[#D4A85C]/70 text-xs font-sans">
+                  Copy each person&apos;s email + password and send from sandd@abiodunsule.uk · Portal: sandd.abiodunsule.uk
+                </p>
+              </div>
             </div>
           </motion.div>
         )}
