@@ -5,6 +5,7 @@ import Link from "next/link";
 import AdminShell from "@/components/admin/AdminShell";
 import { createClient } from "@/lib/supabase";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { Users, Video, FileText, BookOpen, Upload, ClipboardList, Award, Megaphone, CheckCircle, Clock, XCircle } from "lucide-react";
 
 const rise = (delay = 0) => ({
@@ -34,6 +35,8 @@ export default function AdminDashboard() {
   const [regOpen, setRegOpen]     = useState(false);
   const [waitlist, setWaitlist]   = useState<any[]>([]);
   const [togglingReg, setTogglingReg] = useState(false);
+  const [enrollingAll, setEnrollingAll] = useState(false);
+  const [enrollResult, setEnrollResult] = useState<any>(null);
 
   useEffect(() => {
     async function load() {
@@ -68,6 +71,22 @@ export default function AdminDashboard() {
       setRegOpen(!regOpen);
     } catch (err) { console.error(err); }
     finally { setTogglingReg(false); }
+  }
+
+  async function enrollAllWaitlist() {
+    if (!confirm(`Enroll all ${waitlist.length} waitlist members? They will each receive an email with their login details.`)) return;
+    setEnrollingAll(true);
+    try {
+      const res = await fetch("/api/admin/enroll-waitlist", { method: "POST" });
+      const data = await res.json();
+      setEnrollResult(data);
+      setWaitlist([]);
+      toast.success(`${data.total} students enrolled and emailed successfully!`);
+    } catch (err: any) {
+      toast.error("Enrollment failed: " + err.message);
+    } finally {
+      setEnrollingAll(false);
+    }
   }
 
   const hour = new Date().getHours();
