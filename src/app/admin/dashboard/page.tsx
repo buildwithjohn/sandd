@@ -187,6 +187,10 @@ export default function AdminDashboard() {
               <div className="text-white/25 text-xs tracking-[0.2em] uppercase font-sans flex items-center gap-2">
                 Waitlist ({waitlist.length})
               </div>
+              <button onClick={enrollAllWaitlist} disabled={enrollingAll || waitlist.length === 0}
+                className="bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] text-xs font-bold font-sans px-4 py-2 rounded-full transition-all flex items-center gap-1.5">
+                {enrollingAll ? "Enrolling..." : `Enroll All ${waitlist.length}`}
+              </button>
             </div>
             <div className="bg-[#0D1320] rounded-2xl border border-white/[0.07] overflow-hidden">
               {waitlist.map((w, i) => (
