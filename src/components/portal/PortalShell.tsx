@@ -66,7 +66,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   }
 
   const Avatar = ({ size = 8 }: { size?: number }) => (
-    <div className={`w-${size} h-${size} rounded-full overflow-hidden bg-[#1A1A2E] flex items-center justify-center flex-shrink-0`}>
+    <div className={`w-${size} h-${size} rounded-full overflow-hidden bg-royal-700 flex items-center justify-center flex-shrink-0`}>
       {profile.avatarUrl
         ? <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
         : <span className="text-white text-[10px] font-bold">{profile.initials}</span>
@@ -75,7 +75,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6]" style={{ fontFamily: "Arial, sans-serif" }}>
+    <div className="min-h-screen bg-ivory-100" style={{ fontFamily: "var(--font-geist), system-ui, sans-serif" }}>
 
       {/* ── TOP NAV ─────────────────────────────────────── */}
       <nav className="bg-white border-b border-[#E8E2D9] sticky top-0 z-50"
@@ -84,7 +84,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
 
           {/* Hamburger — mobile only */}
           <button onClick={() => setDrawerOpen(v => !v)}
-            className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center text-[#1A1A2E] hover:bg-[#F5F0E8] transition-colors flex-shrink-0">
+            className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center text-ink-800 hover:bg-ivory-200 transition-colors flex-shrink-0">
             {drawerOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
@@ -92,10 +92,10 @@ export default function PortalShell({ children }: { children: React.ReactNode })
           <Link href="/portal/dashboard" className="flex items-center gap-2">
             <Image src="/assets/logo.png" alt="S&D" width={30} height={30} className="rounded-lg flex-shrink-0" />
             <div className="hidden sm:block">
-              <div className="text-[#1A1A2E] text-sm font-semibold leading-none" style={{ fontFamily: "'Georgia', serif" }}>
+              <div className="text-ink-800 text-sm font-semibold leading-none" style={{ fontFamily: "'Georgia', serif" }}>
                 S&D Prophetic School
               </div>
-              <div className="text-[9px] text-[#8B7355] mt-0.5 tracking-wide uppercase">Student Portal</div>
+              <div className="text-[9px] text-gilt-700 mt-0.5 tracking-wide uppercase">Student Portal</div>
             </div>
           </Link>
 
@@ -106,7 +106,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
               return (
                 <Link key={l.href} href={l.href}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    active ? "bg-[#1A1A2E] text-white" : "text-[#6B6B6B] hover:text-[#1A1A2E] hover:bg-[#F0EDE8]"
+                    active ? "bg-royal-700 text-white" : "text-ink-400 hover:text-ink-800 hover:bg-[#F0EDE8]"
                   }`}>
                   <l.icon className="w-3.5 h-3.5" />
                   {l.label}
@@ -117,7 +117,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
 
           {/* Avatar */}
           <Link href="/portal/profile" className="flex-shrink-0">
-            <div className="w-8 h-8 rounded-full overflow-hidden bg-[#1A1A2E] flex items-center justify-center border-2 border-transparent hover:border-[#D4A85C] transition-all">
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-royal-700 flex items-center justify-center border-2 border-transparent hover:border-[#D4A85C] transition-all">
               {profile.avatarUrl
                 ? <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
                 : <span className="text-white text-[10px] font-bold">{profile.initials}</span>
@@ -135,7 +135,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
             onClick={e => e.stopPropagation()}>
 
             {/* Profile section */}
-            <div className="bg-[#1A1A2E] px-5 py-5">
+            <div className="bg-royal-700 px-5 py-5">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#2A2A4E] flex items-center justify-center flex-shrink-0">
                   {profile.avatarUrl
@@ -145,7 +145,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                 </div>
                 <div>
                   <div className="text-white text-sm font-semibold" style={{ fontFamily: "'Georgia', serif" }}>{profile.name}</div>
-                  <div className="text-[#D4A85C] text-xs mt-0.5">{profile.church || "Student"}</div>
+                  <div className="text-gilt-600 text-xs mt-0.5">{profile.church || "Student"}</div>
                   <div className="text-white/40 text-[10px] mt-0.5">Year {profile.year}</div>
                 </div>
               </div>
@@ -159,10 +159,10 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                   <Link key={l.href} href={l.href}
                     className={`flex items-center gap-3 px-4 py-3.5 rounded-xl mb-1 transition-all ${
                       active
-                        ? "bg-[#1A1A2E] text-white"
-                        : "text-[#444] hover:bg-[#F5F0E8]"
+                        ? "bg-royal-700 text-white"
+                        : "text-ink-600 hover:bg-ivory-200"
                     }`}>
-                    <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "text-[#D4A85C]" : "text-[#8B7355]"}`} />
+                    <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "text-gilt-600" : "text-gilt-700"}`} />
                     <span className="text-sm font-medium">{l.label}</span>
                   </Link>
                 );
@@ -171,19 +171,19 @@ export default function PortalShell({ children }: { children: React.ReactNode })
 
             {/* Registrar + sign out */}
             <div className="px-3 pb-6 border-t border-[#E8E2D9] mt-2 pt-4">
-              <div className="bg-[#F5F0E8] rounded-xl p-3 mb-3">
-                <div className="text-[#9B9B9B] text-[10px] uppercase tracking-widest mb-2">School Administration</div>
+              <div className="bg-ivory-200 rounded-xl p-3 mb-3">
+                <div className="text-ink-400 text-[10px] uppercase tracking-widest mb-2">School Administration</div>
                 <div className="flex items-center gap-2.5 mb-2">
                   <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 border border-[#E8E2D9]">
                     <Image src="/assets/registrar.jpg" alt="Registrar" width={32} height={32} className="w-full h-full object-cover object-top" />
                   </div>
                   <div>
-                    <div className="text-[#1A1A2E] text-xs font-semibold">John Ayomide Akinola</div>
-                    <div className="text-[#9B9B9B] text-[10px]">Registrar</div>
+                    <div className="text-ink-800 text-xs font-semibold">John Ayomide Akinola</div>
+                    <div className="text-ink-400 text-[10px]">Registrar</div>
                   </div>
                 </div>
                 <a href="mailto:sandd@abiodunsule.uk"
-                  className="block text-center text-[#8B7355] text-xs bg-white rounded-lg py-2 border border-[#E8E2D9]">
+                  className="block text-center text-gilt-700 text-xs bg-white rounded-lg py-2 border border-[#E8E2D9]">
                   Contact Registrar
                 </a>
               </div>
@@ -207,22 +207,22 @@ export default function PortalShell({ children }: { children: React.ReactNode })
             <div className="bg-white rounded-2xl border border-[#E8E2D9] p-4"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl overflow-hidden bg-[#1A1A2E] flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-xl overflow-hidden bg-royal-700 flex items-center justify-center flex-shrink-0">
                   {profile.avatarUrl
                     ? <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
                     : <span className="text-white text-xs font-bold">{profile.initials}</span>
                   }
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[#1A1A2E] text-sm font-semibold truncate" style={{ fontFamily: "'Georgia', serif" }}>
+                  <div className="text-ink-800 text-sm font-semibold truncate" style={{ fontFamily: "'Georgia', serif" }}>
                     {profile.name.split(" ")[0]}
                   </div>
-                  <div className="text-[10px] text-[#8B7355] mt-0.5">{profile.church || "Student"}</div>
+                  <div className="text-[10px] text-gilt-700 mt-0.5">{profile.church || "Student"}</div>
                 </div>
               </div>
-              <div className="bg-[#F5F0E8] rounded-lg px-3 py-2 flex items-center justify-between">
-                <span className="text-[#8B7355] text-[10px] uppercase tracking-wide">Year</span>
-                <span className="text-[#1A1A2E] text-xs font-bold">Year {profile.year}</span>
+              <div className="bg-ivory-200 rounded-lg px-3 py-2 flex items-center justify-between">
+                <span className="text-gilt-700 text-[10px] uppercase tracking-wide">Year</span>
+                <span className="text-ink-800 text-xs font-bold">Year {profile.year}</span>
               </div>
             </div>
 
@@ -234,16 +234,16 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                 return (
                   <Link key={l.href} href={l.href}
                     className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                      active ? "bg-[#1A1A2E] text-white font-medium" : "text-[#6B6B6B] hover:bg-[#F5F0E8] hover:text-[#1A1A2E]"
+                      active ? "bg-royal-700 text-white font-medium" : "text-ink-400 hover:bg-ivory-200 hover:text-ink-800"
                     }`}>
-                    <l.icon className={`w-4 h-4 ${active ? "text-[#D4A85C]" : ""}`} />
+                    <l.icon className={`w-4 h-4 ${active ? "text-gilt-600" : ""}`} />
                     {l.label}
                   </Link>
                 );
               })}
               <div className="border-t border-[#E8E2D9] mt-2 pt-2">
                 <button onClick={signOut}
-                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-[#9B9B9B] hover:text-red-500 hover:bg-red-50 w-full transition-all">
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-ink-400 hover:text-red-500 hover:bg-red-50 w-full transition-all">
                   <LogOut className="w-4 h-4" /> Sign Out
                 </button>
               </div>
@@ -258,12 +258,12 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                   <Image src="/assets/registrar.jpg" alt="Registrar" width={32} height={32} className="w-full h-full object-cover object-top" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[#1A1A2E] text-xs font-semibold truncate">John Ayomide Akinola</div>
-                  <div className="text-[#9B9B9B] text-[10px]">Registrar</div>
+                  <div className="text-ink-800 text-xs font-semibold truncate">John Ayomide Akinola</div>
+                  <div className="text-ink-400 text-[10px]">Registrar</div>
                 </div>
               </div>
               <a href="mailto:sandd@abiodunsule.uk"
-                className="block text-center text-[#8B7355] hover:text-[#D4A85C] text-[10px] transition-colors bg-[#F5F0E8] hover:bg-[#EDE8DF] rounded-lg py-1.5 px-2">
+                className="block text-center text-gilt-700 hover:text-gilt-600 text-[10px] transition-colors bg-ivory-200 hover:bg-ivory-300 rounded-lg py-1.5 px-2">
                 Contact Registrar
               </a>
             </div>
@@ -285,8 +285,8 @@ export default function PortalShell({ children }: { children: React.ReactNode })
             return (
               <Link key={l.href} href={l.href}
                 className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all min-w-0 flex-1">
-                <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "text-[#1A1A2E]" : "text-[#9B9B9B]"}`} />
-                <span className={`text-[10px] font-medium truncate ${active ? "text-[#1A1A2E]" : "text-[#9B9B9B]"}`}>
+                <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "text-ink-800" : "text-ink-400"}`} />
+                <span className={`text-[10px] font-medium truncate ${active ? "text-ink-800" : "text-ink-400"}`}>
                   {l.label}
                 </span>
                 {active && <div className="w-1 h-1 rounded-full bg-[#D4A85C]" />}
@@ -296,8 +296,8 @@ export default function PortalShell({ children }: { children: React.ReactNode })
           {/* More button */}
           <button onClick={() => setDrawerOpen(v => !v)}
             className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all min-w-0 flex-1">
-            <Menu className="w-5 h-5 text-[#9B9B9B]" />
-            <span className="text-[10px] font-medium text-[#9B9B9B]">More</span>
+            <Menu className="w-5 h-5 text-ink-400" />
+            <span className="text-[10px] font-medium text-ink-400">More</span>
           </button>
         </div>
       </nav>

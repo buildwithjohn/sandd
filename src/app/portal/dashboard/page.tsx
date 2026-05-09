@@ -7,18 +7,18 @@ import { createClient } from "@/lib/supabase";
 import PortalShell from "@/components/portal/PortalShell";
 import { motion } from "framer-motion";
 import {
-  Play, BookOpen, ChevronRight, CheckCircle, Clock, TrendingUp,
-  Star, Sparkles, GraduationCap, Calendar, FileDown, Megaphone, ArrowRight
+  Play, BookOpen, ChevronRight, CheckCircle, Clock,
+  Star, GraduationCap, Megaphone, ArrowUpRight, TrendingUp
 } from "lucide-react";
 
 const rise = (delay = 0) => ({
   hidden:  { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay, ease: "easeOut" as const } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as any } }
 });
 
 export default function StudentDashboard() {
   const router = useRouter();
-  const [student, setStudent] = useState({ name: "Student", church: "", studentNumber: "", enrolled: "" });
+  const [student, setStudent] = useState({ name: "Student", studentNumber: "", enrolled: "" });
   const [stats, setStats] = useState({
     coursesEnrolled: 0,
     coursesCompleted: 0,
@@ -30,7 +30,6 @@ export default function StudentDashboard() {
   const [announcements, setAnnouncements] = useState<any[]>([]);
   const [nextSubtopic, setNextSubtopic] = useState<any>(null);
   const [pendingAssessments, setPendingAssessments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
@@ -43,46 +42,27 @@ export default function StudentDashboard() {
 
       setStudent({
         name: profile.full_name ?? "Student",
-        church: profile.church ?? "",
         studentNumber: profile.student_number ?? "",
         enrolled: new Date(profile.created_at).toLocaleDateString("en-NG", { month: "short", year: "numeric" }),
       });
 
-      // 1. Enrolled course IDs
-      const { data: enrolls } = await supabase
-        .from("enrollments").select("course_id").eq("student_id", user.id);
+      const { data: enrolls } = await supabase.from("enrollments").select("course_id").eq("student_id", user.id);
       const courseIds = enrolls?.map((e: any) => e.course_id) ?? [];
-
-      // 2. Fetch enrolled courses
       let courses: any[] = [];
       if (courseIds.length > 0) {
-        const { data: c } = await supabase.from("courses")
-          .select("id, title, slug, year, description")
-          .in("id", courseIds).order("year").order("order_index");
+        const { data: c } = await supabase.from("courses").select("id, title, slug, year, description").in("id", courseIds).order("year").order("order_index");
         courses = c ?? [];
       } else {
-        // Fallback to year 1 if no enrollments
-        const { data: c } = await supabase.from("courses")
-          .select("id, title, slug, year, description")
-          .eq("year", profile.current_year ?? 1).order("order_index");
+        const { data: c } = await supabase.from("courses").select("id, title, slug, year, description").eq("year", profile.current_year ?? 1).order("order_index");
         courses = c ?? [];
       }
-
       setRecentCourses(courses.slice(0, 4));
 
-      // 3. Subtopic progress per course
-      const { data: progress } = await supabase
-        .from("lesson_progress").select("lesson_id, status").eq("student_id", user.id);
+      const { data: progress } = await supabase.from("lesson_progress").select("lesson_id, status").eq("student_id", user.id);
       const completedLessonIds = new Set(progress?.filter(p => p.status === "completed").map(p => p.lesson_id) ?? []);
 
-      // Get all lessons for enrolled courses
-      const { data: allLessons } = await supabase
-        .from("lessons").select("id, course_id, title, order_index, is_published")
-        .in("course_id", courses.map(c => c.id))
-        .eq("is_published", true)
-        .order("order_index");
+      const { data: allLessons } = await supabase.from("lessons").select("id, course_id, title, order_index, is_published").in("course_id", courses.map(c => c.id)).eq("is_published", true).order("order_index");
 
-      // Calculate courses completed: course where ALL lessons are done
       let coursesCompleted = 0;
       const lessonsByCourse: Record<string, any[]> = {};
       allLessons?.forEach(l => {
@@ -90,46 +70,26 @@ export default function StudentDashboard() {
         lessonsByCourse[l.course_id].push(l);
       });
       Object.values(lessonsByCourse).forEach(lessons => {
-        if (lessons.length > 0 && lessons.every(l => completedLessonIds.has(l.id))) {
-          coursesCompleted++;
-        }
+        if (lessons.length > 0 && lessons.every(l => completedLessonIds.has(l.id))) coursesCompleted++;
       });
 
-      // Find next subtopic to watch
       let nextSub: any = null;
       for (const course of courses) {
         const lessons = lessonsByCourse[course.id] || [];
         const next = lessons.find(l => !completedLessonIds.has(l.id));
-        if (next) {
-          nextSub = { ...next, courseTitle: course.title, courseSlug: course.slug };
-          break;
-        }
+        if (next) { nextSub = { ...next, courseTitle: course.title, courseSlug: course.slug }; break; }
       }
       setNextSubtopic(nextSub);
 
-      // 4. Assessment scores
-      const { data: subs } = await supabase
-        .from("assessment_submissions")
-        .select("*, assessments(total_marks, course_id, title, courses(title))")
-        .eq("student_id", user.id)
-        .eq("status", "graded")
-        .eq("results_released", true);
-
+      const { data: subs } = await supabase.from("assessment_submissions").select("*, assessments(total_marks, course_id, title, courses(title))").eq("student_id", user.id).eq("status", "graded").eq("results_released", true);
       let avg = 0;
       if (subs && subs.length > 0) {
-        const total = subs.reduce((sum, s: any) =>
-          sum + (s.total_score / (s.assessments?.total_marks || 100)) * 100, 0);
+        const total = subs.reduce((sum, s: any) => sum + (s.total_score / (s.assessments?.total_marks || 100)) * 100, 0);
         avg = Math.round(total / subs.length);
       }
-
-      // Pending assessments (published, enrolled course, not yet submitted)
-      const { data: published } = await supabase
-        .from("assessments").select("*, courses(title, slug)")
-        .in("course_id", courses.map(c => c.id))
-        .eq("is_published", true);
-      const submittedIds = new Set(subs?.map((s: any) => s.assessment_id) ?? []);
-      const { data: allSubs } = await supabase
-        .from("assessment_submissions").select("assessment_id").eq("student_id", user.id);
+      const { data: published } = await supabase.from("assessments").select("*, courses(title, slug)").in("course_id", courses.map(c => c.id)).eq("is_published", true);
+      const submittedIds = new Set();
+      const { data: allSubs } = await supabase.from("assessment_submissions").select("assessment_id").eq("student_id", user.id);
       allSubs?.forEach((s: any) => submittedIds.add(s.assessment_id));
       const pending = published?.filter((a: any) => !submittedIds.has(a.id)) ?? [];
       setPendingAssessments(pending.slice(0, 3));
@@ -142,12 +102,8 @@ export default function StudentDashboard() {
         assessmentCount: subs?.length ?? 0,
       });
 
-      // Announcements
-      const { data: ann } = await supabase.from("announcements")
-        .select("*").order("published_at", { ascending: false }).limit(3);
+      const { data: ann } = await supabase.from("announcements").select("*").order("published_at", { ascending: false }).limit(3);
       setAnnouncements(ann ?? []);
-
-      setLoading(false);
     }
     load();
   }, []);
@@ -156,153 +112,196 @@ export default function StudentDashboard() {
     const h = new Date().getHours();
     return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
   })();
-
   const firstName = student.name.split(" ")[0];
 
   return (
     <PortalShell>
-      <div className="space-y-6">
+      <div className="space-y-6 max-w-6xl">
 
-        {/* ── HERO GREETING ─────────────────────────────────────────── */}
+        {/* ── HERO — DEEP ROYAL CARD ─────────────────────────────────── */}
         <motion.div variants={rise()} initial="hidden" animate="visible"
-          className="relative bg-gradient-to-br from-[#1A1A2E] via-[#1F1F3A] to-[#0F0F1F] rounded-3xl p-6 sm:p-8 overflow-hidden"
-          style={{ boxShadow: "0 12px 40px rgba(26,26,46,0.25)" }}>
+          className="relative rounded-[28px] p-8 sm:p-12 overflow-hidden border border-royal-700"
+          style={{
+            background: "linear-gradient(135deg, #2D1B5E 0%, #1F1342 50%, #150C2E 100%)",
+            boxShadow: "0 24px 60px -20px rgba(45, 27, 94, 0.45)",
+          }}>
 
-          {/* Decorative gradient blobs */}
-          <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full opacity-15"
-            style={{ background: "radial-gradient(circle, #D4A85C 0%, transparent 60%)" }} />
-          <div className="absolute -bottom-32 -left-16 w-72 h-72 rounded-full opacity-8"
-            style={{ background: "radial-gradient(circle, #D4A85C 0%, transparent 70%)" }} />
+          {/* Gold leaf accent — top right */}
+          <div className="absolute top-0 right-0 w-1/2 h-full pointer-events-none opacity-50"
+            style={{ background: "radial-gradient(ellipse at top right, rgba(201, 169, 97, 0.18) 0%, transparent 60%)" }} />
+
+          {/* Subtle texture pattern */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+            style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.5) 1px, transparent 0)", backgroundSize: "24px 24px" }} />
+
+          {/* Gold corner ornament */}
+          <div className="absolute top-6 right-6 w-12 h-12 border-t border-r border-gilt-500/40 hidden sm:block" />
+          <div className="absolute bottom-6 left-6 w-12 h-12 border-b border-l border-gilt-500/40 hidden sm:block" />
 
           <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-[#D4A85C]" />
-              <span className="text-[#D4A85C] text-xs tracking-[0.25em] uppercase font-semibold">{greeting}</span>
+            <div className="text-gilt-400 text-[10px] tracking-[0.4em] uppercase font-medium mb-6 sm:mb-8" style={{ fontFamily: "var(--font-geist)" }}>
+              {greeting}
             </div>
-            <h1 className="text-white text-3xl sm:text-4xl font-medium mb-2 leading-tight"
-              style={{ fontFamily: "var(--font-fraunces)", letterSpacing: "-0.02em" }}>
-              {firstName}.
+
+            {/* The dramatic editorial heading */}
+            <h1 className="text-white leading-[0.95] tracking-tight mb-2"
+              style={{ fontFamily: "var(--font-instrument)", fontSize: "clamp(3rem, 8vw, 5.5rem)", fontWeight: 400 }}>
+              {firstName}
+              <span className="text-gilt-400 italic font-normal" style={{ fontFamily: "var(--font-instrument)" }}>.</span>
             </h1>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-white/40 text-sm">
+
+            <div className="flex items-center gap-4 mt-6 sm:mt-8">
               {student.studentNumber && (
-                <span className="font-mono text-[#D4A85C]/70 text-xs">{student.studentNumber}</span>
+                <span className="text-gilt-300 text-xs font-mono tracking-wider">
+                  {student.studentNumber}
+                </span>
               )}
-              {student.studentNumber && <span className="text-white/20">·</span>}
-              <span>Enrolled {student.enrolled}</span>
+              <span className="w-px h-3 bg-gilt-500/30" />
+              <span className="text-white/40 text-xs tracking-wider" style={{ fontFamily: "var(--font-geist)" }}>
+                ENROLLED {student.enrolled.toUpperCase()}
+              </span>
+            </div>
+
+            {/* Scripture verse — the spiritual gravitas */}
+            <div className="mt-8 sm:mt-12 pl-4 border-l-2 border-gilt-500/40">
+              <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-xl"
+                style={{ fontFamily: "var(--font-instrument)", fontStyle: "italic" }}>
+                He gave some, apostles; and some, prophets; and some, evangelists; and some, pastors and teachers.
+              </p>
+              <p className="text-gilt-400 text-xs tracking-[0.25em] uppercase mt-2" style={{ fontFamily: "var(--font-geist)" }}>
+                Ephesians 4:11
+              </p>
             </div>
           </div>
         </motion.div>
 
-        {/* ── QUICK STATS ───────────────────────────────────────────── */}
+        {/* ── EDITORIAL STAT CARDS ─────────────────────────────────── */}
         <motion.div variants={rise(0.1)} initial="hidden" animate="visible"
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {[
-            { icon: GraduationCap, label: "Courses Enrolled",  value: stats.coursesEnrolled,  total: null,                tint: "#1A1A2E", iconBg: "bg-[#1A1A2E]/10",      iconColor: "text-[#1A1A2E]"  },
-            { icon: CheckCircle,   label: "Courses Done",       value: stats.coursesCompleted, total: stats.coursesEnrolled, tint: "#16A34A", iconBg: "bg-green-50",         iconColor: "text-green-600"   },
-            { icon: Play,          label: "Subtopics Watched",  value: stats.subtopicsWatched, total: null,                tint: "#D4A85C", iconBg: "bg-[#D4A85C]/10",     iconColor: "text-[#D4A85C]"   },
-            { icon: TrendingUp,    label: stats.assessmentCount > 0 ? `Avg (${stats.assessmentCount} assess)` : "No exams yet", value: stats.assessmentAvg > 0 ? `${stats.assessmentAvg}%` : "—", total: null, tint: "#3B82F6", iconBg: "bg-blue-50", iconColor: "text-blue-600" },
+            { label: "Courses",      sublabel: "Enrolled",  value: stats.coursesEnrolled,     suffix: null },
+            { label: "Completed",    sublabel: "Courses",   value: stats.coursesCompleted,    suffix: stats.coursesEnrolled },
+            { label: "Subtopics",    sublabel: "Watched",   value: stats.subtopicsWatched,    suffix: null },
+            { label: stats.assessmentCount > 0 ? "Average" : "No Exams", sublabel: stats.assessmentCount > 0 ? `${stats.assessmentCount} graded` : "yet",
+              value: stats.assessmentAvg > 0 ? `${stats.assessmentAvg}` : "—", suffix: stats.assessmentAvg > 0 ? "%" : null },
           ].map((s, i) => (
-            <div key={i} className="bg-white border border-[#EAE3D6] rounded-2xl p-4 hover:border-[#D4A85C]/30 transition-all group">
-              <div className={`w-9 h-9 rounded-xl ${s.iconBg} flex items-center justify-center mb-3`}>
-                <s.icon className={`w-4 h-4 ${s.iconColor}`} />
-              </div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-[#1A1A2E] text-2xl font-semibold tabular-nums"
-                  style={{ fontFamily: "var(--font-fraunces)" }}>{s.value}</span>
-                {s.total !== null && s.total > 0 && (
-                  <span className="text-[#9B9B9B] text-sm font-normal">/ {s.total}</span>
+            <div key={i}
+              className="bg-white border border-ivory-300 rounded-2xl p-5 hover:border-gilt-400/50 transition-all group">
+              <div className="flex items-baseline gap-1.5 mb-2">
+                <span className="text-ink-800 tabular-nums leading-none"
+                  style={{ fontFamily: "var(--font-instrument)", fontSize: "2.5rem", fontWeight: 400 }}>
+                  {s.value}
+                </span>
+                {s.suffix && (
+                  <span className="text-ink-400 text-base"
+                    style={{ fontFamily: "var(--font-instrument)" }}>
+                    {typeof s.suffix === "number" ? `/ ${s.suffix}` : s.suffix}
+                  </span>
                 )}
               </div>
-              <div className="text-[#8B8B8B] text-[11px] mt-1 leading-tight">{s.label}</div>
+              <div className="border-t border-ivory-300 pt-2.5">
+                <div className="text-ink-800 text-xs font-medium" style={{ fontFamily: "var(--font-geist)" }}>
+                  {s.label}
+                </div>
+                <div className="text-ink-400 text-[10px] tracking-wider uppercase mt-0.5" style={{ fontFamily: "var(--font-geist)" }}>
+                  {s.sublabel}
+                </div>
+              </div>
             </div>
           ))}
         </motion.div>
 
         {/* ── ORIENTATION RECORDING ─────────────────────────────────── */}
         <motion.div variants={rise(0.18)} initial="hidden" animate="visible"
-          className="bg-white border border-[#EAE3D6] rounded-2xl overflow-hidden"
-          style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-          <div className="px-5 py-3.5 border-b border-[#F0EDE8] flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-[#1A1A2E] text-sm font-semibold truncate" style={{ fontFamily: "var(--font-fraunces)" }}>
-                Orientation Recording
-              </span>
-              <span className="text-[10px] bg-red-50 border border-red-200 text-red-600 px-2 py-0.5 rounded-full font-medium hidden sm:inline-block">
-                Watch Now
-              </span>
+          className="bg-white border border-ivory-300 rounded-2xl overflow-hidden"
+          style={{ boxShadow: "0 4px 20px -8px rgba(45, 27, 94, 0.08)" }}>
+          <div className="px-6 py-4 border-b border-ivory-200 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-1 h-8 bg-gilt-500 rounded-full" />
+              <div className="min-w-0">
+                <div className="text-ink-800 text-base sm:text-lg truncate" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
+                  Cohort Orientation
+                </div>
+                <div className="text-ink-400 text-[11px] tracking-wider uppercase mt-0.5" style={{ fontFamily: "var(--font-geist)" }}>
+                  7 May 2026 · Recording
+                </div>
+              </div>
             </div>
-            <span className="text-[#9B9B9B] text-xs flex-shrink-0">7 May 2026</span>
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase bg-royal-50 text-royal-700 border border-royal-100 px-3 py-1.5 rounded-full">
+              Watch Now
+            </span>
           </div>
-          <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
-            <iframe
-              src="https://www.youtube.com/embed/5avJn6tSOHw?rel=0&modestbranding=1"
+          <div className="relative w-full bg-black" style={{ aspectRatio: "16/9" }}>
+            <iframe src="https://www.youtube.com/embed/5avJn6tSOHw?rel=0&modestbranding=1"
               title="S&D Prophetic School — Orientation 2026"
               className="absolute inset-0 w-full h-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+              allowFullScreen />
           </div>
         </motion.div>
 
         {/* ── CONTINUE LEARNING ─────────────────────────────────────── */}
         {nextSubtopic && (
-          <motion.div variants={rise(0.2)} initial="hidden" animate="visible">
+          <motion.div variants={rise(0.22)} initial="hidden" animate="visible">
             <Link href={`/portal/lessons/${nextSubtopic.id}`}
-              className="group block bg-gradient-to-br from-[#D4A85C]/[0.08] via-[#FAF6EA] to-[#FAF9F6] border border-[#D4A85C]/25 rounded-2xl p-5 hover:border-[#D4A85C]/50 transition-all"
-              style={{ boxShadow: "0 2px 12px rgba(212,168,92,0.12)" }}>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-[#1A1A2E] flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                  <Play className="w-5 h-5 text-[#D4A85C]" fill="currentColor" />
+              className="group block relative bg-white border border-ivory-300 rounded-2xl p-6 sm:p-8 hover:border-gilt-400/60 transition-all overflow-hidden"
+              style={{ boxShadow: "0 4px 20px -8px rgba(45, 27, 94, 0.08)" }}>
+
+              <div className="absolute top-0 right-0 w-1/3 h-full opacity-30 pointer-events-none"
+                style={{ background: "radial-gradient(ellipse at right, rgba(201, 169, 97, 0.15) 0%, transparent 70%)" }} />
+
+              <div className="relative flex flex-col sm:flex-row sm:items-center gap-5">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-royal-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform"
+                  style={{ boxShadow: "0 8px 24px -8px rgba(45, 27, 94, 0.4)" }}>
+                  <Play className="w-5 h-5 sm:w-6 sm:h-6 text-gilt-400" fill="currentColor" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[#8B7355] text-[10px] uppercase tracking-[0.2em] font-semibold mb-1">
+                  <div className="text-gilt-700 text-[10px] uppercase tracking-[0.3em] font-medium mb-2" style={{ fontFamily: "var(--font-geist)" }}>
                     Continue Where You Left Off
                   </div>
-                  <div className="text-[#1A1A2E] text-base font-semibold truncate group-hover:text-[#8B6F35] transition-colors"
-                    style={{ fontFamily: "var(--font-fraunces)" }}>
+                  <div className="text-ink-800 text-xl sm:text-2xl mb-1.5" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
                     {nextSubtopic.title}
                   </div>
-                  <div className="text-[#9B9B9B] text-xs mt-0.5 truncate">{nextSubtopic.courseTitle}</div>
+                  <div className="text-ink-400 text-sm" style={{ fontFamily: "var(--font-geist)" }}>
+                    {nextSubtopic.courseTitle}
+                  </div>
                 </div>
-                <ArrowRight className="w-5 h-5 text-[#D4A85C] flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+                <ArrowUpRight className="w-5 h-5 text-gilt-600 group-hover:rotate-12 transition-transform flex-shrink-0 hidden sm:block" />
               </div>
             </Link>
           </motion.div>
         )}
 
-        {/* ── PENDING ASSESSMENTS ─────────────────────────────────── */}
+        {/* ── PENDING ASSESSMENTS ───────────────────────────────────── */}
         {pendingAssessments.length > 0 && (
-          <motion.div variants={rise(0.25)} initial="hidden" animate="visible">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[#1A1A2E] text-base font-semibold flex items-center gap-2"
-                style={{ fontFamily: "var(--font-fraunces)" }}>
-                <Star className="w-4 h-4 text-[#D4A85C]" />
-                Assessments Due
+          <motion.div variants={rise(0.26)} initial="hidden" animate="visible">
+            <div className="flex items-baseline justify-between mb-4">
+              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
+                Assessments <span className="italic text-gilt-600">due</span>
               </h2>
-              <Link href="/portal/assessments" className="text-[#8B7355] hover:text-[#1A1A2E] text-xs transition-colors flex items-center gap-1">
+              <Link href="/portal/assessments" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors flex items-center gap-1" style={{ fontFamily: "var(--font-geist)" }}>
                 See all <ChevronRight className="w-3 h-3" />
               </Link>
             </div>
             <div className="space-y-2">
-              {pendingAssessments.map((a, i) => (
+              {pendingAssessments.map((a) => (
                 <Link key={a.id} href={`/portal/assessments/${a.id}`}
-                  className="group flex items-center gap-4 bg-white border border-[#EAE3D6] rounded-2xl px-5 py-4 hover:border-[#D4A85C]/40 hover:shadow-sm transition-all">
-                  <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
-                    <Star className="w-4 h-4 text-[#D4A85C]" />
+                  className="group flex items-center gap-4 bg-white border border-ivory-300 rounded-2xl px-5 py-4 hover:border-royal-200 transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-gilt-50 border border-gilt-200 flex items-center justify-center flex-shrink-0">
+                    <Star className="w-4 h-4 text-gilt-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[#8B7355] text-[10px] uppercase tracking-widest mb-0.5">
+                    <div className="text-ink-400 text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: "var(--font-geist)" }}>
                       {a.courses?.title}
                     </div>
-                    <div className="text-[#1A1A2E] text-sm font-semibold truncate group-hover:text-[#D4A85C] transition-colors">
+                    <div className="text-ink-800 text-base truncate" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
                       {a.title}
                     </div>
-                    <div className="text-[#9B9B9B] text-xs mt-0.5">
-                      {a.total_marks} marks
-                      {a.due_date && ` · Due ${new Date(a.due_date).toLocaleDateString("en-NG", { dateStyle: "medium" })}`}
+                    <div className="text-ink-400 text-xs mt-0.5" style={{ fontFamily: "var(--font-geist)" }}>
+                      {a.total_marks} marks{a.due_date && ` · Due ${new Date(a.due_date).toLocaleDateString("en-NG", { dateStyle: "medium" })}`}
                     </div>
                   </div>
-                  <span className="bg-[#1A1A2E] text-white text-xs font-semibold px-3 py-1.5 rounded-full flex-shrink-0">
+                  <span className="bg-royal-700 text-white text-xs font-medium px-4 py-2 rounded-full flex-shrink-0 group-hover:bg-royal-800 transition-colors" style={{ fontFamily: "var(--font-geist)" }}>
                     Take
                   </span>
                 </Link>
@@ -311,47 +310,45 @@ export default function StudentDashboard() {
           </motion.div>
         )}
 
-        {/* ── COURSES & ANNOUNCEMENTS — TWO COLS ON DESKTOP ───────── */}
+        {/* ── COURSES + ANNOUNCEMENTS ───────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           {/* Courses */}
           <motion.div variants={rise(0.3)} initial="hidden" animate="visible" className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[#1A1A2E] text-base font-semibold flex items-center gap-2"
-                style={{ fontFamily: "var(--font-fraunces)" }}>
-                <BookOpen className="w-4 h-4 text-[#D4A85C]" />
-                Your Courses
+            <div className="flex items-baseline justify-between mb-4">
+              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
+                Your <span className="italic text-gilt-600">courses</span>
               </h2>
-              <Link href="/portal/courses" className="text-[#8B7355] hover:text-[#1A1A2E] text-xs transition-colors flex items-center gap-1">
+              <Link href="/portal/courses" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors flex items-center gap-1" style={{ fontFamily: "var(--font-geist)" }}>
                 See all <ChevronRight className="w-3 h-3" />
               </Link>
             </div>
 
             {recentCourses.length === 0 ? (
-              <div className="bg-white border border-[#EAE3D6] rounded-2xl p-10 text-center">
-                <BookOpen className="w-10 h-10 text-[#E8E2D9] mx-auto mb-3" />
-                <p className="text-[#9B9B9B] text-sm">No courses yet.</p>
+              <div className="bg-white border border-ivory-300 rounded-2xl p-12 text-center">
+                <BookOpen className="w-10 h-10 text-ivory-300 mx-auto mb-3" />
+                <p className="text-ink-400 text-sm" style={{ fontFamily: "var(--font-geist)" }}>No courses yet.</p>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-[#EAE3D6] overflow-hidden"
-                style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+              <div className="bg-white rounded-2xl border border-ivory-300 overflow-hidden"
+                style={{ boxShadow: "0 4px 20px -8px rgba(45, 27, 94, 0.06)" }}>
                 {recentCourses.map((course, i) => (
                   <Link key={course.id} href={`/portal/courses/${course.slug}`}
-                    className={`flex items-center gap-4 px-5 py-4 hover:bg-[#FAF9F6] transition-colors group
-                      ${i < recentCourses.length - 1 ? "border-b border-[#F5F0E8]" : ""}`}>
-                    <div className="w-10 h-10 rounded-xl bg-[#FAF6EA] border border-[#EAE3D6] flex items-center justify-center flex-shrink-0">
-                      <span className="text-[#D4A85C] text-xs font-mono font-bold">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
+                    className={`flex items-center gap-5 px-5 py-5 hover:bg-ivory-50 transition-colors group
+                      ${i < recentCourses.length - 1 ? "border-b border-ivory-200" : ""}`}>
+                    <div className="text-gilt-600 text-2xl font-mono leading-none flex-shrink-0 w-8" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
+                      {String(i + 1).padStart(2, "0")}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[#1A1A2E] text-sm font-semibold truncate group-hover:text-[#D4A85C] transition-colors"
-                        style={{ fontFamily: "var(--font-fraunces)" }}>
+                      <div className="text-ink-800 text-lg leading-tight truncate group-hover:text-royal-700 transition-colors"
+                        style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
                         {course.title}
                       </div>
-                      <div className="text-[#9B9B9B] text-xs mt-0.5">Year {course.year}</div>
+                      <div className="text-ink-400 text-xs mt-1 tracking-wider uppercase" style={{ fontFamily: "var(--font-geist)" }}>
+                        Year {course.year}
+                      </div>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:text-[#D4A85C] transition-colors flex-shrink-0" />
+                    <ArrowUpRight className="w-4 h-4 text-ivory-300 group-hover:text-gilt-600 group-hover:rotate-12 transition-all flex-shrink-0" />
                   </Link>
                 ))}
               </div>
@@ -360,36 +357,34 @@ export default function StudentDashboard() {
 
           {/* Announcements */}
           <motion.div variants={rise(0.35)} initial="hidden" animate="visible">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[#1A1A2E] text-base font-semibold flex items-center gap-2"
-                style={{ fontFamily: "var(--font-fraunces)" }}>
-                <Megaphone className="w-4 h-4 text-[#D4A85C]" />
-                Announcements
+            <div className="flex items-baseline justify-between mb-4">
+              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
+                <span className="italic text-gilt-600">News</span>
               </h2>
-              <Link href="/portal/announcements" className="text-[#8B7355] hover:text-[#1A1A2E] text-xs transition-colors">
+              <Link href="/portal/announcements" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors" style={{ fontFamily: "var(--font-geist)" }}>
                 All
               </Link>
             </div>
 
             {announcements.length === 0 ? (
-              <div className="bg-white border border-[#EAE3D6] rounded-2xl p-6 text-center">
-                <p className="text-[#9B9B9B] text-xs">No announcements.</p>
+              <div className="bg-white border border-ivory-300 rounded-2xl p-6 text-center">
+                <p className="text-ink-400 text-xs" style={{ fontFamily: "var(--font-geist)" }}>No announcements.</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {announcements.map(a => (
                   <Link key={a.id} href="/portal/announcements"
-                    className="block bg-white border border-[#EAE3D6] rounded-2xl p-4 hover:border-[#D4A85C]/30 transition-all">
+                    className="block bg-white border border-ivory-300 rounded-2xl p-4 hover:border-gilt-400/40 transition-all">
                     {a.is_pinned && (
-                      <div className="text-[#D4A85C] text-[9px] tracking-widest uppercase font-semibold mb-1.5">
-                        Pinned
+                      <div className="text-gilt-600 text-[9px] tracking-[0.3em] uppercase font-medium mb-2" style={{ fontFamily: "var(--font-geist)" }}>
+                        ◆ Pinned
                       </div>
                     )}
-                    <div className="text-[#1A1A2E] text-sm font-semibold mb-1 line-clamp-2"
-                      style={{ fontFamily: "var(--font-fraunces)" }}>
+                    <div className="text-ink-800 text-base leading-tight mb-2 line-clamp-2"
+                      style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
                       {a.title}
                     </div>
-                    <div className="text-[#9B9B9B] text-[11px] flex items-center gap-1">
+                    <div className="text-ink-400 text-[10px] tracking-wider uppercase flex items-center gap-1" style={{ fontFamily: "var(--font-geist)" }}>
                       <Clock className="w-2.5 h-2.5" />
                       {new Date(a.published_at).toLocaleDateString("en-NG", { dateStyle: "medium" })}
                     </div>
