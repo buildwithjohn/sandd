@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   LogOut, LayoutDashboard, BookOpen,
   Megaphone, User, Award, FolderOpen, Menu, X, Star
@@ -75,16 +76,16 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="min-h-screen bg-ivory-100" style={{ fontFamily: "Arial, sans-serif" }}>
+    <div className="min-h-screen theme-bg" style={{ fontFamily: "Arial, sans-serif" }}>
 
       {/* ── TOP NAV ─────────────────────────────────────── */}
-      <nav className="bg-white border-b border-[#E8E2D9] sticky top-0 z-50"
+      <nav className="theme-bg-elevated border-b theme-border-soft sticky top-0 z-50"
         style={{ boxShadow: "0 1px 0 rgba(0,0,0,0.04)" }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
 
           {/* Hamburger — mobile only */}
           <button onClick={() => setDrawerOpen(v => !v)}
-            className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center text-ink-800 hover:bg-ivory-200 transition-colors flex-shrink-0">
+            className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center theme-text hover:theme-bg-subtle transition-colors flex-shrink-0">
             {drawerOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
@@ -92,10 +93,10 @@ export default function PortalShell({ children }: { children: React.ReactNode })
           <Link href="/portal/dashboard" className="flex items-center gap-2">
             <Image src="/assets/logo.png" alt="S&D" width={30} height={30} className="rounded-lg flex-shrink-0" />
             <div className="hidden sm:block">
-              <div className="text-ink-800 text-sm font-semibold leading-none" style={{ fontFamily: "'Georgia', serif" }}>
+              <div className="theme-text text-sm font-semibold leading-none" style={{ fontFamily: "'Georgia', serif" }}>
                 S&D Prophetic School
               </div>
-              <div className="text-[9px] text-gilt-700 mt-0.5 tracking-wide uppercase">Student Portal</div>
+              <div className="text-[9px] theme-accent mt-0.5 tracking-wide uppercase">Student Portal</div>
             </div>
           </Link>
 
@@ -106,7 +107,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
               return (
                 <Link key={l.href} href={l.href}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    active ? "bg-royal-700 text-white" : "text-ink-400 hover:text-ink-800 hover:bg-[#F0EDE8]"
+                    active ? "bg-royal-700 text-white" : "theme-text-faint hover:theme-text hover:bg-[#F0EDE8]"
                   }`}>
                   <l.icon className="w-3.5 h-3.5" />
                   {l.label}
@@ -115,7 +116,9 @@ export default function PortalShell({ children }: { children: React.ReactNode })
             })}
           </div>
 
-          {/* Avatar */}
+          {/* Theme toggle + Avatar */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <ThemeToggle className="!w-9 !h-9" />
           <Link href="/portal/profile" className="flex-shrink-0">
             <div className="w-8 h-8 rounded-full overflow-hidden bg-royal-700 flex items-center justify-center border-2 border-transparent hover:border-[#D4A85C] transition-all">
               {profile.avatarUrl
@@ -124,6 +127,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
               }
             </div>
           </Link>
+          </div>
         </div>
       </nav>
 
@@ -145,7 +149,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                 </div>
                 <div>
                   <div className="text-white text-sm font-semibold" style={{ fontFamily: "'Georgia', serif" }}>{profile.name}</div>
-                  <div className="text-gilt-600 text-xs mt-0.5">{profile.church || "Student"}</div>
+                  <div className="theme-accent text-xs mt-0.5">{profile.church || "Student"}</div>
                   <div className="text-white/40 text-[10px] mt-0.5">Year {profile.year}</div>
                 </div>
               </div>
@@ -160,9 +164,9 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                     className={`flex items-center gap-3 px-4 py-3.5 rounded-xl mb-1 transition-all ${
                       active
                         ? "bg-royal-700 text-white"
-                        : "text-ink-600 hover:bg-ivory-200"
+                        : "theme-text-muted hover:bg-ivory-200"
                     }`}>
-                    <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "text-gilt-600" : "text-gilt-700"}`} />
+                    <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "theme-accent" : "theme-accent"}`} />
                     <span className="text-sm font-medium">{l.label}</span>
                   </Link>
                 );
@@ -170,20 +174,20 @@ export default function PortalShell({ children }: { children: React.ReactNode })
             </div>
 
             {/* Registrar + sign out */}
-            <div className="px-3 pb-6 border-t border-[#E8E2D9] mt-2 pt-4">
-              <div className="bg-ivory-200 rounded-xl p-3 mb-3">
-                <div className="text-ink-400 text-[10px] uppercase tracking-widest mb-2">School Administration</div>
+            <div className="px-3 pb-6 border-t theme-border-soft mt-2 pt-4">
+              <div className="theme-bg-subtle rounded-xl p-3 mb-3">
+                <div className="theme-text-faint text-[10px] uppercase tracking-widest mb-2">School Administration</div>
                 <div className="flex items-center gap-2.5 mb-2">
-                  <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 border border-[#E8E2D9]">
+                  <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 border theme-border-soft">
                     <Image src="/assets/registrar.jpg" alt="Registrar" width={32} height={32} className="w-full h-full object-cover object-top" />
                   </div>
                   <div>
-                    <div className="text-ink-800 text-xs font-semibold">John Ayomide Akinola</div>
-                    <div className="text-ink-400 text-[10px]">Registrar</div>
+                    <div className="theme-text text-xs font-semibold">John Ayomide Akinola</div>
+                    <div className="theme-text-faint text-[10px]">Registrar</div>
                   </div>
                 </div>
                 <a href="mailto:sandd@abiodunsule.uk"
-                  className="block text-center text-gilt-700 text-xs bg-white rounded-lg py-2 border border-[#E8E2D9]">
+                  className="block text-center theme-accent text-xs bg-white rounded-lg py-2 border theme-border-soft">
                   Contact Registrar
                 </a>
               </div>
@@ -204,7 +208,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         <aside className="w-52 flex-shrink-0 hidden lg:block">
           <div className="sticky top-20 space-y-2">
             {/* Student card */}
-            <div className="bg-white rounded-2xl border border-[#E8E2D9] p-4"
+            <div className="bg-white rounded-2xl border theme-border-soft p-4"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-xl overflow-hidden bg-royal-700 flex items-center justify-center flex-shrink-0">
@@ -214,56 +218,56 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                   }
                 </div>
                 <div className="min-w-0">
-                  <div className="text-ink-800 text-sm font-semibold truncate" style={{ fontFamily: "'Georgia', serif" }}>
+                  <div className="theme-text text-sm font-semibold truncate" style={{ fontFamily: "'Georgia', serif" }}>
                     {profile.name.split(" ")[0]}
                   </div>
-                  <div className="text-[10px] text-gilt-700 mt-0.5">{profile.church || "Student"}</div>
+                  <div className="text-[10px] theme-accent mt-0.5">{profile.church || "Student"}</div>
                 </div>
               </div>
-              <div className="bg-ivory-200 rounded-lg px-3 py-2 flex items-center justify-between">
-                <span className="text-gilt-700 text-[10px] uppercase tracking-wide">Year</span>
-                <span className="text-ink-800 text-xs font-bold">Year {profile.year}</span>
+              <div className="theme-bg-subtle rounded-lg px-3 py-2 flex items-center justify-between">
+                <span className="theme-accent text-[10px] uppercase tracking-wide">Year</span>
+                <span className="theme-text text-xs font-bold">Year {profile.year}</span>
               </div>
             </div>
 
             {/* Nav */}
-            <div className="bg-white rounded-2xl border border-[#E8E2D9] p-2"
+            <div className="bg-white rounded-2xl border theme-border-soft p-2"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
               {navLinks.map(l => {
                 const active = pathname === l.href;
                 return (
                   <Link key={l.href} href={l.href}
                     className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                      active ? "bg-royal-700 text-white font-medium" : "text-ink-400 hover:bg-ivory-200 hover:text-ink-800"
+                      active ? "bg-[var(--primary)] text-white font-medium" : "theme-text-faint hover:bg-ivory-200 hover:theme-text"
                     }`}>
-                    <l.icon className={`w-4 h-4 ${active ? "text-gilt-600" : ""}`} />
+                    <l.icon className={`w-4 h-4 ${active ? "theme-accent" : ""}`} />
                     {l.label}
                   </Link>
                 );
               })}
-              <div className="border-t border-[#E8E2D9] mt-2 pt-2">
+              <div className="border-t theme-border-soft mt-2 pt-2">
                 <button onClick={signOut}
-                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm text-ink-400 hover:text-red-500 hover:bg-red-50 w-full transition-all">
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm theme-text-faint hover:text-red-500 hover:bg-red-50 w-full transition-all">
                   <LogOut className="w-4 h-4" /> Sign Out
                 </button>
               </div>
             </div>
 
             {/* Registrar */}
-            <div className="bg-white rounded-2xl border border-[#E8E2D9] p-3"
+            <div className="bg-white rounded-2xl border theme-border-soft p-3"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
               <div className="text-[#C4BDB2] text-[9px] uppercase tracking-widest mb-2.5">School Administration</div>
               <div className="flex items-center gap-2.5 mb-2">
-                <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 border border-[#E8E2D9]">
+                <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 border theme-border-soft">
                   <Image src="/assets/registrar.jpg" alt="Registrar" width={32} height={32} className="w-full h-full object-cover object-top" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-ink-800 text-xs font-semibold truncate">John Ayomide Akinola</div>
-                  <div className="text-ink-400 text-[10px]">Registrar</div>
+                  <div className="theme-text text-xs font-semibold truncate">John Ayomide Akinola</div>
+                  <div className="theme-text-faint text-[10px]">Registrar</div>
                 </div>
               </div>
               <a href="mailto:sandd@abiodunsule.uk"
-                className="block text-center text-gilt-700 hover:text-gilt-600 text-[10px] transition-colors bg-ivory-200 hover:bg-ivory-300 rounded-lg py-1.5 px-2">
+                className="block text-center theme-accent hover:theme-accent text-[10px] transition-colors bg-ivory-200 hover:theme-bg-muted rounded-lg py-1.5 px-2">
                 Contact Registrar
               </a>
             </div>
@@ -277,7 +281,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
       </div>
 
       {/* ── MOBILE BOTTOM NAV ────────────────────────────── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#E8E2D9]"
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 theme-bg-elevated border-t theme-border-soft"
         style={{ boxShadow: "0 -4px 20px rgba(0,0,0,0.08)" }}>
         <div className="flex items-center justify-around px-2 py-1">
           {bottomNav.map(l => {
@@ -285,8 +289,8 @@ export default function PortalShell({ children }: { children: React.ReactNode })
             return (
               <Link key={l.href} href={l.href}
                 className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all min-w-0 flex-1">
-                <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "text-ink-800" : "text-ink-400"}`} />
-                <span className={`text-[10px] font-medium truncate ${active ? "text-ink-800" : "text-ink-400"}`}>
+                <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "theme-text" : "theme-text-faint"}`} />
+                <span className={`text-[10px] font-medium truncate ${active ? "theme-text" : "theme-text-faint"}`}>
                   {l.label}
                 </span>
                 {active && <div className="w-1 h-1 rounded-full bg-[#D4A85C]" />}
@@ -296,8 +300,8 @@ export default function PortalShell({ children }: { children: React.ReactNode })
           {/* More button */}
           <button onClick={() => setDrawerOpen(v => !v)}
             className="flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all min-w-0 flex-1">
-            <Menu className="w-5 h-5 text-ink-400" />
-            <span className="text-[10px] font-medium text-ink-400">More</span>
+            <Menu className="w-5 h-5 theme-text-faint" />
+            <span className="text-[10px] font-medium theme-text-faint">More</span>
           </button>
         </div>
       </nav>

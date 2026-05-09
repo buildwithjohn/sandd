@@ -187,24 +187,24 @@ export default function StudentDashboard() {
               value: stats.assessmentAvg > 0 ? `${stats.assessmentAvg}` : "—", suffix: stats.assessmentAvg > 0 ? "%" : null },
           ].map((s, i) => (
             <div key={i}
-              className="bg-white border border-ivory-300 rounded-2xl p-5 hover:border-gilt-400/50 transition-all group">
+              className="theme-bg-elevated border theme-border rounded-2xl p-5 hover:border-[var(--accent)] transition-all group">
               <div className="flex items-baseline gap-1.5 mb-2">
-                <span className="text-ink-800 tabular-nums leading-none"
+                <span className="theme-text tabular-nums leading-none"
                   style={{ fontFamily: "'Georgia', serif", fontWeight: 600 }}>
                   {s.value}
                 </span>
                 {s.suffix && (
-                  <span className="text-ink-400 text-base"
+                  <span className="theme-text-muted text-base"
                     style={{ fontFamily: "'Georgia', serif" }}>
                     {typeof s.suffix === "number" ? `/ ${s.suffix}` : s.suffix}
                   </span>
                 )}
               </div>
-              <div className="border-t border-ivory-300 pt-2.5">
-                <div className="text-ink-800 text-xs font-medium" style={{ fontFamily: "'Arial', sans-serif" }}>
+              <div className="border-t theme-border pt-2.5">
+                <div className="theme-text text-xs font-medium" style={{ fontFamily: "'Arial', sans-serif" }}>
                   {s.label}
                 </div>
-                <div className="text-ink-400 text-[10px] tracking-wider uppercase mt-0.5" style={{ fontFamily: "'Arial', sans-serif" }}>
+                <div className="theme-text-faint text-[10px] tracking-wider uppercase mt-0.5" style={{ fontFamily: "'Arial', sans-serif" }}>
                   {s.sublabel}
                 </div>
               </div>
@@ -214,13 +214,13 @@ export default function StudentDashboard() {
 
         {/* ── ORIENTATION RECORDING ─────────────────────────────────── */}
         <motion.div variants={rise(0.18)} initial="hidden" animate="visible"
-          className="bg-white border border-ivory-300 rounded-2xl overflow-hidden"
+          className="theme-bg-elevated border theme-border rounded-2xl overflow-hidden"
           style={{ boxShadow: "0 4px 20px -8px rgba(45, 27, 94, 0.08)" }}>
-          <div className="px-6 py-4 border-b border-ivory-200 flex items-center justify-between gap-3">
+          <div className="px-6 py-4 border-b theme-border-soft flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-1 h-8 bg-gilt-500 rounded-full" />
               <div className="min-w-0">
-                <div className="text-ink-800 text-base sm:text-lg truncate" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
+                <div className="theme-text text-base sm:text-lg truncate" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                   Cohort Orientation
                 </div>
                 <div className="text-ink-400 text-[11px] tracking-wider uppercase mt-0.5" style={{ fontFamily: "'Arial', sans-serif" }}>
@@ -245,7 +245,7 @@ export default function StudentDashboard() {
         {nextSubtopic && (
           <motion.div variants={rise(0.22)} initial="hidden" animate="visible">
             <Link href={`/portal/lessons/${nextSubtopic.id}`}
-              className="group block relative bg-white border border-ivory-300 rounded-2xl p-6 sm:p-8 hover:border-gilt-400/60 transition-all overflow-hidden"
+              className="group block relative theme-bg-elevated border theme-border rounded-2xl p-6 sm:p-8 hover:border-gilt-400/60 transition-all overflow-hidden"
               style={{ boxShadow: "0 4px 20px -8px rgba(45, 27, 94, 0.08)" }}>
 
               <div className="absolute top-0 right-0 w-1/3 h-full opacity-30 pointer-events-none"
@@ -257,17 +257,17 @@ export default function StudentDashboard() {
                   <Play className="w-5 h-5 sm:w-6 sm:h-6 text-gilt-400" fill="currentColor" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-gilt-700 text-[10px] uppercase tracking-[0.3em] font-medium mb-2" style={{ fontFamily: "'Arial', sans-serif" }}>
+                  <div className="theme-accent text-[10px] uppercase tracking-[0.3em] font-medium mb-2" style={{ fontFamily: "'Arial', sans-serif" }}>
                     Continue Where You Left Off
                   </div>
-                  <div className="text-ink-800 text-xl sm:text-2xl mb-1.5" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
+                  <div className="theme-text text-xl sm:text-2xl mb-1.5" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                     {nextSubtopic.title}
                   </div>
-                  <div className="text-ink-400 text-sm" style={{ fontFamily: "'Arial', sans-serif" }}>
+                  <div className="theme-text-muted text-sm" style={{ fontFamily: "'Arial', sans-serif" }}>
                     {nextSubtopic.courseTitle}
                   </div>
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-gilt-600 group-hover:rotate-12 transition-transform flex-shrink-0 hidden sm:block" />
+                <ArrowUpRight className="w-5 h-5 theme-accent group-hover:rotate-12 transition-transform flex-shrink-0 hidden sm:block" />
               </div>
             </Link>
           </motion.div>
@@ -277,32 +277,32 @@ export default function StudentDashboard() {
         {pendingAssessments.length > 0 && (
           <motion.div variants={rise(0.26)} initial="hidden" animate="visible">
             <div className="flex items-baseline justify-between mb-4">
-              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
+              <h2 className="theme-text text-2xl sm:text-3xl" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                 Assessments Due
               </h2>
-              <Link href="/portal/assessments" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors flex items-center gap-1" style={{ fontFamily: "'Arial', sans-serif" }}>
+              <Link href="/portal/assessments" className="theme-text-muted hover:theme-primary text-xs uppercase tracking-wider transition-colors flex items-center gap-1" style={{ fontFamily: "'Arial', sans-serif" }}>
                 See all <ChevronRight className="w-3 h-3" />
               </Link>
             </div>
             <div className="space-y-2">
               {pendingAssessments.map((a) => (
                 <Link key={a.id} href={`/portal/assessments/${a.id}`}
-                  className="group flex items-center gap-4 bg-white border border-ivory-300 rounded-2xl px-5 py-4 hover:border-royal-200 transition-all">
-                  <div className="w-10 h-10 rounded-xl bg-gilt-50 border border-gilt-200 flex items-center justify-center flex-shrink-0">
-                    <Star className="w-4 h-4 text-gilt-600" />
+                  className="group flex items-center gap-4 theme-bg-elevated border theme-border rounded-2xl px-5 py-4 hover:border-royal-200 transition-all">
+                  <div className="w-10 h-10 rounded-xl theme-accent-bg border theme-border flex items-center justify-center flex-shrink-0">
+                    <Star className="w-4 h-4 theme-accent" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-ink-400 text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: "'Arial', sans-serif" }}>
+                    <div className="theme-text-faint text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: "'Arial', sans-serif" }}>
                       {a.courses?.title}
                     </div>
-                    <div className="text-ink-800 text-base truncate" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
+                    <div className="theme-text text-base truncate" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                       {a.title}
                     </div>
-                    <div className="text-ink-400 text-xs mt-0.5" style={{ fontFamily: "'Arial', sans-serif" }}>
+                    <div className="theme-text-muted text-xs mt-0.5" style={{ fontFamily: "'Arial', sans-serif" }}>
                       {a.total_marks} marks{a.due_date && ` · Due ${new Date(a.due_date).toLocaleDateString("en-NG", { dateStyle: "medium" })}`}
                     </div>
                   </div>
-                  <span className="bg-royal-700 text-white text-xs font-medium px-4 py-2 rounded-full flex-shrink-0 group-hover:bg-royal-800 transition-colors" style={{ fontFamily: "'Arial', sans-serif" }}>
+                  <span className="bg-[var(--primary)] text-white text-xs font-medium px-4 py-2 rounded-full flex-shrink-0 group-hover:bg-royal-800 transition-colors" style={{ fontFamily: "'Arial', sans-serif" }}>
                     Take
                   </span>
                 </Link>
@@ -317,31 +317,31 @@ export default function StudentDashboard() {
           {/* Courses */}
           <motion.div variants={rise(0.3)} initial="hidden" animate="visible" className="lg:col-span-2">
             <div className="flex items-baseline justify-between mb-4">
-              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
+              <h2 className="theme-text text-2xl sm:text-3xl" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                 Your Courses
               </h2>
-              <Link href="/portal/courses" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors flex items-center gap-1" style={{ fontFamily: "'Arial', sans-serif" }}>
+              <Link href="/portal/courses" className="theme-text-muted hover:theme-primary text-xs uppercase tracking-wider transition-colors flex items-center gap-1" style={{ fontFamily: "'Arial', sans-serif" }}>
                 See all <ChevronRight className="w-3 h-3" />
               </Link>
             </div>
 
             {recentCourses.length === 0 ? (
-              <div className="bg-white border border-ivory-300 rounded-2xl p-12 text-center">
-                <BookOpen className="w-10 h-10 text-ivory-300 mx-auto mb-3" />
-                <p className="text-ink-400 text-sm" style={{ fontFamily: "'Arial', sans-serif" }}>No courses yet.</p>
+              <div className="theme-bg-elevated border theme-border rounded-2xl p-12 text-center">
+                <BookOpen className="w-10 h-10 theme-text-faint mx-auto mb-3" />
+                <p className="theme-text-muted text-sm" style={{ fontFamily: "'Arial', sans-serif" }}>No courses yet.</p>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-ivory-300 overflow-hidden"
+              <div className="theme-bg-elevated rounded-2xl border theme-border overflow-hidden"
                 style={{ boxShadow: "0 4px 20px -8px rgba(45, 27, 94, 0.06)" }}>
                 {recentCourses.map((course, i) => (
                   <Link key={course.id} href={`/portal/courses/${course.slug}`}
-                    className={`flex items-center gap-5 px-5 py-5 hover:bg-ivory-50 transition-colors group
-                      ${i < recentCourses.length - 1 ? "border-b border-ivory-200" : ""}`}>
-                    <div className="text-gilt-600 text-2xl font-mono leading-none flex-shrink-0 w-8" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
+                    className={`flex items-center gap-5 px-5 py-5 hover:theme-bg-subtle transition-colors group
+                      ${i < recentCourses.length - 1 ? "border-b theme-border-soft" : ""}`}>
+                    <div className="theme-accent text-2xl font-mono leading-none flex-shrink-0 w-8" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                       {String(i + 1).padStart(2, "0")}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-ink-800 text-lg leading-tight truncate group-hover:text-royal-700 transition-colors"
+                      <div className="theme-text text-lg leading-tight truncate group-hover:theme-primary transition-colors"
                         style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                         {course.title}
                       </div>
@@ -349,7 +349,7 @@ export default function StudentDashboard() {
                         Year {course.year}
                       </div>
                     </div>
-                    <ArrowUpRight className="w-4 h-4 text-ivory-300 group-hover:text-gilt-600 group-hover:rotate-12 transition-all flex-shrink-0" />
+                    <ArrowUpRight className="w-4 h-4 text-ivory-300 group-hover:theme-accent group-hover:rotate-12 transition-all flex-shrink-0" />
                   </Link>
                 ))}
               </div>
@@ -359,33 +359,33 @@ export default function StudentDashboard() {
           {/* Announcements */}
           <motion.div variants={rise(0.35)} initial="hidden" animate="visible">
             <div className="flex items-baseline justify-between mb-4">
-              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
+              <h2 className="theme-text text-2xl sm:text-3xl" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                 News
               </h2>
-              <Link href="/portal/announcements" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors" style={{ fontFamily: "'Arial', sans-serif" }}>
+              <Link href="/portal/announcements" className="theme-text-muted hover:theme-primary text-xs uppercase tracking-wider transition-colors" style={{ fontFamily: "'Arial', sans-serif" }}>
                 All
               </Link>
             </div>
 
             {announcements.length === 0 ? (
-              <div className="bg-white border border-ivory-300 rounded-2xl p-6 text-center">
+              <div className="theme-bg-elevated border theme-border rounded-2xl p-6 text-center">
                 <p className="text-ink-400 text-xs" style={{ fontFamily: "'Arial', sans-serif" }}>No announcements.</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {announcements.map(a => (
                   <Link key={a.id} href="/portal/announcements"
-                    className="block bg-white border border-ivory-300 rounded-2xl p-4 hover:border-gilt-400/40 transition-all">
+                    className="block theme-bg-elevated border theme-border rounded-2xl p-4 hover:border-gilt-400/40 transition-all">
                     {a.is_pinned && (
-                      <div className="text-gilt-600 text-[9px] tracking-[0.3em] uppercase font-medium mb-2" style={{ fontFamily: "'Arial', sans-serif" }}>
+                      <div className="theme-accent text-[9px] tracking-[0.3em] uppercase font-medium mb-2" style={{ fontFamily: "'Arial', sans-serif" }}>
                         ◆ Pinned
                       </div>
                     )}
-                    <div className="text-ink-800 text-base leading-tight mb-2 line-clamp-2"
+                    <div className="theme-text text-base leading-tight mb-2 line-clamp-2"
                       style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                       {a.title}
                     </div>
-                    <div className="text-ink-400 text-[10px] tracking-wider uppercase flex items-center gap-1" style={{ fontFamily: "'Arial', sans-serif" }}>
+                    <div className="theme-text-faint text-[10px] tracking-wider uppercase flex items-center gap-1" style={{ fontFamily: "'Arial', sans-serif" }}>
                       <Clock className="w-2.5 h-2.5" />
                       {new Date(a.published_at).toLocaleDateString("en-NG", { dateStyle: "medium" })}
                     </div>
