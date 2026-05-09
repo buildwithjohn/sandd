@@ -151,13 +151,15 @@ export default function StudentDashboard() {
 
             <div className="flex items-center gap-4 mt-6 sm:mt-8">
               {student.studentNumber && (
-                <span className="text-gilt-300 text-xs font-mono tracking-wider">
-                  {student.studentNumber}
-                </span>
+                <>
+                  <span className="text-white text-sm font-mono tracking-wider font-semibold">
+                    {student.studentNumber}
+                  </span>
+                  <span className="w-px h-4 bg-white/20" />
+                </>
               )}
-              <span className="w-px h-3 bg-gilt-500/30" />
-              <span className="text-white/40 text-xs tracking-wider" style={{ fontFamily: "'Arial', sans-serif" }}>
-                ENROLLED {student.enrolled.toUpperCase()}
+              <span className="text-white/60 text-xs tracking-[0.15em] uppercase" style={{ fontFamily: "'Arial', sans-serif" }}>
+                Enrolled {student.enrolled}
               </span>
             </div>
 
