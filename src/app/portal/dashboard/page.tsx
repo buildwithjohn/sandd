@@ -98,6 +98,38 @@ export default function StudentDashboard() {
           ))}
         </div>
 
+        {/* ── ORIENTATION RECORDING ──────────────────────────────── */}
+        <motion.div variants={rise(0.18)} initial="hidden" animate="visible">
+          <div className="bg-white rounded-2xl border border-[#E8E2D9] overflow-hidden"
+            style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+            <div className="px-5 py-3 border-b border-[#F0EDE8] flex items-center justify-between">
+              <div>
+                <span className="text-[#1A1A2E] text-sm font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
+                  Orientation Recording
+                </span>
+                <span className="ml-2 text-[10px] bg-red-50 border border-red-200 text-red-500 px-2 py-0.5 rounded-full font-sans">
+                  Watch Now
+                </span>
+              </div>
+              <span className="text-[#9B9B9B] text-xs font-sans">Thursday 7th May 2026</span>
+            </div>
+            <div className="relative w-full" style={{ aspectRatio: "16/9" }}>
+              <iframe
+                src="https://www.youtube.com/embed/5avJn6tSOHw?rel=0&modestbranding=1"
+                title="S&D Prophetic School — Orientation 2026"
+                className="absolute inset-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <div className="px-5 py-3 bg-[#FAF9F6] border-t border-[#F0EDE8]">
+              <p className="text-[#9B9B9B] text-xs font-sans">
+                If you missed the orientation, watch this recording in full before starting Module 1 on Sunday 10th May.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
         {/* ── WELCOME MODULE ───────────────────────────────────────── */}
         {welcomeId && (
           <motion.div variants={rise(0.2)} initial="hidden" animate="visible">
