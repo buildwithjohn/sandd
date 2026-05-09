@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import {
   LogOut, LayoutDashboard, Users, Upload, FileText,
-  Award, Megaphone, UserCircle, ClipboardList, Menu, X, BookOpen
+  Award, Megaphone, UserCircle, ClipboardList, Menu, X, BookOpen, Star
 } from "lucide-react";
 
 const navLinks = [
@@ -17,6 +17,8 @@ const navLinks = [
   { href: "/admin/students",      icon: Users,           label: "Students"      },
   { href: "/admin/upload",        icon: Upload,          label: "Course Builder"},
   { href: "/admin/assignments",   icon: FileText,        label: "Assignments"   },
+  { href: "/admin/assessments/new", icon: Star,           label: "New Assessment"},
+
   { href: "/admin/announcements", icon: Megaphone,       label: "Announcements" },
   { href: "/admin/certificates",  icon: Award,           label: "Certificates"  },
   { href: "/admin/profile",       icon: UserCircle,      label: "My Profile"    },
