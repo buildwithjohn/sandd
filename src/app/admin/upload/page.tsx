@@ -36,6 +36,8 @@ export default function CourseBuilderPage() {
   const [youtubeInput, setYoutube]    = useState("");
   const [orderIndex, setOrder]        = useState("1");
   const [savingVideo, setSavingVideo] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState("");
+  const [publishMode, setPublishMode] = useState<"now" | "schedule">("now");
 
   // Material state
   const [materialLessonId, setMaterialLessonId] = useState("");
@@ -76,18 +78,21 @@ export default function CourseBuilderPage() {
   // ── VIDEO PUBLISH ──────────────────────────────────────────────────────
   async function handlePublishVideo() {
     if (!lessonTitle || !courseId || !videoId) { toast.error("Fill in all fields with a valid YouTube URL."); return; }
+    if (publishMode === "schedule" && !scheduledAt) { toast.error("Please select a date and time to schedule."); return; }
     setSavingVideo(true);
     try {
       const supabase = createClient();
+      const isNow = publishMode === "now";
       const { error } = await supabase.from("lessons").insert({
         course_id: courseId, title: lessonTitle,
         youtube_video_id: videoId,
         video_url: `https://www.youtube.com/watch?v=${videoId}`,
         order_index: parseInt(orderIndex),
-        is_published: true,
+        is_published: isNow,
+        scheduled_at: isNow ? null : new Date(scheduledAt).toISOString(),
       });
       if (error) throw error;
-      toast.success("Video lesson published!");
+      toast.success(isNow ? "Video lesson published!" : `Lesson scheduled for ${new Date(scheduledAt).toLocaleDateString("en-NG", { dateStyle: "medium", timeStyle: "short" } as any)}`);
       setLessonTitle(""); setYoutube(""); setOrder("1");
       // Refresh lessons
       const { data } = await supabase.from("lessons")
@@ -275,6 +280,44 @@ export default function CourseBuilderPage() {
               <input type="number" min="0" value={orderIndex} onChange={e => setOrder(e.target.value)}
                 className="w-28 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-sans focus:outline-none focus:border-[#D4A85C]/50" />
               <p className="text-white/20 text-xs font-sans mt-1.5">Use 0 for the Welcome/Intro lesson</p>
+            </div>
+
+            {/* Publish mode */}
+            <div>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">
+                When to Publish
+              </label>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                <button type="button" onClick={() => setPublishMode("now")}
+                  className={`py-2.5 rounded-xl text-xs font-semibold font-sans transition-all border ${
+                    publishMode === "now"
+                      ? "bg-[#D4A85C] border-[#D4A85C] text-[#080C14]"
+                      : "bg-white/[0.04] border-white/10 text-white/50 hover:border-white/25"
+                  }`}>
+                  Publish Now
+                </button>
+                <button type="button" onClick={() => setPublishMode("schedule")}
+                  className={`py-2.5 rounded-xl text-xs font-semibold font-sans transition-all border ${
+                    publishMode === "schedule"
+                      ? "bg-[#D4A85C] border-[#D4A85C] text-[#080C14]"
+                      : "bg-white/[0.04] border-white/10 text-white/50 hover:border-white/25"
+                  }`}>
+                  Schedule
+                </button>
+              </div>
+              {publishMode === "schedule" && (
+                <div>
+                  <input
+                    type="datetime-local"
+                    value={scheduledAt}
+                    onChange={e => setScheduledAt(e.target.value)}
+                    className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-all"
+                  />
+                  <p className="text-white/20 text-xs font-sans mt-1.5">
+                    Lesson saves as draft — students cannot see it until the scheduled time.
+                  </p>
+                </div>
+              )}
             </div>
 
             <button onClick={handlePublishVideo} disabled={savingVideo || !videoId || !lessonTitle || !courseId}
