@@ -46,9 +46,19 @@ export default function StudentDashboard() {
       const avg = attempts?.length ? Math.round(attempts.reduce((a: number, b: { score: number }) => a + b.score, 0) / attempts.length) : 0;
       setStats({ courses: courses ?? 0, lessons: completed, quiz_avg: avg });
 
+      // Fetch courses directly to avoid RLS join issues
       const { data: enrollments } = await supabase
-        .from("enrollments").select("courses(id, title, slug, year)").eq("student_id", user.id).limit(4);
-      setRecentCourses(enrollments?.map((e: any) => e.courses).filter(Boolean) ?? []);
+        .from("enrollments").select("course_id").eq("student_id", user.id).limit(4);
+      if (enrollments && enrollments.length > 0) {
+        const ids = enrollments.map((e: any) => e.course_id);
+        const { data: recentData } = await supabase
+          .from("courses").select("id, title, slug, year").in("id", ids).order("year").order("order_index").limit(4);
+        setRecentCourses(recentData ?? []);
+      } else {
+        const { data: recentData } = await supabase
+          .from("courses").select("id, title, slug, year").eq("year", 1).order("order_index").limit(4);
+        setRecentCourses(recentData ?? []);
+      }
 
       const { data: ann } = await supabase.from("announcements").select("*").order("published_at", { ascending: false }).limit(3);
       setAnnouncements(ann ?? []);

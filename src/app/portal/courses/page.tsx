@@ -26,12 +26,30 @@ export default function CoursesPortalPage() {
       if (!user) { router.push("/auth/login"); return; }
       const { data: profile } = await supabase.from("profiles").select("current_year").eq("id", user.id).single();
       setCurrentYear(profile?.current_year ?? 1);
+      // Get enrolled course IDs first, then fetch courses directly
       const { data: enrollments } = await supabase
         .from("enrollments")
-        .select("courses(id, title, slug, year, description)")
-        .eq("student_id", user.id)
-        .order("course_id");
-      setCourses(enrollments?.map((e: any) => e.courses).filter(Boolean) ?? []);
+        .select("course_id")
+        .eq("student_id", user.id);
+
+      if (enrollments && enrollments.length > 0) {
+        const courseIds = enrollments.map((e: any) => e.course_id);
+        const { data: coursesData } = await supabase
+          .from("courses")
+          .select("id, title, slug, year, description")
+          .in("id", courseIds)
+          .order("year")
+          .order("order_index");
+        setCourses(coursesData ?? []);
+      } else {
+        // Fallback: fetch all Year 1 courses if no enrollments found
+        const { data: coursesData } = await supabase
+          .from("courses")
+          .select("id, title, slug, year, description")
+          .eq("year", profile?.current_year ?? 1)
+          .order("order_index");
+        setCourses(coursesData ?? []);
+      }
       setLoading(false);
     }
     load();
