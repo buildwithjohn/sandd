@@ -28,6 +28,9 @@ export default function NewAssessmentPage() {
   const [theoryQuestions, setTheoryQuestions] = useState<TheoryQ[]>([emptyTheory()]);
   const [saving, setSaving] = useState(false);
   const [expandedObj, setExpandedObj] = useState<number | null>(0);
+  const [showImport, setShowImport]   = useState(false);
+  const [importText, setImportText]   = useState("");
+  const [importing, setImporting]     = useState(false);
 
   useEffect(() => {
     createClient().from("courses").select("id, title, year").order("year").order("order_index")
@@ -50,6 +53,66 @@ export default function NewAssessmentPage() {
 
   function updateTheory(i: number, field: keyof TheoryQ, val: string | number) {
     setTheoryQuestions(prev => prev.map((q, idx) => idx === i ? { ...q, [field]: val } : q));
+  }
+
+  async function handleAIImport() {
+    if (!importText.trim()) { toast.error("Paste some questions first."); return; }
+    setImporting(true);
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 4000,
+          messages: [{
+            role: "user",
+            content: `Extract all multiple choice questions from the text below and return ONLY a valid JSON array. No explanation, no markdown, just the raw JSON array.
+
+Each item must have exactly these fields:
+- "question": the question text (string)
+- "a": option A text (string)
+- "b": option B text (string)  
+- "c": option C text (string)
+- "d": option D text (string)
+- "correct": the correct answer letter, must be exactly "A", "B", "C", or "D" (string)
+- "marks": marks for this question, default to 1 if not specified (number)
+
+If the correct answer is not clear, use "A" as default.
+If there are no valid MCQ questions, return an empty array [].
+
+TEXT TO EXTRACT FROM:
+${importText}`
+          }]
+        })
+      });
+
+      const data = await res.json();
+      const text = data.content?.[0]?.text ?? "[]";
+      
+      // Clean and parse
+      const clean = text.replace(/```json|```/g, "").trim();
+      const parsed: ObjQ[] = JSON.parse(clean);
+
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        toast.error("No valid questions found. Make sure your text has A/B/C/D options and answers.");
+        return;
+      }
+
+      const limited = parsed.slice(0, 100);
+      setObjQuestions(prev => {
+        const existing = prev.filter(q => q.question.trim());
+        const combined = [...existing, ...limited].slice(0, 100);
+        return combined.length > 0 ? combined : limited;
+      });
+      setImportText("");
+      setShowImport(false);
+      setExpandedObj(null);
+      toast.success(`${limited.length} question${limited.length !== 1 ? "s" : ""} imported successfully!`);
+    } catch (err: any) {
+      toast.error("Import failed. Check the format and try again.");
+      console.error(err);
+    } finally { setImporting(false); }
   }
 
   async function handleSave(publish: boolean) {
