@@ -55,53 +55,52 @@ export default function NewAssessmentPage() {
     setTheoryQuestions(prev => prev.map((q, idx) => idx === i ? { ...q, [field]: val } : q));
   }
 
-  function parseQuestions(text: string): ObjQ[] {
+  function parseQuestions(raw: string): ObjQ[] {
     const results: ObjQ[] = [];
-    
-    // Normalize line endings
-    const lines = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
-    
-    let currentQ = "";
-    let opts: Record<string, string> = {};
-    let correct = "A";
+    // Split into blocks by blank lines
+    const blocks = raw.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
 
-    const optPattern = /^\s*[\(\[\{]?([ABCDabcd])[\)\]\.\}\s]+(.+)/;
-    const ansPattern = /^\s*(?:answer|ans|correct|key)[:\s]+([ABCDabcd])/i;
-    const qPattern   = /^\s*(?:\d+[\)\.\/\s]+|Q\d+[\)\.\/\s]*)?(.{5,})/i;
+    for (const block of blocks) {
+      const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
+      if (lines.length < 5) continue;
 
-    function flush() {
-      if (currentQ && opts.A && opts.B && opts.C && opts.D) {
-        results.push({ question: currentQ.trim(), a: opts.A.trim(), b: opts.B.trim(), c: opts.C.trim(), d: opts.D.trim(), correct: correct.toUpperCase() as "A"|"B"|"C"|"D", marks: 1 });
+      // First line is the question (strip leading number like "1." "1)" "Q1.")
+      const qLine = lines[0].replace(/^\d+[.)\s]+|^Q\d+[.)\s]*/i, "").trim();
+      if (!qLine) continue;
+
+      const opts: Record<string, string> = {};
+      let correct = "A";
+
+      for (let i = 1; i < lines.length; i++) {
+        const line = lines[i];
+        // Match option lines: A) / A. / A] / (A) / A - etc
+        const optMatch = line.match(/^[(\[]?([ABCDabcd])[)\].:\s]+(.+)/);
+        if (optMatch) {
+          opts[optMatch[1].toUpperCase()] = optMatch[2].trim();
+          continue;
+        }
+        // Match answer line
+        const ansMatch = line.match(/^(?:answer|ans|correct|key|\*)[:\s]+([ABCDabcd])/i);
+        if (ansMatch) {
+          correct = ansMatch[1].toUpperCase();
+          continue;
+        }
+        // Match starred correct answer like: * B) correct answer
+        const starMatch = line.match(/^\*\s*[(\[]?([ABCDabcd])[)\].:\s]+/);
+        if (starMatch) {
+          correct = starMatch[1].toUpperCase();
+        }
       }
-      currentQ = ""; opts = {}; correct = "A";
+
+      if (opts["A"] && opts["B"] && opts["C"] && opts["D"]) {
+        results.push({
+          question: qLine,
+          a: opts["A"], b: opts["B"], c: opts["C"], d: opts["D"],
+          correct: correct as "A"|"B"|"C"|"D",
+          marks: 1,
+        });
+      }
     }
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
-
-      const ansMatch = line.match(ansPattern);
-      if (ansMatch) { correct = ansMatch[1].toUpperCase(); continue; }
-
-      const optMatch = line.match(optPattern);
-      if (optMatch) {
-        opts[optMatch[1].toUpperCase()] = optMatch[2].trim();
-        continue;
-      }
-
-      // New question line — if we have a previous question with 4 options, flush it
-      if (Object.keys(opts).length === 4 && currentQ) {
-        flush();
-      }
-
-      // Try to read this as a question
-      const qMatch = line.match(qPattern);
-      if (qMatch && !optMatch) {
-        currentQ = qMatch[1];
-      }
-    }
-    flush(); // flush last one
-
     return results.slice(0, 100);
   }
 
@@ -243,11 +242,72 @@ export default function NewAssessmentPage() {
                 {objQuestions.length}/100 questions · {objMarksTotal} marks total
               </p>
             </div>
-            <button onClick={addObj}
-              className="flex items-center gap-1.5 bg-white/[0.06] hover:bg-white/[0.10] border border-white/10 text-white/70 text-xs font-sans px-3 py-2 rounded-xl transition-all">
-              <Plus className="w-3.5 h-3.5" /> Add Question
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setShowImport(v => !v)}
+                className={`flex items-center gap-1.5 border text-xs font-sans px-3 py-2 rounded-xl transition-all ${
+                  showImport
+                    ? "bg-[#D4A85C]/20 border-[#D4A85C]/40 text-[#D4A85C]"
+                    : "bg-[#D4A85C]/10 border-[#D4A85C]/25 text-[#D4A85C] hover:bg-[#D4A85C]/20"
+                }`}>
+                ⚡ Paste & Import
+              </button>
+              <button onClick={addObj}
+                className="flex items-center gap-1.5 bg-white/[0.06] hover:bg-white/[0.10] border border-white/10 text-white/70 text-xs font-sans px-3 py-2 rounded-xl transition-all">
+                <Plus className="w-3.5 h-3.5" /> Add One
+              </button>
+            </div>
           </div>
+
+          {/* Paste & Import Panel */}
+          {showImport && (
+            <div className="bg-[#0D1320] border border-[#D4A85C]/25 rounded-xl p-5 space-y-4">
+              <div>
+                <div className="text-[#D4A85C] text-sm font-semibold font-sans mb-1">⚡ Paste Raw Questions</div>
+                <p className="text-white/40 text-xs font-sans leading-relaxed">
+                  Paste questions in any format. The system will automatically detect each question, options A–D, and the correct answer. One question per block.
+                </p>
+              </div>
+
+              {/* Format example */}
+              <div className="bg-black/30 border border-white/[0.06] rounded-xl p-4">
+                <p className="text-white/25 text-[10px] font-sans mb-2 uppercase tracking-widest">Accepted formats</p>
+                <pre className="text-white/50 text-[11px] font-mono leading-relaxed">{`1. What is NT prophecy?
+A) Speaking in tongues
+B) Spirit-inspired speech
+C) Future prediction only
+D) A gift only for prophets
+Answer: B
+
+2. According to 1 Cor 14:3...
+A. Edification only
+B. Judgment and correction
+C. Strengthening, encouragement and comfort
+D. Replacing Scripture
+Correct: C`}</pre>
+              </div>
+
+              <textarea
+                value={importText}
+                onChange={e => setImportText(e.target.value)}
+                rows={10}
+                placeholder="Paste your questions here — numbered list, Word doc content, any format..."
+                className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#D4A85C]/50 transition-all resize-none leading-relaxed"
+              />
+
+              <div className="flex items-center gap-3">
+                <button onClick={handleImport} disabled={!importText.trim()}
+                  className="flex items-center gap-2 bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm px-6 py-2.5 rounded-full transition-all font-sans">
+                  Import Questions
+                  Import Questions
+                  Import Questions
+                </button>
+                <button onClick={() => { setShowImport(false); setImportText(""); }}
+                  className="text-white/30 hover:text-white/60 text-sm font-sans transition-colors">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
 
           {objQuestions.map((q, i) => (
             <div key={i} className="border border-white/[0.08] rounded-xl overflow-hidden">
