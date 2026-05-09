@@ -6,11 +6,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import {
   LogOut, LayoutDashboard, Users, Upload, FileText,
-  Award, Megaphone, UserCircle, ClipboardList, Menu, X
+  Award, Megaphone, UserCircle, ClipboardList, Menu, X, BookOpen
 } from "lucide-react";
 
 const navLinks = [
   { href: "/admin/dashboard",     icon: LayoutDashboard, label: "Dashboard"     },
+  { href: "/admin/courses",       icon: BookOpen,        label: "Course Manager"},
+
   { href: "/admin/applications",  icon: ClipboardList,   label: "Applications"  },
   { href: "/admin/students",      icon: Users,           label: "Students"      },
   { href: "/admin/upload",        icon: Upload,          label: "Course Builder"},
@@ -22,6 +24,7 @@ const navLinks = [
 
 const bottomNav = [
   { href: "/admin/dashboard",     icon: LayoutDashboard, label: "Home"      },
+  { href: "/admin/courses",       icon: BookOpen,        label: "Courses"   },
   { href: "/admin/students",      icon: Users,           label: "Students"  },
   { href: "/admin/upload",        icon: Upload,          label: "Builder"   },
   { href: "/admin/assignments",   icon: FileText,        label: "Grades"    },
