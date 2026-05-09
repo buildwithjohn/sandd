@@ -21,7 +21,7 @@ function linkify(text: string) {
       urlRegex.lastIndex = 0;
       return (
         <a key={i} href={part} target="_blank" rel="noopener noreferrer"
-          className="text-[#D4A85C] hover:text-[#C49848] underline underline-offset-2 break-all transition-colors">
+          className="theme-accent hover:text-[#C49848] underline underline-offset-2 break-all transition-colors">
           {part}
         </a>
       );
@@ -53,42 +53,42 @@ export default function AnnouncementsPage() {
     <PortalShell>
       <div className="space-y-5">
         <motion.div variants={rise()} initial="hidden" animate="visible">
-          <h1 className="text-2xl font-semibold text-[#1A1A2E] mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
             Announcements
           </h1>
-          <p className="text-[#9B9B9B] text-sm font-sans">{announcements.length} message{announcements.length !== 1 ? "s" : ""} from the school</p>
+          <p className="theme-text-muted text-sm font-sans">{announcements.length} message{announcements.length !== 1 ? "s" : ""} from the school</p>
         </motion.div>
 
         {loading ? (
-          <div className="bg-white rounded-2xl border border-[#E8E2D9] p-12 text-center">
-            <p className="text-[#9B9B9B] text-sm font-sans">Loading...</p>
+          <div className="theme-bg-elevated rounded-2xl border theme-border p-12 text-center">
+            <p className="theme-text-muted text-sm font-sans">Loading...</p>
           </div>
         ) : announcements.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-[#E8E2D9] p-12 text-center"
+          <div className="theme-bg-elevated rounded-2xl border theme-border p-12 text-center"
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
             <Megaphone className="w-10 h-10 text-[#E8E2D9] mx-auto mb-3" />
-            <p className="text-[#9B9B9B] text-sm font-sans">No announcements yet.</p>
+            <p className="theme-text-muted text-sm font-sans">No announcements yet.</p>
           </div>
         ) : (
           <div className="space-y-3">
             {announcements.map((a, i) => (
               <motion.div key={a.id} variants={rise(i * 0.07)} initial="hidden" animate="visible">
-                <div className={`bg-white rounded-2xl border p-6 ${
-                  a.is_pinned ? "border-[#D4A85C]/30" : "border-[#E8E2D9]"
+                <div className={`theme-bg-elevated rounded-2xl border p-6 ${
+                  a.is_pinned ? "border-[#D4A85C]/30" : "theme-border"
                 }`} style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
                   {a.is_pinned && (
                     <div className="flex items-center gap-1.5 mb-3">
-                      <Pin className="w-3 h-3 text-[#D4A85C]" />
-                      <span className="text-[#D4A85C] text-[10px] font-sans uppercase tracking-widest">Pinned</span>
+                      <Pin className="w-3 h-3 theme-accent" />
+                      <span className="theme-accent text-[10px] font-sans uppercase tracking-widest">Pinned</span>
                     </div>
                   )}
-                  <h2 className="text-[#1A1A2E] text-base font-semibold mb-2" style={{ fontFamily: "'Georgia', serif" }}>
+                  <h2 className="theme-text text-base font-semibold mb-2" style={{ fontFamily: "'Georgia', serif" }}>
                     {a.title}
                   </h2>
-                  <p className="text-[#6B6B6B] text-sm font-sans leading-relaxed mb-4 whitespace-pre-wrap">
+                  <p className="theme-text-muted text-sm font-sans leading-relaxed mb-4 whitespace-pre-wrap">
                       {linkify(a.body)}
                     </p>
-                  <div className="flex items-center gap-1.5 text-[#C4BDB2] text-xs font-sans">
+                  <div className="flex items-center gap-1.5 theme-text-faint text-xs font-sans">
                     <Clock className="w-3 h-3" />
                     {new Date(a.published_at).toLocaleDateString("en-NG", { dateStyle: "long" })}
                   </div>

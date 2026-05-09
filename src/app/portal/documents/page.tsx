@@ -18,7 +18,7 @@ const docs = [
     title: "School Brochure 2026",
     desc: "Complete overview of the school — vision, mission, curriculum, leadership, and how to get involved.",
     url: "/downloads/SandD-School-Brochure-2026.pdf",
-    color: "text-[#D4A85C]",
+    color: "theme-accent",
     bg: "bg-[#D4A85C]/10 border-[#D4A85C]/20",
   },
   {
@@ -42,25 +42,25 @@ export default function DocumentsPage() {
     <PortalShell>
       <div className="space-y-5">
         <motion.div variants={rise()} initial="hidden" animate="visible">
-          <h1 className="text-2xl font-semibold text-[#1A1A2E] mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
             School Documents
           </h1>
-          <p className="text-[#9B9B9B] text-sm font-sans">Download official school documents and your admission letter.</p>
+          <p className="theme-text-muted text-sm font-sans">Download official school documents and your admission letter.</p>
         </motion.div>
 
         <div className="space-y-3">
           {docs.map((doc, i) => (
             <motion.div key={doc.title} variants={rise(i * 0.1)} initial="hidden" animate="visible">
-              <div className="bg-white rounded-2xl border border-[#E8E2D9] p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 transition-all"
+              <div className="theme-bg-elevated rounded-2xl border theme-border p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 transition-all"
                 style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
                 <div className={`w-12 h-12 rounded-xl border flex items-center justify-center flex-shrink-0 ${doc.bg}`}>
                   <doc.icon className={`w-5 h-5 ${doc.color}`} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-[#1A1A2E] text-sm font-semibold mb-0.5" style={{ fontFamily: "'Georgia', serif" }}>
+                  <div className="theme-text text-sm font-semibold mb-0.5" style={{ fontFamily: "'Georgia', serif" }}>
                     {doc.title}
                   </div>
-                  <p className="text-[#9B9B9B] text-xs font-sans leading-relaxed">{doc.desc}</p>
+                  <p className="theme-text-muted text-xs font-sans leading-relaxed">{doc.desc}</p>
                 </div>
                 {doc.isInternal ? (
                   <a href={doc.url}
@@ -82,7 +82,7 @@ export default function DocumentsPage() {
           className="rounded-2xl border border-[#D4A85C]/20 bg-[#D4A85C]/[0.04] p-5 text-center">
           <p className="text-[#5C4A2A] text-xs font-sans leading-relaxed" style={{ fontFamily: "'Georgia', serif" }}>
             All documents are official publications of the Sons and Daughters of Prophets Prophetic Training School.<br />
-            For enquiries contact the Registrar: <a href="mailto:sandd@abiodunsule.uk" className="text-[#D4A85C] hover:underline">sandd@abiodunsule.uk</a>
+            For enquiries contact the Registrar: <a href="mailto:sandd@abiodunsule.uk" className="theme-accent hover:underline">sandd@abiodunsule.uk</a>
           </p>
         </motion.div>
       </div>

@@ -135,7 +135,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
       {drawerOpen && (
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setDrawerOpen(false)}>
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-          <div className="absolute top-14 left-0 bottom-0 w-72 bg-white shadow-2xl overflow-y-auto"
+          <div className="absolute top-14 left-0 bottom-0 w-72 theme-bg-elevated shadow-2xl overflow-y-auto"
             onClick={e => e.stopPropagation()}>
 
             {/* Profile section */}
@@ -187,7 +187,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                   </div>
                 </div>
                 <a href="mailto:sandd@abiodunsule.uk"
-                  className="block text-center theme-accent text-xs bg-white rounded-lg py-2 border theme-border-soft">
+                  className="block text-center theme-accent text-xs theme-bg-elevated rounded-lg py-2 border theme-border-soft">
                   Contact Registrar
                 </a>
               </div>
@@ -208,7 +208,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         <aside className="w-52 flex-shrink-0 hidden lg:block">
           <div className="sticky top-20 space-y-2">
             {/* Student card */}
-            <div className="bg-white rounded-2xl border theme-border-soft p-4"
+            <div className="theme-bg-elevated rounded-2xl border theme-border-soft p-4"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-xl overflow-hidden bg-royal-700 flex items-center justify-center flex-shrink-0">
@@ -231,7 +231,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
             </div>
 
             {/* Nav */}
-            <div className="bg-white rounded-2xl border theme-border-soft p-2"
+            <div className="theme-bg-elevated rounded-2xl border theme-border-soft p-2"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
               {navLinks.map(l => {
                 const active = pathname === l.href;
@@ -254,9 +254,9 @@ export default function PortalShell({ children }: { children: React.ReactNode })
             </div>
 
             {/* Registrar */}
-            <div className="bg-white rounded-2xl border theme-border-soft p-3"
+            <div className="theme-bg-elevated rounded-2xl border theme-border-soft p-3"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-              <div className="text-[#C4BDB2] text-[9px] uppercase tracking-widest mb-2.5">School Administration</div>
+              <div className="theme-text-faint text-[9px] uppercase tracking-widest mb-2.5">School Administration</div>
               <div className="flex items-center gap-2.5 mb-2">
                 <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 border theme-border-soft">
                   <Image src="/assets/registrar.jpg" alt="Registrar" width={32} height={32} className="w-full h-full object-cover object-top" />

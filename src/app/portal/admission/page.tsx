@@ -41,11 +41,11 @@ export default function AdmissionLetterPage() {
       <div className="space-y-5">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-[#1A1A2E] mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+            <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
               Admission Letter
             </h1>
-            <p className="text-[#9B9B9B] text-sm font-sans">
-              Student No: <span className="text-[#D4A85C] font-semibold">{studentNumber}</span>
+            <p className="theme-text-muted text-sm font-sans">
+              Student No: <span className="theme-accent font-semibold">{studentNumber}</span>
             </p>
           </div>
           <a
@@ -59,14 +59,14 @@ export default function AdmissionLetterPage() {
 
         {/* Preview card */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl border border-[#E8E2D9] overflow-hidden"
+          className="theme-bg-elevated rounded-2xl border theme-border overflow-hidden"
           style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
           <LetterPreview student={student} admissionDate={admissionDate} studentNumber={studentNumber} />
         </motion.div>
 
-        <div className="bg-[#FAF9F6] border border-[#E8E2D9] rounded-2xl p-4 flex items-start gap-3">
-          <ExternalLink className="w-4 h-4 text-[#D4A85C] flex-shrink-0 mt-0.5" />
-          <p className="text-[#6B6B6B] text-xs font-sans leading-relaxed">
+        <div className="theme-bg border theme-border rounded-2xl p-4 flex items-start gap-3">
+          <ExternalLink className="w-4 h-4 theme-accent flex-shrink-0 mt-0.5" />
+          <p className="theme-text-muted text-xs font-sans leading-relaxed">
             Click <strong>&quot;Open &amp; Print / Save PDF&quot;</strong> above to open your letter in a new tab.
             Then press <strong>Ctrl+P</strong> (or Cmd+P on Mac), choose <strong>&quot;Save as PDF&quot;</strong> as destination, and click Save.
           </p>

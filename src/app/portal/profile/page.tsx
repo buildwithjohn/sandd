@@ -89,16 +89,16 @@ export default function ProfilePage() {
     finally { setChangingPw(false); }
   }
 
-  const inp = "w-full bg-[#FAF9F6] border border-[#E8E2D9] rounded-xl px-4 py-3 text-sm text-[#1A1A2E] font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-colors";
+  const inp = "w-full theme-bg border theme-border rounded-xl px-4 py-3 text-sm theme-text font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-colors";
 
   return (
     <PortalShell>
       <div className="space-y-5 max-w-lg">
         <motion.div variants={rise()} initial="hidden" animate="visible">
-          <h1 className="text-2xl font-semibold text-[#1A1A2E] mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
             My Profile
           </h1>
-          <p className="text-[#9B9B9B] text-sm font-sans">Update your photo, details and password</p>
+          <p className="theme-text-muted text-sm font-sans">Update your photo, details and password</p>
         </motion.div>
 
         {/* Avatar card */}
@@ -114,7 +114,7 @@ export default function ProfilePage() {
               </div>
               <button onClick={() => fileRef.current?.click()} disabled={uploading}
                 className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#D4A85C] hover:bg-[#C49848] border-2 border-[#1A1A2E] flex items-center justify-center transition-colors">
-                <Camera className="w-3 h-3 text-[#1A1A2E]" />
+                <Camera className="w-3 h-3 theme-text" />
               </button>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
             </div>
@@ -124,7 +124,7 @@ export default function ProfilePage() {
               </h2>
               <p className="text-white/40 text-xs font-sans mt-0.5">{email}</p>
               {uploading && (
-                <p className="text-[#D4A85C] text-xs font-sans mt-1 flex items-center gap-1">
+                <p className="theme-accent text-xs font-sans mt-1 flex items-center gap-1">
                   <Upload className="w-3 h-3" /> Uploading...
                 </p>
               )}
@@ -133,40 +133,40 @@ export default function ProfilePage() {
         </motion.div>
 
         <button onClick={() => fileRef.current?.click()} disabled={uploading}
-          className="w-full flex items-center justify-center gap-2 bg-white border border-[#E8E2D9] hover:border-[#D4A85C]/40 text-[#6B6B6B] hover:text-[#1A1A2E] font-sans text-sm py-3 rounded-xl transition-all"
+          className="w-full flex items-center justify-center gap-2 theme-bg-elevated border theme-border hover:border-[#D4A85C]/40 theme-text-muted hover:theme-text font-sans text-sm py-3 rounded-xl transition-all"
           style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
           <Camera className="w-4 h-4" /> {uploading ? "Uploading..." : "Change Profile Photo"}
         </button>
 
         {/* Personal info */}
         <motion.div variants={rise(0.2)} initial="hidden" animate="visible">
-          <div className="bg-white rounded-2xl border border-[#E8E2D9] p-6 space-y-4"
+          <div className="theme-bg-elevated rounded-2xl border theme-border p-6 space-y-4"
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
-            <h2 className="text-[#1A1A2E] text-base font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
+            <h2 className="theme-text text-base font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
               Personal Information
             </h2>
             <div>
-              <label className="text-[#9B9B9B] text-xs uppercase tracking-widest font-sans block mb-2">Full Name</label>
+              <label className="theme-text-muted text-xs uppercase tracking-widest font-sans block mb-2">Full Name</label>
               <input value={fullName} onChange={e => setFullName(e.target.value)} className={inp} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[#9B9B9B] text-xs uppercase tracking-widest font-sans block mb-2">Phone</label>
+                <label className="theme-text-muted text-xs uppercase tracking-widest font-sans block mb-2">Phone</label>
                 <input value={phone} onChange={e => setPhone(e.target.value)} className={inp} />
               </div>
               <div>
-                <label className="text-[#9B9B9B] text-xs uppercase tracking-widest font-sans block mb-2">City</label>
+                <label className="theme-text-muted text-xs uppercase tracking-widest font-sans block mb-2">City</label>
                 <input value={city} onChange={e => setCity(e.target.value)} className={inp} />
               </div>
             </div>
             <div>
-              <label className="text-[#9B9B9B] text-xs uppercase tracking-widest font-sans block mb-2">Church / Ministry</label>
+              <label className="theme-text-muted text-xs uppercase tracking-widest font-sans block mb-2">Church / Ministry</label>
               <input value={church} onChange={e => setChurch(e.target.value)} className={inp} />
             </div>
             <div>
-              <label className="text-[#9B9B9B] text-xs uppercase tracking-widest font-sans block mb-2">Email Address</label>
+              <label className="theme-text-muted text-xs uppercase tracking-widest font-sans block mb-2">Email Address</label>
               <input value={email} disabled className={`${inp} opacity-50 cursor-not-allowed`} />
-              <p className="text-[#C4BDB2] text-xs font-sans mt-1">Email cannot be changed. Contact admin if needed.</p>
+              <p className="theme-text-faint text-xs font-sans mt-1">Email cannot be changed. Contact admin if needed.</p>
             </div>
             <button onClick={saveProfile} disabled={saving}
               className="w-full bg-[#1A1A2E] hover:bg-[#2A2A4E] disabled:opacity-50 text-white font-semibold text-sm py-3 rounded-xl transition-all font-sans flex items-center justify-center gap-2">
@@ -177,18 +177,18 @@ export default function ProfilePage() {
 
         {/* Change password */}
         <motion.div variants={rise(0.3)} initial="hidden" animate="visible">
-          <div className="bg-white rounded-2xl border border-[#E8E2D9] p-6 space-y-4"
+          <div className="theme-bg-elevated rounded-2xl border theme-border p-6 space-y-4"
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
-            <h2 className="text-[#1A1A2E] text-base font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
+            <h2 className="theme-text text-base font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
               Change Password
             </h2>
             <div>
-              <label className="text-[#9B9B9B] text-xs uppercase tracking-widest font-sans block mb-2">New Password</label>
+              <label className="theme-text-muted text-xs uppercase tracking-widest font-sans block mb-2">New Password</label>
               <input type="password" value={pwNew} onChange={e => setPwNew(e.target.value)}
                 placeholder="Min 8 characters" className={inp} />
             </div>
             <div>
-              <label className="text-[#9B9B9B] text-xs uppercase tracking-widest font-sans block mb-2">Confirm Password</label>
+              <label className="theme-text-muted text-xs uppercase tracking-widest font-sans block mb-2">Confirm Password</label>
               <input type="password" value={pwConfirm} onChange={e => setPwConfirm(e.target.value)}
                 placeholder="Repeat password" className={inp} />
               {pwConfirm && pwNew !== pwConfirm && (
@@ -196,7 +196,7 @@ export default function ProfilePage() {
               )}
             </div>
             <button onClick={changePassword} disabled={changingPw || !pwNew || !pwConfirm}
-              className="w-full border border-[#E8E2D9] hover:border-[#D4A85C]/40 text-[#6B6B6B] hover:text-[#1A1A2E] disabled:opacity-40 font-semibold text-sm py-3 rounded-xl transition-all font-sans">
+              className="w-full border theme-border hover:border-[#D4A85C]/40 theme-text-muted hover:theme-text disabled:opacity-40 font-semibold text-sm py-3 rounded-xl transition-all font-sans">
               {changingPw ? "Updating..." : "Update Password"}
             </button>
           </div>

@@ -96,7 +96,7 @@ export default function CourseDetailPage() {
 
         {/* Back */}
         <Link href="/portal/courses"
-          className="inline-flex items-center gap-1.5 text-[#9B9B9B] hover:text-[#1A1A2E] text-sm font-sans transition-colors">
+          className="inline-flex items-center gap-1.5 theme-text-muted hover:theme-text text-sm font-sans transition-colors">
           ← My Courses
         </Link>
 
@@ -108,7 +108,7 @@ export default function CourseDetailPage() {
             style={{ background: "radial-gradient(circle, #D4A85C 0%, transparent 70%)", transform: "translate(30%,-40%)" }} />
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-[#D4A85C] text-xs font-sans tracking-[0.15em] uppercase">Year {course.year}</span>
+              <span className="theme-accent text-xs font-sans tracking-[0.15em] uppercase">Year {course.year}</span>
               <span className="text-white/20 text-xs">·</span>
               <span className="text-white/40 text-xs font-sans">{course.credits || 3} Credits</span>
             </div>
@@ -123,7 +123,7 @@ export default function CourseDetailPage() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-white/40 text-xs font-sans">{completedCount} of {totalCount} subtopics complete</span>
-                  <span className="text-[#D4A85C] text-xs font-sans font-semibold">{pct}%</span>
+                  <span className="theme-accent text-xs font-sans font-semibold">{pct}%</span>
                 </div>
                 <div className="w-full bg-white/10 rounded-full h-1.5">
                   <div className="bg-[#D4A85C] h-1.5 rounded-full transition-all duration-500"
@@ -138,49 +138,49 @@ export default function CourseDetailPage() {
         {course.notes_url && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <a href={course.notes_url} target="_blank" rel="noopener noreferrer" download
-              className="flex items-center gap-4 bg-white border border-[#E8E2D9] rounded-2xl p-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all group"
+              className="flex items-center gap-4 theme-bg-elevated border theme-border rounded-2xl p-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all group"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
               <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
-                <FileDown className="w-5 h-5 text-[#D4A85C]" />
+                <FileDown className="w-5 h-5 theme-accent" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-[#1A1A2E] text-sm font-semibold group-hover:text-[#D4A85C] transition-colors">
+                <div className="theme-text text-sm font-semibold group-hover:theme-accent transition-colors">
                   Course Material
                 </div>
-                <div className="text-[#9B9B9B] text-xs font-sans mt-0.5">Click to download — PDF</div>
+                <div className="theme-text-muted text-xs font-sans mt-0.5">Click to download — PDF</div>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:text-[#D4A85C] transition-colors" />
+              <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:theme-accent transition-colors" />
             </a>
           </motion.div>
         )}
 
         {/* Subtopics */}
         <div>
-          <h2 className="text-[#1A1A2E] text-base font-semibold mb-3" style={{ fontFamily: "'Georgia', serif" }}>
-            Subtopics {totalCount > 0 && <span className="text-[#9B9B9B] text-sm font-sans font-normal">({totalCount})</span>}
+          <h2 className="theme-text text-base font-semibold mb-3" style={{ fontFamily: "'Georgia', serif" }}>
+            Subtopics {totalCount > 0 && <span className="theme-text-muted text-sm font-sans font-normal">({totalCount})</span>}
           </h2>
 
           {subtopics.length === 0 ? (
-            <div className="bg-white border border-[#E8E2D9] rounded-2xl p-10 text-center"
+            <div className="theme-bg-elevated border theme-border rounded-2xl p-10 text-center"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
               <Clock className="w-10 h-10 text-[#E8E2D9] mx-auto mb-3" />
-              <p className="text-[#1A1A2E] text-sm font-semibold mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+              <p className="theme-text text-sm font-semibold mb-1" style={{ fontFamily: "'Georgia', serif" }}>
                 No subtopics yet
               </p>
-              <p className="text-[#9B9B9B] text-xs font-sans">
+              <p className="theme-text-muted text-xs font-sans">
                 Your instructor will publish subtopics here when ready.
               </p>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-[#E8E2D9] overflow-hidden"
+            <div className="theme-bg-elevated rounded-2xl border theme-border overflow-hidden"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
               {subtopics.map((sub, i) => {
                 const isDone = progress[sub.id] === "completed";
                 const isNext = !isDone && subtopics.slice(0, i).every(s => progress[s.id] === "completed");
                 return (
                   <Link key={sub.id} href={`/portal/lessons/${sub.id}`}
-                    className={`flex items-center gap-4 px-5 py-4 hover:bg-[#FAF9F6] transition-colors group ${
-                      i < subtopics.length - 1 ? "border-b border-[#F5F0E8]" : ""
+                    className={`flex items-center gap-4 px-5 py-4 hover:theme-bg transition-colors group ${
+                      i < subtopics.length - 1 ? "border-b theme-border-soft" : ""
                     }`}>
                     {/* Status icon */}
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
@@ -188,31 +188,31 @@ export default function CourseDetailPage() {
                         ? "bg-green-50 border border-green-200"
                         : isNext
                         ? "bg-[#1A1A2E] border border-[#1A1A2E]"
-                        : "bg-[#F5F0E8] border border-[#E8E2D9]"
+                        : "theme-bg-subtle border theme-border"
                     }`}>
                       {isDone
                         ? <CheckCircle className="w-4 h-4 text-green-600" />
                         : isNext
                         ? <Play className="w-3.5 h-3.5 text-white" fill="white" />
-                        : <span className="text-[#C4BDB2] text-xs font-mono">{String(sub.order_index).padStart(2,"0")}</span>
+                        : <span className="theme-text-faint text-xs font-mono">{String(sub.order_index).padStart(2,"0")}</span>
                       }
                     </div>
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className={`text-sm font-semibold truncate ${
-                        isDone ? "text-green-700" : isNext ? "text-[#1A1A2E]" : "text-[#9B9B9B]"
+                        isDone ? "text-green-700" : isNext ? "theme-text" : "theme-text-muted"
                       }`} style={{ fontFamily: "'Georgia', serif" }}>
                         {sub.title}
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">
                         {sub.youtube_video_id && (
-                          <span className="text-[#9B9B9B] text-[10px] font-sans flex items-center gap-1">
+                          <span className="theme-text-muted text-[10px] font-sans flex items-center gap-1">
                             <Play className="w-2.5 h-2.5" /> Video
                           </span>
                         )}
                         {sub.notes_url && (
-                          <span className="text-[#9B9B9B] text-[10px] font-sans flex items-center gap-1">
+                          <span className="theme-text-muted text-[10px] font-sans flex items-center gap-1">
                             <FileDown className="w-2.5 h-2.5" /> Notes
                           </span>
                         )}
@@ -225,11 +225,11 @@ export default function CourseDetailPage() {
                         <span className="text-green-600 text-xs font-semibold font-sans">Done</span>
                       )}
                       {isNext && (
-                        <span className="text-[#1A1A2E] text-xs font-semibold font-sans">Start →</span>
+                        <span className="theme-text text-xs font-semibold font-sans">Start →</span>
                       )}
                       <ChevronRight className={`w-4 h-4 transition-colors ${
-                        isDone ? "text-green-300" : isNext ? "text-[#1A1A2E]" : "text-[#E8E2D9]"
-                      } group-hover:text-[#D4A85C]`} />
+                        isDone ? "text-green-300" : isNext ? "theme-text" : "text-[#E8E2D9]"
+                      } group-hover:theme-accent`} />
                     </div>
                   </Link>
                 );
@@ -242,19 +242,19 @@ export default function CourseDetailPage() {
         {assessment && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Link href={`/portal/assessments/${assessment.id}`}
-              className="flex items-center gap-4 bg-white border border-[#D4A85C]/25 rounded-2xl p-5 hover:border-[#D4A85C]/50 hover:shadow-md transition-all group"
+              className="flex items-center gap-4 theme-bg-elevated border border-[#D4A85C]/25 rounded-2xl p-5 hover:border-[#D4A85C]/50 hover:shadow-md transition-all group"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
               <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
-                <Star className="w-5 h-5 text-[#D4A85C]" />
+                <Star className="w-5 h-5 theme-accent" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-[#8B7355] text-[10px] uppercase tracking-widest font-sans mb-0.5">Course Assessment</div>
-                <div className="text-[#1A1A2E] text-sm font-semibold group-hover:text-[#D4A85C] transition-colors">
+                <div className="theme-accent text-[10px] uppercase tracking-widest font-sans mb-0.5">Course Assessment</div>
+                <div className="theme-text text-sm font-semibold group-hover:theme-accent transition-colors">
                   {assessment.title}
                 </div>
-                <div className="text-[#9B9B9B] text-xs font-sans mt-0.5">{assessment.total_marks} marks total</div>
+                <div className="theme-text-muted text-xs font-sans mt-0.5">{assessment.total_marks} marks total</div>
               </div>
-              <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:text-[#D4A85C] transition-colors" />
+              <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:theme-accent transition-colors" />
             </Link>
           </motion.div>
         )}

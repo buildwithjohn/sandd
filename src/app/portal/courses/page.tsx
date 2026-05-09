@@ -62,15 +62,15 @@ export default function CoursesPortalPage() {
     <PortalShell>
       <div className="space-y-6">
         <motion.div variants={rise()} initial="hidden" animate="visible">
-          <h1 className="text-2xl font-semibold text-[#1A1A2E] mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
             My Courses
           </h1>
-          <p className="text-[#9B9B9B] text-sm font-sans">Your enrolled courses for Year {currentYear}</p>
+          <p className="theme-text-muted text-sm font-sans">Your enrolled courses for Year {currentYear}</p>
         </motion.div>
 
         {loading ? (
-          <div className="bg-white rounded-2xl border border-[#E8E2D9] p-12 text-center">
-            <p className="text-[#9B9B9B] text-sm font-sans">Loading courses...</p>
+          <div className="theme-bg-elevated rounded-2xl border theme-border p-12 text-center">
+            <p className="theme-text-muted text-sm font-sans">Loading courses...</p>
           </div>
         ) : (
           <>
@@ -78,28 +78,28 @@ export default function CoursesPortalPage() {
             <motion.div variants={rise(0.1)} initial="hidden" animate="visible">
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-px flex-1 bg-[#E8E2D9]" />
-                <span className="text-[#D4A85C] text-xs tracking-[0.2em] uppercase font-sans px-3">Year One · Certificate</span>
+                <span className="theme-accent text-xs tracking-[0.2em] uppercase font-sans px-3">Year One · Certificate</span>
                 <div className="h-px flex-1 bg-[#E8E2D9]" />
               </div>
               <div className="space-y-2">
                 {year1.map((course, i) => (
                   <motion.div key={course.id} variants={rise(i * 0.06)} initial="hidden" animate="visible">
                     <Link href={`/portal/courses/${course.slug}`}
-                      className="group bg-white rounded-2xl border border-[#E8E2D9] p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all block"
+                      className="group theme-bg-elevated rounded-2xl border theme-border p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all block"
                       style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
-                      <div className="w-10 h-10 rounded-xl bg-[#F5F0E8] border border-[#E8E2D9] flex items-center justify-center flex-shrink-0">
-                        <span className="text-[#8B7355] text-xs font-mono font-semibold">
+                      <div className="w-10 h-10 rounded-xl theme-bg-subtle border theme-border flex items-center justify-center flex-shrink-0">
+                        <span className="theme-accent text-xs font-mono font-semibold">
                           {String(i + 1).padStart(2, "0")}
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-[#1A1A2E] text-sm font-semibold mb-0.5 group-hover:text-[#D4A85C] transition-colors"
+                        <div className="theme-text text-sm font-semibold mb-0.5 group-hover:theme-accent transition-colors"
                           style={{ fontFamily: "'Georgia', serif" }}>{course.title}</div>
                         {course.description && (
-                          <p className="text-[#9B9B9B] text-xs font-sans leading-relaxed line-clamp-1">{course.description}</p>
+                          <p className="theme-text-muted text-xs font-sans leading-relaxed line-clamp-1">{course.description}</p>
                         )}
                       </div>
-                      <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:text-[#D4A85C] transition-colors flex-shrink-0" />
+                      <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:theme-accent transition-colors flex-shrink-0" />
                     </Link>
                   </motion.div>
                 ))}
@@ -110,17 +110,17 @@ export default function CoursesPortalPage() {
             <motion.div variants={rise(0.25)} initial="hidden" animate="visible">
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-px flex-1 bg-[#E8E2D9]" />
-                <span className="text-[#9B9B9B] text-xs tracking-[0.2em] uppercase font-sans px-3">Year Two · Diploma</span>
+                <span className="theme-text-muted text-xs tracking-[0.2em] uppercase font-sans px-3">Year Two · Diploma</span>
                 <div className="h-px flex-1 bg-[#E8E2D9]" />
               </div>
               {currentYear < 2 ? (
-                <div className="bg-white rounded-2xl border border-[#E8E2D9] p-8 text-center"
+                <div className="theme-bg-elevated rounded-2xl border theme-border p-8 text-center"
                   style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
                   <Lock className="w-8 h-8 text-[#D4D0C8] mx-auto mb-3" />
-                  <p className="text-[#1A1A2E] text-sm font-semibold mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+                  <p className="theme-text text-sm font-semibold mb-1" style={{ fontFamily: "'Georgia', serif" }}>
                     Year 2 Unlocks After Year 1
                   </p>
-                  <p className="text-[#9B9B9B] text-xs font-sans">
+                  <p className="theme-text-muted text-xs font-sans">
                     Complete all Year 1 courses to advance to the Diploma programme.
                   </p>
                 </div>
@@ -128,21 +128,21 @@ export default function CoursesPortalPage() {
                 <div className="space-y-2">
                   {year2.map((course, i) => (
                     <Link key={course.id} href={`/portal/courses/${course.slug}`}
-                      className="group bg-white rounded-2xl border border-[#D4A85C]/15 p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all block"
+                      className="group theme-bg-elevated rounded-2xl border border-[#D4A85C]/15 p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all block"
                       style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
                       <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/8 border border-[#D4A85C]/15 flex items-center justify-center flex-shrink-0">
-                        <span className="text-[#D4A85C] text-xs font-mono font-semibold">
+                        <span className="theme-accent text-xs font-mono font-semibold">
                           {String(i + 7).padStart(2, "0")}
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="text-[#1A1A2E] text-sm font-semibold mb-0.5 group-hover:text-[#D4A85C] transition-colors"
+                        <div className="theme-text text-sm font-semibold mb-0.5 group-hover:theme-accent transition-colors"
                           style={{ fontFamily: "'Georgia', serif" }}>{course.title}</div>
                         {course.description && (
-                          <p className="text-[#9B9B9B] text-xs font-sans leading-relaxed line-clamp-1">{course.description}</p>
+                          <p className="theme-text-muted text-xs font-sans leading-relaxed line-clamp-1">{course.description}</p>
                         )}
                       </div>
-                      <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:text-[#D4A85C] transition-colors flex-shrink-0" />
+                      <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:theme-accent transition-colors flex-shrink-0" />
                     </Link>
                   ))}
                 </div>
