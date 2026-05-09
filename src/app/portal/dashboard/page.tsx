@@ -139,15 +139,14 @@ export default function StudentDashboard() {
           <div className="absolute bottom-6 left-6 w-12 h-12 border-b border-l border-gilt-500/40 hidden sm:block" />
 
           <div className="relative z-10">
-            <div className="text-gilt-400 text-[10px] tracking-[0.4em] uppercase font-medium mb-6 sm:mb-8" style={{ fontFamily: "var(--font-geist)" }}>
+            <div className="text-gilt-400 text-[10px] tracking-[0.4em] uppercase font-medium mb-6 sm:mb-8" style={{ fontFamily: "'Arial', sans-serif" }}>
               {greeting}
             </div>
 
             {/* The dramatic editorial heading */}
             <h1 className="text-white leading-[0.95] tracking-tight mb-2"
-              style={{ fontFamily: "var(--font-instrument)", fontSize: "clamp(3rem, 8vw, 5.5rem)", fontWeight: 400 }}>
+              style={{ fontFamily: "'Georgia', serif", fontSize: "clamp(2.25rem, 5vw, 3.5rem)", fontWeight: 600 }}>
               {firstName}
-              <span className="text-gilt-400 italic font-normal" style={{ fontFamily: "var(--font-instrument)" }}>.</span>
             </h1>
 
             <div className="flex items-center gap-4 mt-6 sm:mt-8">
@@ -157,7 +156,7 @@ export default function StudentDashboard() {
                 </span>
               )}
               <span className="w-px h-3 bg-gilt-500/30" />
-              <span className="text-white/40 text-xs tracking-wider" style={{ fontFamily: "var(--font-geist)" }}>
+              <span className="text-white/40 text-xs tracking-wider" style={{ fontFamily: "'Arial', sans-serif" }}>
                 ENROLLED {student.enrolled.toUpperCase()}
               </span>
             </div>
@@ -165,10 +164,10 @@ export default function StudentDashboard() {
             {/* Scripture verse — the spiritual gravitas */}
             <div className="mt-8 sm:mt-12 pl-4 border-l-2 border-gilt-500/40">
               <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-xl"
-                style={{ fontFamily: "var(--font-instrument)", fontStyle: "italic" }}>
+                style={{ fontFamily: "'Georgia', serif", fontStyle: "italic" }}>
                 He gave some, apostles; and some, prophets; and some, evangelists; and some, pastors and teachers.
               </p>
-              <p className="text-gilt-400 text-xs tracking-[0.25em] uppercase mt-2" style={{ fontFamily: "var(--font-geist)" }}>
+              <p className="text-gilt-400 text-xs tracking-[0.25em] uppercase mt-2" style={{ fontFamily: "'Arial', sans-serif" }}>
                 Ephesians 4:11
               </p>
             </div>
@@ -189,21 +188,21 @@ export default function StudentDashboard() {
               className="bg-white border border-ivory-300 rounded-2xl p-5 hover:border-gilt-400/50 transition-all group">
               <div className="flex items-baseline gap-1.5 mb-2">
                 <span className="text-ink-800 tabular-nums leading-none"
-                  style={{ fontFamily: "var(--font-instrument)", fontSize: "2.5rem", fontWeight: 400 }}>
+                  style={{ fontFamily: "'Georgia', serif", fontWeight: 600 }}>
                   {s.value}
                 </span>
                 {s.suffix && (
                   <span className="text-ink-400 text-base"
-                    style={{ fontFamily: "var(--font-instrument)" }}>
+                    style={{ fontFamily: "'Georgia', serif" }}>
                     {typeof s.suffix === "number" ? `/ ${s.suffix}` : s.suffix}
                   </span>
                 )}
               </div>
               <div className="border-t border-ivory-300 pt-2.5">
-                <div className="text-ink-800 text-xs font-medium" style={{ fontFamily: "var(--font-geist)" }}>
+                <div className="text-ink-800 text-xs font-medium" style={{ fontFamily: "'Arial', sans-serif" }}>
                   {s.label}
                 </div>
-                <div className="text-ink-400 text-[10px] tracking-wider uppercase mt-0.5" style={{ fontFamily: "var(--font-geist)" }}>
+                <div className="text-ink-400 text-[10px] tracking-wider uppercase mt-0.5" style={{ fontFamily: "'Arial', sans-serif" }}>
                   {s.sublabel}
                 </div>
               </div>
@@ -219,10 +218,10 @@ export default function StudentDashboard() {
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-1 h-8 bg-gilt-500 rounded-full" />
               <div className="min-w-0">
-                <div className="text-ink-800 text-base sm:text-lg truncate" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
+                <div className="text-ink-800 text-base sm:text-lg truncate" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                   Cohort Orientation
                 </div>
-                <div className="text-ink-400 text-[11px] tracking-wider uppercase mt-0.5" style={{ fontFamily: "var(--font-geist)" }}>
+                <div className="text-ink-400 text-[11px] tracking-wider uppercase mt-0.5" style={{ fontFamily: "'Arial', sans-serif" }}>
                   7 May 2026 · Recording
                 </div>
               </div>
@@ -256,13 +255,13 @@ export default function StudentDashboard() {
                   <Play className="w-5 h-5 sm:w-6 sm:h-6 text-gilt-400" fill="currentColor" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-gilt-700 text-[10px] uppercase tracking-[0.3em] font-medium mb-2" style={{ fontFamily: "var(--font-geist)" }}>
+                  <div className="text-gilt-700 text-[10px] uppercase tracking-[0.3em] font-medium mb-2" style={{ fontFamily: "'Arial', sans-serif" }}>
                     Continue Where You Left Off
                   </div>
-                  <div className="text-ink-800 text-xl sm:text-2xl mb-1.5" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
+                  <div className="text-ink-800 text-xl sm:text-2xl mb-1.5" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                     {nextSubtopic.title}
                   </div>
-                  <div className="text-ink-400 text-sm" style={{ fontFamily: "var(--font-geist)" }}>
+                  <div className="text-ink-400 text-sm" style={{ fontFamily: "'Arial', sans-serif" }}>
                     {nextSubtopic.courseTitle}
                   </div>
                 </div>
@@ -276,10 +275,10 @@ export default function StudentDashboard() {
         {pendingAssessments.length > 0 && (
           <motion.div variants={rise(0.26)} initial="hidden" animate="visible">
             <div className="flex items-baseline justify-between mb-4">
-              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
-                Assessments <span className="italic text-gilt-600">due</span>
+              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
+                Assessments Due
               </h2>
-              <Link href="/portal/assessments" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors flex items-center gap-1" style={{ fontFamily: "var(--font-geist)" }}>
+              <Link href="/portal/assessments" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors flex items-center gap-1" style={{ fontFamily: "'Arial', sans-serif" }}>
                 See all <ChevronRight className="w-3 h-3" />
               </Link>
             </div>
@@ -291,17 +290,17 @@ export default function StudentDashboard() {
                     <Star className="w-4 h-4 text-gilt-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-ink-400 text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: "var(--font-geist)" }}>
+                    <div className="text-ink-400 text-[10px] uppercase tracking-widest mb-0.5" style={{ fontFamily: "'Arial', sans-serif" }}>
                       {a.courses?.title}
                     </div>
-                    <div className="text-ink-800 text-base truncate" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
+                    <div className="text-ink-800 text-base truncate" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                       {a.title}
                     </div>
-                    <div className="text-ink-400 text-xs mt-0.5" style={{ fontFamily: "var(--font-geist)" }}>
+                    <div className="text-ink-400 text-xs mt-0.5" style={{ fontFamily: "'Arial', sans-serif" }}>
                       {a.total_marks} marks{a.due_date && ` · Due ${new Date(a.due_date).toLocaleDateString("en-NG", { dateStyle: "medium" })}`}
                     </div>
                   </div>
-                  <span className="bg-royal-700 text-white text-xs font-medium px-4 py-2 rounded-full flex-shrink-0 group-hover:bg-royal-800 transition-colors" style={{ fontFamily: "var(--font-geist)" }}>
+                  <span className="bg-royal-700 text-white text-xs font-medium px-4 py-2 rounded-full flex-shrink-0 group-hover:bg-royal-800 transition-colors" style={{ fontFamily: "'Arial', sans-serif" }}>
                     Take
                   </span>
                 </Link>
@@ -316,10 +315,10 @@ export default function StudentDashboard() {
           {/* Courses */}
           <motion.div variants={rise(0.3)} initial="hidden" animate="visible" className="lg:col-span-2">
             <div className="flex items-baseline justify-between mb-4">
-              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
-                Your <span className="italic text-gilt-600">courses</span>
+              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
+                Your Courses
               </h2>
-              <Link href="/portal/courses" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors flex items-center gap-1" style={{ fontFamily: "var(--font-geist)" }}>
+              <Link href="/portal/courses" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors flex items-center gap-1" style={{ fontFamily: "'Arial', sans-serif" }}>
                 See all <ChevronRight className="w-3 h-3" />
               </Link>
             </div>
@@ -327,7 +326,7 @@ export default function StudentDashboard() {
             {recentCourses.length === 0 ? (
               <div className="bg-white border border-ivory-300 rounded-2xl p-12 text-center">
                 <BookOpen className="w-10 h-10 text-ivory-300 mx-auto mb-3" />
-                <p className="text-ink-400 text-sm" style={{ fontFamily: "var(--font-geist)" }}>No courses yet.</p>
+                <p className="text-ink-400 text-sm" style={{ fontFamily: "'Arial', sans-serif" }}>No courses yet.</p>
               </div>
             ) : (
               <div className="bg-white rounded-2xl border border-ivory-300 overflow-hidden"
@@ -336,15 +335,15 @@ export default function StudentDashboard() {
                   <Link key={course.id} href={`/portal/courses/${course.slug}`}
                     className={`flex items-center gap-5 px-5 py-5 hover:bg-ivory-50 transition-colors group
                       ${i < recentCourses.length - 1 ? "border-b border-ivory-200" : ""}`}>
-                    <div className="text-gilt-600 text-2xl font-mono leading-none flex-shrink-0 w-8" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
+                    <div className="text-gilt-600 text-2xl font-mono leading-none flex-shrink-0 w-8" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                       {String(i + 1).padStart(2, "0")}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-ink-800 text-lg leading-tight truncate group-hover:text-royal-700 transition-colors"
-                        style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
+                        style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                         {course.title}
                       </div>
-                      <div className="text-ink-400 text-xs mt-1 tracking-wider uppercase" style={{ fontFamily: "var(--font-geist)" }}>
+                      <div className="text-ink-400 text-xs mt-1 tracking-wider uppercase" style={{ fontFamily: "'Arial', sans-serif" }}>
                         Year {course.year}
                       </div>
                     </div>
@@ -358,17 +357,17 @@ export default function StudentDashboard() {
           {/* Announcements */}
           <motion.div variants={rise(0.35)} initial="hidden" animate="visible">
             <div className="flex items-baseline justify-between mb-4">
-              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
-                <span className="italic text-gilt-600">News</span>
+              <h2 className="text-ink-800 text-2xl sm:text-3xl" style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
+                News
               </h2>
-              <Link href="/portal/announcements" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors" style={{ fontFamily: "var(--font-geist)" }}>
+              <Link href="/portal/announcements" className="text-ink-400 hover:text-royal-700 text-xs uppercase tracking-wider transition-colors" style={{ fontFamily: "'Arial', sans-serif" }}>
                 All
               </Link>
             </div>
 
             {announcements.length === 0 ? (
               <div className="bg-white border border-ivory-300 rounded-2xl p-6 text-center">
-                <p className="text-ink-400 text-xs" style={{ fontFamily: "var(--font-geist)" }}>No announcements.</p>
+                <p className="text-ink-400 text-xs" style={{ fontFamily: "'Arial', sans-serif" }}>No announcements.</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -376,15 +375,15 @@ export default function StudentDashboard() {
                   <Link key={a.id} href="/portal/announcements"
                     className="block bg-white border border-ivory-300 rounded-2xl p-4 hover:border-gilt-400/40 transition-all">
                     {a.is_pinned && (
-                      <div className="text-gilt-600 text-[9px] tracking-[0.3em] uppercase font-medium mb-2" style={{ fontFamily: "var(--font-geist)" }}>
+                      <div className="text-gilt-600 text-[9px] tracking-[0.3em] uppercase font-medium mb-2" style={{ fontFamily: "'Arial', sans-serif" }}>
                         ◆ Pinned
                       </div>
                     )}
                     <div className="text-ink-800 text-base leading-tight mb-2 line-clamp-2"
-                      style={{ fontFamily: "var(--font-instrument)", fontWeight: 400 }}>
+                      style={{ fontFamily: "'Georgia', serif", fontWeight: 400 }}>
                       {a.title}
                     </div>
-                    <div className="text-ink-400 text-[10px] tracking-wider uppercase flex items-center gap-1" style={{ fontFamily: "var(--font-geist)" }}>
+                    <div className="text-ink-400 text-[10px] tracking-wider uppercase flex items-center gap-1" style={{ fontFamily: "'Arial', sans-serif" }}>
                       <Clock className="w-2.5 h-2.5" />
                       {new Date(a.published_at).toLocaleDateString("en-NG", { dateStyle: "medium" })}
                     </div>

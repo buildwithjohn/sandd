@@ -1,22 +1,7 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Geist } from "next/font/google";
 import "../styles/globals.css";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/lib/auth";
-
-const instrumentSerif = Instrument_Serif({
-  subsets: ["latin"],
-  variable: "--font-instrument",
-  display: "swap",
-  weight: ["400"],
-  style: ["normal", "italic"],
-});
-
-const geist = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "S&D Prophetic School | Sons and Daughters of Prophets",
@@ -35,8 +20,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${instrumentSerif.variable} ${geist.variable}`}>
-      <body className="font-sans antialiased" style={{ background: "#FBF7EE" }}>
+    <html lang="en">
+      <body style={{ fontFamily: "Arial, sans-serif", background: "#FAF9F6" }}>
         <AuthProvider>{children}</AuthProvider>
         <Toaster position="top-right" richColors />
       </body>

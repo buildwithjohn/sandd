@@ -30,9 +30,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans:    ["var(--font-geist)",      "system-ui", "sans-serif"],
-        serif:   ["var(--font-instrument)", "Georgia",   "serif"],
-        display: ["var(--font-instrument)", "Georgia",   "serif"],
+        sans:    ["Arial",   "system-ui", "sans-serif"],
+        serif:   ["Georgia", "serif"],
+        display: ["Georgia", "serif"],
       },
       borderRadius: {
         "2xl": "16px",

@@ -75,7 +75,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="min-h-screen bg-ivory-100" style={{ fontFamily: "var(--font-geist), system-ui, sans-serif" }}>
+    <div className="min-h-screen bg-ivory-100" style={{ fontFamily: "Arial, sans-serif" }}>
 
       {/* ── TOP NAV ─────────────────────────────────────── */}
       <nav className="bg-white border-b border-[#E8E2D9] sticky top-0 z-50"
