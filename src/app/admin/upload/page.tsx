@@ -90,7 +90,7 @@ export default function CourseBuilderPage() {
   // ── Publish Video ────────────────────────────────────────────────────
   async function handlePublishVideo() {
     if (!vCourseId)    { toast.error("Select a course first."); return; }
-    if (!lessonTitle)  { toast.error("Enter a lesson title."); return; }
+    if (!lessonTitle)  { toast.error("Enter a subtopic title."); return; }
     if (!videoId)      { toast.error("Enter a valid YouTube URL."); return; }
     if (publishMode === "schedule" && !scheduledAt) { toast.error("Select a date and time to schedule."); return; }
     setSavingVideo(true);
@@ -119,26 +119,28 @@ export default function CourseBuilderPage() {
     } finally { setSavingVideo(false); }
   }
 
-  // ── Upload Material ──────────────────────────────────────────────────
+  // ── Upload Material (per course, not per subtopic) ──────────────────
   async function handleUploadMaterial() {
     if (!mCourseId)  { toast.error("Select a course first."); return; }
-    if (!mLessonId)  { toast.error("Select a lesson to attach the material to."); return; }
     if (!mFile)      { toast.error("Select a file to upload."); return; }
     if (mFile.size > 20 * 1024 * 1024) { toast.error("File must be under 20MB."); return; }
     setUploadingFile(true);
     try {
       const supabase = createClient();
       const ext  = mFile.name.split(".").pop();
-      const path = `materials/${mLessonId}.${ext}`;
+      const path = `materials/course-${mCourseId}.${ext}`;
       const { error: upErr } = await supabase.storage.from("materials").upload(path, mFile, { upsert: true });
       if (upErr) throw upErr;
       const { data: urlData } = supabase.storage.from("materials").getPublicUrl(path);
-      const { error: dbErr } = await supabase.from("lessons").update({ notes_url: urlData.publicUrl }).eq("id", mLessonId);
-      if (dbErr) throw dbErr;
-      toast.success("Material uploaded successfully!");
-      setMFile(null); setMLessonId("");
+      // Save to courses table as course_material_url
+      const { error: dbErr } = await supabase.from("courses").update({ notes_url: urlData.publicUrl }).eq("id", mCourseId);
+      if (dbErr) {
+        // Fallback: save to all lessons in the course
+        await supabase.from("lessons").update({ notes_url: urlData.publicUrl }).eq("course_id", mCourseId);
+      }
+      toast.success("Course material uploaded! Students can download it from their portal.");
+      setMFile(null);
       if (fileRef.current) fileRef.current.value = "";
-      loadLessons(mCourseId, setMLessons);
     } catch (err: any) {
       toast.error(err.message || "Upload failed.");
     } finally { setUploadingFile(false); }
@@ -169,8 +171,8 @@ export default function CourseBuilderPage() {
   }
 
   const tabs: { id: Tab; icon: any; label: string; desc: string }[] = [
-    { id: "video",      icon: Youtube,       label: "Video Lesson",    desc: "Add a YouTube lesson" },
-    { id: "material",   icon: FileText,      label: "Course Material", desc: "Upload PDF or Word" },
+    { id: "video",      icon: Youtube,       label: "Video Subtopic",    desc: "Add a YouTube video for a subtopic" },
+    { id: "material",   icon: FileText,      label: "Course Material", desc: "One PDF per course" },
     { id: "assignment", icon: ClipboardList, label: "Assignment",      desc: "Set exam questions" },
   ];
 
@@ -198,7 +200,7 @@ export default function CourseBuilderPage() {
           <h1 className="text-2xl font-medium text-white mb-1" style={{ fontFamily: "'Georgia', serif" }}>
             Course Builder
           </h1>
-          <p className="text-white/35 text-sm font-sans">Add lessons, upload materials, and create assignments.</p>
+          <p className="text-white/35 text-sm font-sans">Add subtopics, upload course materials, and create assignments.</p>
         </div>
 
         {/* Tabs */}
@@ -225,7 +227,7 @@ export default function CourseBuilderPage() {
             <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
               <Youtube className="w-4 h-4 text-red-400" />
               <div>
-                <div className="text-white text-sm font-semibold font-sans">Add Video Lesson</div>
+                <div className="text-white text-sm font-semibold font-sans">Add Video Subtopic</div>
                 <div className="text-white/30 text-xs font-sans">Upload to YouTube as Unlisted first, then paste the link here</div>
               </div>
             </div>
@@ -235,9 +237,9 @@ export default function CourseBuilderPage() {
 
             {/* Step 2 — Title */}
             <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Lesson Title *</label>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Title *</label>
               <input value={lessonTitle} onChange={e => setLessonTitle(e.target.value)}
-                placeholder="e.g. What is New Testament Prophecy?"
+                placeholder="e.g. What is NT Prophecy?"
                 className={inp} />
             </div>
 
@@ -266,10 +268,10 @@ export default function CourseBuilderPage() {
 
             {/* Step 4 — Lesson number */}
             <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Lesson Number</label>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Number</label>
               <input type="number" min="0" value={orderIndex} onChange={e => setOrderIndex(e.target.value)}
                 className="w-28 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-sans focus:outline-none focus:border-[#D4A85C]/50" />
-              <p className="text-white/20 text-xs font-sans mt-1">Use 0 for orientation/intro lesson</p>
+              <p className="text-white/20 text-xs font-sans mt-1">Use 1, 2, 3... for each subtopic in the course</p>
             </div>
 
             {/* Step 5 — Publish or Schedule */}
@@ -304,7 +306,7 @@ export default function CourseBuilderPage() {
               <div className="rounded-xl border border-white/[0.07] overflow-hidden">
                 <div className="px-4 py-2 border-b border-white/[0.06]">
                   <span className="text-white/30 text-[10px] uppercase tracking-widest font-sans">
-                    {vLessons.length} lesson{vLessons.length !== 1 ? "s" : ""} in this course
+                    {vLessons.length} subtopic{vLessons.length !== 1 ? "s" : ""} in this course
                   </span>
                 </div>
                 {vLessons.map((l, i) => (
@@ -324,7 +326,7 @@ export default function CourseBuilderPage() {
               className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(212,168,92,0.3)]">
               {savingVideo
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> {publishMode === "now" ? "Publishing..." : "Scheduling..."}</>
-                : <><Youtube className="w-4 h-4" /> {publishMode === "now" ? "Publish Lesson" : "Schedule Lesson"}</>
+                : <><Youtube className="w-4 h-4" /> {publishMode === "now" ? "Publish Subtopic" : "Schedule Subtopic"}</>
               }
             </button>
           </div>
@@ -337,35 +339,22 @@ export default function CourseBuilderPage() {
               <FileText className="w-4 h-4 text-[#D4A85C]" />
               <div>
                 <div className="text-white text-sm font-semibold font-sans">Upload Course Material</div>
-                <div className="text-white/30 text-xs font-sans">PDF or Word — students download this from the lesson page</div>
+                <div className="text-white/30 text-xs font-sans">PDF or Word for the whole course — students download from their portal</div>
               </div>
             </div>
 
             {/* Step 1 — Course */}
             <CourseSelect value={mCourseId} onChange={setMCourseId} />
 
-            {/* Step 2 — Lesson */}
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Attach to Lesson *</label>
-              {!mCourseId ? (
-                <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3">
-                  <p className="text-white/25 text-sm font-sans">← Select a course above first</p>
-                </div>
-              ) : mLessons.length === 0 ? (
-                <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3">
-                  <p className="text-white/25 text-sm font-sans">No lessons in this course yet. Add a video lesson first.</p>
-                </div>
-              ) : (
-                <select value={mLessonId} onChange={e => setMLessonId(e.target.value)} className={sel}>
-                  <option value="">Select a lesson...</option>
-                  {mLessons.map(l => (
-                    <option key={l.id} value={l.id}>
-                      {String(l.order_index).padStart(2,"0")} — {l.title}{l.notes_url ? " ✓ (has material)" : ""}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
+            {/* Step 2 — File (one per course) */}
+            {mCourseId && (
+              <div className="bg-[#D4A85C]/[0.05] border border-[#D4A85C]/15 rounded-xl px-4 py-3">
+                <p className="text-[#D4A85C]/80 text-xs font-sans">
+                  One course material per course. Uploading a new file will replace the existing one.
+                  Students download it from the Documents section of their portal.
+                </p>
+              </div>
+            )}
 
             {/* Step 3 — File */}
             <div>
@@ -391,7 +380,7 @@ export default function CourseBuilderPage() {
               </div>
             </div>
 
-            <button onClick={handleUploadMaterial} disabled={uploadingFile || !mFile || !mLessonId || !mCourseId}
+            <button onClick={handleUploadMaterial} disabled={uploadingFile || !mFile || !mCourseId}
               className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans flex items-center justify-center gap-2">
               {uploadingFile
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>
@@ -418,7 +407,7 @@ export default function CourseBuilderPage() {
             {/* Step 2 — Lesson (optional) */}
             <div>
               <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">
-                Link to Lesson <span className="text-white/20 normal-case tracking-normal">(optional)</span>
+                Link to Subtopic <span className="text-white/20 normal-case tracking-normal">(optional)</span>
               </label>
               {!aCourseId ? (
                 <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3">
@@ -426,7 +415,7 @@ export default function CourseBuilderPage() {
                 </div>
               ) : (
                 <select value={aLessonId} onChange={e => setALessonId(e.target.value)} className={sel}>
-                  <option value="">General course assignment (not tied to a specific lesson)</option>
+                  <option value="">General course assignment (not tied to a specific subtopic)</option>
                   {aLessons.map(l => (
                     <option key={l.id} value={l.id}>{String(l.order_index).padStart(2,"0")} — {l.title}</option>
                   ))}

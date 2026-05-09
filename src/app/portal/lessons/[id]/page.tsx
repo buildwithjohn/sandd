@@ -131,7 +131,7 @@ export default function LessonPage() {
   }
 
   const tabs: { id: Tab; icon: any; label: string }[] = [
-    { id: "video",      icon: Play,          label: "Lesson"    },
+    { id: "video",      icon: Play,          label: "Subtopic"    },
     { id: "material",   icon: FileDown,      label: "Material"  },
     { id: "assignment", icon: ClipboardList, label: "Assignment" },
   ];
@@ -158,7 +158,7 @@ export default function LessonPage() {
               {lesson.title}
             </h1>
             <p className="text-[#9B9B9B] text-xs font-sans mt-1">
-              Lesson {lesson.order_index} · {lesson.courses.title}
+              Subtopic {lesson.order_index} · {lesson.courses.title}
             </p>
           </div>
           {completed && (
