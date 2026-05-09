@@ -119,25 +119,19 @@ export default function CourseBuilderPage() {
     } finally { setSavingVideo(false); }
   }
 
-  // ── Upload Material (per course, not per subtopic) ──────────────────
+  // ── Upload Material via server API (bypasses RLS) ───────────────────
   async function handleUploadMaterial() {
-    if (!mCourseId)  { toast.error("Select a course first."); return; }
-    if (!mFile)      { toast.error("Select a file to upload."); return; }
+    if (!mCourseId) { toast.error("Select a course first."); return; }
+    if (!mFile)     { toast.error("Select a file to upload."); return; }
     if (mFile.size > 20 * 1024 * 1024) { toast.error("File must be under 20MB."); return; }
     setUploadingFile(true);
     try {
-      const supabase = createClient();
-      const ext  = mFile.name.split(".").pop();
-      const path = `materials/course-${mCourseId}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("materials").upload(path, mFile, { upsert: true });
-      if (upErr) throw upErr;
-      const { data: urlData } = supabase.storage.from("materials").getPublicUrl(path);
-      // Save to courses table as course_material_url
-      const { error: dbErr } = await supabase.from("courses").update({ notes_url: urlData.publicUrl }).eq("id", mCourseId);
-      if (dbErr) {
-        // Fallback: save to all lessons in the course
-        await supabase.from("lessons").update({ notes_url: urlData.publicUrl }).eq("course_id", mCourseId);
-      }
+      const form = new FormData();
+      form.append("courseId", mCourseId);
+      form.append("file", mFile);
+      const res = await fetch("/api/admin/upload-material", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed");
       toast.success("Course material uploaded! Students can download it from their portal.");
       setMFile(null);
       if (fileRef.current) fileRef.current.value = "";

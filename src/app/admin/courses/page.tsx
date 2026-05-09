@@ -61,18 +61,24 @@ export default function CourseManagerPage() {
   useEffect(() => { load(); }, []);
 
   async function togglePublish(subtopicId: string, current: boolean) {
-    const supabase = createClient();
-    const { error } = await supabase.from("lessons")
-      .update({ is_published: !current }).eq("id", subtopicId);
-    if (error) { toast.error("Failed to update."); return; }
+    const res = await fetch("/api/admin/delete-lesson", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lessonId: subtopicId, action: "toggle", isPublished: current }),
+    });
+    const data = await res.json();
+    if (!res.ok) { toast.error(data.error || "Failed"); return; }
     toast.success(current ? "Subtopic hidden from students." : "Subtopic published!");
     load();
   }
 
   async function deleteSubtopic(subtopicId: string, title: string) {
     if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
-    const supabase = createClient();
-    await supabase.from("lessons").delete().eq("id", subtopicId);
+    const res = await fetch("/api/admin/delete-lesson", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lessonId: subtopicId, action: "delete" }),
+    });
+    const data = await res.json();
+    if (!res.ok) { toast.error(data.error || "Failed"); return; }
     toast.success("Subtopic deleted.");
     load();
   }
