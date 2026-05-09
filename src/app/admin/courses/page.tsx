@@ -8,7 +8,7 @@ import Link from "next/link";
 import {
   ChevronDown, ChevronRight, Youtube, FileText,
   ClipboardList, Plus, Eye, EyeOff, Calendar,
-  CheckCircle, Clock, Trash2
+  CheckCircle, Clock, Trash2, Star
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,11 +23,15 @@ interface Assignment {
   lesson_id?: string;
 }
 
+interface Assessment {
+  id: string; title: string; is_published: boolean; total_marks: number; due_date?: string;
+}
+
 interface Course {
   id: string; title: string; year: number; order_index: number;
   description?: string; notes_url?: string;
   subtopics: Subtopic[];
-  assignments: Assignment[];
+  assessments: Assessment[];
 }
 
 export default function CourseManagerPage() {
@@ -43,11 +47,11 @@ export default function CourseManagerPage() {
     if (!coursesData) { setLoading(false); return; }
 
     const full: Course[] = await Promise.all(coursesData.map(async (c: any) => {
-      const [{ data: subtopics }, { data: assignments }] = await Promise.all([
+      const [{ data: subtopics }, { data: assessments }] = await Promise.all([
         supabase.from("lessons").select("*").eq("course_id", c.id).order("order_index"),
-        supabase.from("assignments").select("*").eq("course_id", c.id),
+        supabase.from("assessments").select("id, title, is_published, total_marks, due_date").eq("course_id", c.id),
       ]);
-      return { ...c, subtopics: subtopics ?? [], assignments: assignments ?? [] };
+      return { ...c, subtopics: subtopics ?? [], assessments: assessments ?? [] };
     }));
 
     setCourses(full);
@@ -83,11 +87,21 @@ export default function CourseManagerPage() {
     load();
   }
 
-  async function deleteAssignment(assignmentId: string, title: string) {
-    if (!confirm(`Delete assignment "${title}"? This cannot be undone.`)) return;
+  async function goLiveNow(subtopicId: string) {
+    const res = await fetch("/api/admin/delete-lesson", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lessonId: subtopicId, action: "toggle", isPublished: false }),
+    });
+    if (!res.ok) { toast.error("Failed."); return; }
+    toast.success("Subtopic is now LIVE!");
+    load();
+  }
+
+  async function deleteAssessment(assessmentId: string, title: string) {
+    if (!confirm(`Delete assessment "${title}"? This cannot be undone.`)) return;
     const supabase = createClient();
-    await supabase.from("assignments").delete().eq("id", assignmentId);
-    toast.success("Assignment deleted.");
+    await supabase.from("assessments").delete().eq("id", assessmentId);
+    toast.success("Assessment deleted.");
     load();
   }
 
@@ -157,9 +171,9 @@ export default function CourseManagerPage() {
                               <FileText className="w-2.5 h-2.5" /> Material
                             </span>
                           )}
-                          {course.assignments.length > 0 && (
-                            <span className="text-blue-400 text-[10px] font-sans flex items-center gap-1">
-                              <ClipboardList className="w-2.5 h-2.5" /> {course.assignments.length} assignment{course.assignments.length !== 1 ? "s" : ""}
+                          {course.assessments.length > 0 && (
+                            <span className="text-[#D4A85C] text-[10px] font-sans flex items-center gap-1">
+                              <Star className="w-2.5 h-2.5" /> {course.assessments.length} assessment{course.assessments.length !== 1 ? "s" : ""}
                             </span>
                           )}
                         </div>
@@ -221,6 +235,13 @@ export default function CourseManagerPage() {
                                   </span>
                                   {/* Actions */}
                                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {!sub.is_published && (
+                                      <button onClick={() => goLiveNow(sub.id)}
+                                        className="text-[10px] bg-green-500/10 border border-green-500/20 text-green-400 hover:bg-green-500/20 px-2 py-1 rounded-lg font-sans transition-all whitespace-nowrap"
+                                        title="Publish now">
+                                        Go Live
+                                      </button>
+                                    )}
                                     <button onClick={() => togglePublish(sub.id, sub.is_published)}
                                       className="w-7 h-7 rounded-lg flex items-center justify-center text-white/30 hover:text-white hover:bg-white/[0.08] transition-all"
                                       title={sub.is_published ? "Hide from students" : "Publish now"}>
@@ -270,39 +291,56 @@ export default function CourseManagerPage() {
                           )}
                         </div>
 
-                        {/* Assignments */}
+                        {/* Assessments */}
                         <div className="px-5 py-3 border-t border-white/[0.04]">
-                          <div className="text-white/25 text-[10px] uppercase tracking-widest font-sans mb-2 flex items-center gap-2">
-                            <ClipboardList className="w-3 h-3" /> Assignments ({course.assignments.length})
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-white/25 text-[10px] uppercase tracking-widest font-sans flex items-center gap-2">
+                              <Star className="w-3 h-3" /> Assessments ({course.assessments.length})
+                            </div>
+                            <Link href="/admin/assessments/new"
+                              className="text-[#D4A85C]/60 hover:text-[#D4A85C] text-[10px] font-sans transition-colors">
+                              + New →
+                            </Link>
                           </div>
-                          {course.assignments.length === 0 ? (
+                          {course.assessments.length === 0 ? (
                             <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] border-dashed rounded-xl px-4 py-3">
-                              <ClipboardList className="w-4 h-4 text-white/20 flex-shrink-0" />
-                              <span className="text-white/25 text-xs font-sans">No assignments yet.</span>
-                              <Link href="/admin/upload"
-                                className="text-[#D4A85C]/60 hover:text-[#D4A85C] text-[10px] font-sans transition-colors ml-auto flex-shrink-0">
-                                Create →
-                              </Link>
+                              <Star className="w-4 h-4 text-white/20 flex-shrink-0" />
+                              <span className="text-white/25 text-xs font-sans">No assessments yet.</span>
                             </div>
                           ) : (
                             <div className="space-y-1.5">
-                              {course.assignments.map(a => (
+                              {course.assessments.map(a => (
                                 <div key={a.id}
                                   className="flex items-center gap-3 bg-white/[0.03] rounded-xl px-4 py-3 group">
-                                  <ClipboardList className="w-3.5 h-3.5 text-blue-400/60 flex-shrink-0" />
+                                  <Star className="w-3.5 h-3.5 text-[#D4A85C]/60 flex-shrink-0" />
                                   <div className="flex-1 min-w-0">
                                     <div className="text-white/75 text-xs font-semibold font-sans truncate">{a.title}</div>
-                                    {a.due_date && (
-                                      <div className="text-white/30 text-[10px] font-sans mt-0.5 flex items-center gap-1">
-                                        <Clock className="w-2.5 h-2.5" />
-                                        Due: {new Date(a.due_date).toLocaleDateString("en-NG", { dateStyle: "medium" })}
-                                      </div>
-                                    )}
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                      <span className={`text-[9px] px-1.5 py-0.5 rounded font-sans ${
+                                        a.is_published
+                                          ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                                          : "bg-white/5 text-white/30 border border-white/10"
+                                      }`}>
+                                        {a.is_published ? "Published" : "Draft"}
+                                      </span>
+                                      <span className="text-white/25 text-[10px] font-sans">{a.total_marks} marks</span>
+                                      {a.due_date && (
+                                        <span className="text-white/25 text-[10px] font-sans">
+                                          Due {new Date(a.due_date).toLocaleDateString("en-NG", { dateStyle: "medium" })}
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
-                                  <button onClick={() => deleteAssignment(a.id, a.title)}
-                                    className="w-7 h-7 rounded-lg flex items-center justify-center text-white/20 hover:text-red-400 hover:bg-red-400/10 transition-all opacity-0 group-hover:opacity-100">
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
+                                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Link href={`/admin/assessments/${a.id}`}
+                                      className="text-[10px] bg-[#D4A85C]/10 border border-[#D4A85C]/20 text-[#D4A85C] hover:bg-[#D4A85C]/20 px-2 py-1 rounded-lg font-sans transition-all">
+                                      View
+                                    </Link>
+                                    <button onClick={() => deleteAssessment(a.id, a.title)}
+                                      className="w-7 h-7 rounded-lg flex items-center justify-center text-white/20 hover:text-red-400 hover:bg-red-400/10 transition-all">
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
                                 </div>
                               ))}
                             </div>
