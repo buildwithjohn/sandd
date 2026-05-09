@@ -1,163 +1,264 @@
 "use client";
 export const dynamic = 'force-dynamic';
-import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { BookOpen, Bell, ChevronRight, CheckCircle, PlayCircle, Clock, FileText, Lock } from "lucide-react";
+import { createClient } from "@/lib/supabase";
+import PortalShell from "@/components/portal/PortalShell";
+import { motion } from "framer-motion";
+import {
+  Play, FileDown, CheckCircle, Lock,
+  ChevronRight, BookOpen, Star, Clock
+} from "lucide-react";
 
-// Mock course data — replace with getLessonsForCourse(courseId, studentId)
-const courseData: Record<string, {
-  title: string; icon: string; scripture: string; credits: number;
-  description: string;
-  lessons: { id: string; title: string; duration: string; status: string; has_notes: boolean; has_quiz: boolean }[]
-}> = {
-  "intro-nt-prophecy": {
-    title: "Introduction to NT Prophecy",
-    icon: "📖",
-    scripture: "1 Cor. 14:3",
-    credits: 3,
-    description: "This course lays the foundation for understanding how New Testament prophecy differs from Old Testament prophecy, and what role it plays in the church today.",
-    lessons: [
-      { id: "l1", title: "Welcome & Course Overview", duration: "8 min", status: "completed", has_notes: true, has_quiz: false },
-      { id: "l2", title: "What is New Testament Prophecy?", duration: "22 min", status: "completed", has_notes: true, has_quiz: true },
-      { id: "l3", title: "Old Testament vs New Testament Prophecy", duration: "28 min", status: "completed", has_notes: true, has_quiz: true },
-      { id: "l4", title: "The Role of Prophecy in the Church Today", duration: "18 min", status: "in_progress", has_notes: true, has_quiz: false },
-      { id: "l5", title: "Prophecy and Edification (1 Cor 14:3)", duration: "20 min", status: "not_started", has_notes: false, has_quiz: true },
-      { id: "l6", title: "Weighing Prophetic Words", duration: "16 min", status: "not_started", has_notes: true, has_quiz: false },
-      { id: "l7", title: "Corporate Prophecy in the Local Church", duration: "24 min", status: "not_started", has_notes: true, has_quiz: true },
-      { id: "l8", title: "Summary & Course Assessment", duration: "12 min", status: "not_started", has_notes: false, has_quiz: true },
-    ],
-  },
-};
+interface Subtopic {
+  id: string; title: string; order_index: number;
+  youtube_video_id?: string; notes_url?: string;
+  is_published: boolean;
+}
 
-const statusConfig: Record<string, { icon: typeof CheckCircle; label: string; className: string; iconClass: string }> = {
-  completed: { icon: CheckCircle, label: "Completed", className: "text-green-600", iconClass: "text-green-500" },
-  in_progress: { icon: PlayCircle, label: "In Progress", className: "text-brand-600", iconClass: "text-brand-500" },
-  not_started: { icon: Clock, label: "Not Started", className: "text-slate-400", iconClass: "text-slate-300" },
-};
+interface Progress { lesson_id: string; status: string; }
 
 export default function CourseDetailPage() {
   const params = useParams();
-  const slug = params?.slug as string;
-  const course = courseData[slug] ?? courseData["intro-nt-prophecy"];
+  const router = useRouter();
+  const slug   = params?.slug as string;
 
-  const completed = course.lessons.filter(l => l.status === "completed").length;
-  const total = course.lessons.length;
-  const progress = Math.round((completed / total) * 100);
+  const [course, setCourse]       = useState<any>(null);
+  const [subtopics, setSubtopics] = useState<Subtopic[]>([]);
+  const [progress, setProgress]   = useState<Record<string, string>>({});
+  const [assessment, setAssessment] = useState<any>(null);
+  const [loading, setLoading]     = useState(true);
+  const [studentId, setStudentId] = useState("");
+
+  useEffect(() => {
+    async function load() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { router.push("/auth/login"); return; }
+      setStudentId(user.id);
+
+      // Load course
+      const { data: courseData } = await supabase
+        .from("courses").select("*").eq("slug", slug).single();
+      if (!courseData) { router.push("/portal/courses"); return; }
+      setCourse(courseData);
+
+      // Load published subtopics
+      const { data: subs } = await supabase
+        .from("lessons")
+        .select("id, title, order_index, youtube_video_id, notes_url, is_published")
+        .eq("course_id", courseData.id)
+        .eq("is_published", true)
+        .order("order_index");
+      setSubtopics(subs ?? []);
+
+      // Load student progress
+      const { data: prog } = await supabase
+        .from("lesson_progress")
+        .select("lesson_id, status")
+        .eq("student_id", user.id);
+      const progMap: Record<string, string> = {};
+      prog?.forEach((p: Progress) => { progMap[p.lesson_id] = p.status; });
+      setProgress(progMap);
+
+      // Load published assessment for this course
+      const { data: ass } = await supabase
+        .from("assessments")
+        .select("id, title, total_marks, is_published")
+        .eq("course_id", courseData.id)
+        .eq("is_published", true)
+        .single();
+      if (ass) setAssessment(ass);
+
+      setLoading(false);
+    }
+    load();
+  }, [slug]);
+
+  if (loading) return (
+    <PortalShell>
+      <div className="flex items-center justify-center py-20">
+        <div className="w-6 h-6 border-2 border-[#D4A85C]/30 border-t-[#D4A85C] rounded-full animate-spin" />
+      </div>
+    </PortalShell>
+  );
+
+  if (!course) return null;
+
+  const completedCount = subtopics.filter(s => progress[s.id] === "completed").length;
+  const totalCount     = subtopics.length;
+  const pct            = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFF]">
-      <nav className="bg-white border-b border-blue-100 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Link href="/portal/courses" className="text-slate-400 hover:text-brand-600 flex items-center gap-1 text-sm">
-              ← My Courses
-            </Link>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-brand-700 flex items-center justify-center text-white font-medium text-xs">AO</div>
-        </div>
-      </nav>
+    <PortalShell>
+      <div className="max-w-2xl space-y-5">
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-        {/* Course header */}
-        <div className="bg-brand-950 rounded-2xl p-6 mb-6">
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-xl bg-brand-800 border border-brand-700 flex items-center justify-center text-3xl flex-shrink-0">
-              {course.icon}
+        {/* Back */}
+        <Link href="/portal/courses"
+          className="inline-flex items-center gap-1.5 text-[#9B9B9B] hover:text-[#1A1A2E] text-sm font-sans transition-colors">
+          ← My Courses
+        </Link>
+
+        {/* Course hero card */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+          className="bg-[#1A1A2E] rounded-2xl p-7 relative overflow-hidden"
+          style={{ boxShadow: "0 8px 32px rgba(26,26,46,0.2)" }}>
+          <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
+            style={{ background: "radial-gradient(circle, #D4A85C 0%, transparent 70%)", transform: "translate(30%,-40%)" }} />
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-[#D4A85C] text-xs font-sans tracking-[0.15em] uppercase">Year {course.year}</span>
+              <span className="text-white/20 text-xs">·</span>
+              <span className="text-white/40 text-xs font-sans">{course.credits || 3} Credits</span>
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-brand-400 text-xs font-medium uppercase tracking-wider mb-1">
-                Year 1 · {course.credits} credits · {course.scripture}
+            <h1 className="text-white text-2xl font-semibold mb-2" style={{ fontFamily: "'Georgia', serif" }}>
+              {course.title}
+            </h1>
+            {course.description && (
+              <p className="text-white/50 text-sm font-sans leading-relaxed mb-5">{course.description}</p>
+            )}
+            {/* Progress */}
+            {totalCount > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-white/40 text-xs font-sans">{completedCount} of {totalCount} subtopics complete</span>
+                  <span className="text-[#D4A85C] text-xs font-sans font-semibold">{pct}%</span>
+                </div>
+                <div className="w-full bg-white/10 rounded-full h-1.5">
+                  <div className="bg-[#D4A85C] h-1.5 rounded-full transition-all duration-500"
+                    style={{ width: `${pct}%` }} />
+                </div>
               </div>
-              <h1 className="font-display text-white text-2xl font-medium mb-2">{course.title}</h1>
-              <p className="text-brand-300 text-sm leading-relaxed">{course.description}</p>
-            </div>
+            )}
           </div>
+        </motion.div>
 
-          {/* Progress */}
-          <div className="mt-5 pt-4 border-t border-brand-800">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-brand-400 text-xs">{completed} of {total} lessons complete</span>
-              <span className="text-brand-300 text-xs font-medium">{progress}%</span>
+        {/* Course material download */}
+        {course.notes_url && (
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+            <a href={course.notes_url} target="_blank" rel="noopener noreferrer" download
+              className="flex items-center gap-4 bg-white border border-[#E8E2D9] rounded-2xl p-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all group"
+              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+              <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
+                <FileDown className="w-5 h-5 text-[#D4A85C]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[#1A1A2E] text-sm font-semibold group-hover:text-[#D4A85C] transition-colors">
+                  Course Material
+                </div>
+                <div className="text-[#9B9B9B] text-xs font-sans mt-0.5">Click to download — PDF</div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:text-[#D4A85C] transition-colors" />
+            </a>
+          </motion.div>
+        )}
+
+        {/* Subtopics */}
+        <div>
+          <h2 className="text-[#1A1A2E] text-base font-semibold mb-3" style={{ fontFamily: "'Georgia', serif" }}>
+            Subtopics {totalCount > 0 && <span className="text-[#9B9B9B] text-sm font-sans font-normal">({totalCount})</span>}
+          </h2>
+
+          {subtopics.length === 0 ? (
+            <div className="bg-white border border-[#E8E2D9] rounded-2xl p-10 text-center"
+              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+              <Clock className="w-10 h-10 text-[#E8E2D9] mx-auto mb-3" />
+              <p className="text-[#1A1A2E] text-sm font-semibold mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+                No subtopics yet
+              </p>
+              <p className="text-[#9B9B9B] text-xs font-sans">
+                Your instructor will publish subtopics here when ready.
+              </p>
             </div>
-            <div className="h-1.5 bg-brand-800 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-brand-400 rounded-full transition-all"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Lessons list */}
-        <div className="bg-white rounded-2xl border border-blue-100 shadow-card overflow-hidden">
-          <div className="px-5 py-4 border-b border-blue-50">
-            <h2 className="font-display text-brand-900 text-lg font-medium">
-              Course Lessons
-            </h2>
-          </div>
-          <div>
-            {course.lessons.map((lesson, index) => {
-              const s = statusConfig[lesson.status];
-              const StatusIcon = s.icon;
-              const isLocked = index > 0 &&
-                course.lessons[index - 1].status === "not_started" &&
-                lesson.status === "not_started";
-
-              return (
-                <Link
-                  key={lesson.id}
-                  href={isLocked ? "#" : `/portal/lessons/${lesson.id}`}
-                  className={`flex items-center gap-4 px-5 py-4 border-b border-blue-50 last:border-0 transition-colors ${
-                    isLocked
-                      ? "opacity-40 cursor-not-allowed"
-                      : "hover:bg-brand-50/40 cursor-pointer"
-                  }`}
-                  onClick={(e) => isLocked && e.preventDefault()}
-                >
-                  {/* Lesson number / status icon */}
-                  <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                    lesson.status === "completed"
-                      ? "border-green-300 bg-green-50"
-                      : lesson.status === "in_progress"
-                      ? "border-brand-400 bg-brand-50"
-                      : "border-slate-200 bg-white"
-                  }`}>
-                    {isLocked
-                      ? <Lock className="w-3.5 h-3.5 text-slate-400" />
-                      : <StatusIcon className={`w-4 h-4 ${s.iconClass}`} />
-                    }
-                  </div>
-
-                  {/* Lesson info */}
-                  <div className="flex-1 min-w-0">
-                    <div className={`text-sm font-medium ${
-                      lesson.status === "completed" ? "text-slate-500" : "text-brand-900"
+          ) : (
+            <div className="bg-white rounded-2xl border border-[#E8E2D9] overflow-hidden"
+              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+              {subtopics.map((sub, i) => {
+                const isDone = progress[sub.id] === "completed";
+                const isNext = !isDone && subtopics.slice(0, i).every(s => progress[s.id] === "completed");
+                return (
+                  <Link key={sub.id} href={`/portal/lessons/${sub.id}`}
+                    className={`flex items-center gap-4 px-5 py-4 hover:bg-[#FAF9F6] transition-colors group ${
+                      i < subtopics.length - 1 ? "border-b border-[#F5F0E8]" : ""
                     }`}>
-                      {index + 1}. {lesson.title}
+                    {/* Status icon */}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      isDone
+                        ? "bg-green-50 border border-green-200"
+                        : isNext
+                        ? "bg-[#1A1A2E] border border-[#1A1A2E]"
+                        : "bg-[#F5F0E8] border border-[#E8E2D9]"
+                    }`}>
+                      {isDone
+                        ? <CheckCircle className="w-4 h-4 text-green-600" />
+                        : isNext
+                        ? <Play className="w-3.5 h-3.5 text-white" fill="white" />
+                        : <span className="text-[#C4BDB2] text-xs font-mono">{String(sub.order_index).padStart(2,"0")}</span>
+                      }
                     </div>
-                    <div className="flex items-center gap-3 mt-0.5">
-                      <span className="text-xs text-slate-400">{lesson.duration}</span>
-                      {lesson.has_notes && (
-                        <span className="flex items-center gap-1 text-xs text-slate-400">
-                          <FileText className="w-2.5 h-2.5" /> Notes
-                        </span>
-                      )}
-                      {lesson.has_quiz && (
-                        <span className="text-xs text-amber-500 font-medium">Quiz</span>
-                      )}
-                    </div>
-                  </div>
 
-                  {/* Status label */}
-                  <span className={`text-xs font-medium flex-shrink-0 ${s.className}`}>
-                    {lesson.status === "in_progress" ? "Continue →" : s.label}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className={`text-sm font-semibold truncate ${
+                        isDone ? "text-green-700" : isNext ? "text-[#1A1A2E]" : "text-[#9B9B9B]"
+                      }`} style={{ fontFamily: "'Georgia', serif" }}>
+                        {sub.title}
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        {sub.youtube_video_id && (
+                          <span className="text-[#9B9B9B] text-[10px] font-sans flex items-center gap-1">
+                            <Play className="w-2.5 h-2.5" /> Video
+                          </span>
+                        )}
+                        {sub.notes_url && (
+                          <span className="text-[#9B9B9B] text-[10px] font-sans flex items-center gap-1">
+                            <FileDown className="w-2.5 h-2.5" /> Notes
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Status label */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {isDone && (
+                        <span className="text-green-600 text-xs font-semibold font-sans">Done</span>
+                      )}
+                      {isNext && (
+                        <span className="text-[#1A1A2E] text-xs font-semibold font-sans">Start →</span>
+                      )}
+                      <ChevronRight className={`w-4 h-4 transition-colors ${
+                        isDone ? "text-green-300" : isNext ? "text-[#1A1A2E]" : "text-[#E8E2D9]"
+                      } group-hover:text-[#D4A85C]`} />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </div>
+
+        {/* Assessment */}
+        {assessment && (
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+            <Link href={`/portal/assessments/${assessment.id}`}
+              className="flex items-center gap-4 bg-white border border-[#D4A85C]/25 rounded-2xl p-5 hover:border-[#D4A85C]/50 hover:shadow-md transition-all group"
+              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+              <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
+                <Star className="w-5 h-5 text-[#D4A85C]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[#8B7355] text-[10px] uppercase tracking-widest font-sans mb-0.5">Course Assessment</div>
+                <div className="text-[#1A1A2E] text-sm font-semibold group-hover:text-[#D4A85C] transition-colors">
+                  {assessment.title}
+                </div>
+                <div className="text-[#9B9B9B] text-xs font-sans mt-0.5">{assessment.total_marks} marks total</div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:text-[#D4A85C] transition-colors" />
+            </Link>
+          </motion.div>
+        )}
       </div>
-    </div>
+    </PortalShell>
   );
 }

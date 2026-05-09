@@ -5,14 +5,13 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import {
-  LogOut, LayoutDashboard, BookOpen, FileText,
+  LogOut, LayoutDashboard, BookOpen,
   Megaphone, User, Award, FolderOpen, Menu, X, Star
 } from "lucide-react";
 
 const navLinks = [
   { href: "/portal/dashboard",     icon: LayoutDashboard, label: "Dashboard"       },
   { href: "/portal/courses",       icon: BookOpen,        label: "My Courses"      },
-  { href: "/portal/assignments",   icon: FileText,        label: "Assignments"     },
   { href: "/portal/announcements", icon: Megaphone,       label: "Announcements"   },
   { href: "/portal/admission",     icon: Award,           label: "Admission"       },
   { href: "/portal/assessments",   icon: Star,            label: "Assessments"     },
@@ -24,7 +23,6 @@ const navLinks = [
 const bottomNav = [
   { href: "/portal/dashboard",     icon: LayoutDashboard, label: "Home"     },
   { href: "/portal/courses",       icon: BookOpen,        label: "Courses"  },
-  { href: "/portal/assignments",   icon: FileText,        label: "Tasks"    },
   { href: "/portal/announcements", icon: Megaphone,       label: "Updates"  },
   { href: "/portal/profile",       icon: User,            label: "Profile"  },
 ];
