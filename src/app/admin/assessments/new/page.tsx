@@ -55,63 +55,75 @@ export default function NewAssessmentPage() {
     setTheoryQuestions(prev => prev.map((q, idx) => idx === i ? { ...q, [field]: val } : q));
   }
 
-  async function handleAIImport() {
+  function parseQuestions(text: string): ObjQ[] {
+    const results: ObjQ[] = [];
+    
+    // Normalize line endings
+    const lines = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+    
+    let currentQ = "";
+    let opts: Record<string, string> = {};
+    let correct = "A";
+
+    const optPattern = /^\s*[\(\[\{]?([ABCDabcd])[\)\]\.\}\s]+(.+)/;
+    const ansPattern = /^\s*(?:answer|ans|correct|key)[:\s]+([ABCDabcd])/i;
+    const qPattern   = /^\s*(?:\d+[\)\.\/\s]+|Q\d+[\)\.\/\s]*)?(.{5,})/i;
+
+    function flush() {
+      if (currentQ && opts.A && opts.B && opts.C && opts.D) {
+        results.push({ question: currentQ.trim(), a: opts.A.trim(), b: opts.B.trim(), c: opts.C.trim(), d: opts.D.trim(), correct: correct.toUpperCase() as "A"|"B"|"C"|"D", marks: 1 });
+      }
+      currentQ = ""; opts = {}; correct = "A";
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+
+      const ansMatch = line.match(ansPattern);
+      if (ansMatch) { correct = ansMatch[1].toUpperCase(); continue; }
+
+      const optMatch = line.match(optPattern);
+      if (optMatch) {
+        opts[optMatch[1].toUpperCase()] = optMatch[2].trim();
+        continue;
+      }
+
+      // New question line — if we have a previous question with 4 options, flush it
+      if (Object.keys(opts).length === 4 && currentQ) {
+        flush();
+      }
+
+      // Try to read this as a question
+      const qMatch = line.match(qPattern);
+      if (qMatch && !optMatch) {
+        currentQ = qMatch[1];
+      }
+    }
+    flush(); // flush last one
+
+    return results.slice(0, 100);
+  }
+
+  function handleImport() {
     if (!importText.trim()) { toast.error("Paste some questions first."); return; }
     setImporting(true);
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 4000,
-          messages: [{
-            role: "user",
-            content: `Extract all multiple choice questions from the text below and return ONLY a valid JSON array. No explanation, no markdown, just the raw JSON array.
-
-Each item must have exactly these fields:
-- "question": the question text (string)
-- "a": option A text (string)
-- "b": option B text (string)  
-- "c": option C text (string)
-- "d": option D text (string)
-- "correct": the correct answer letter, must be exactly "A", "B", "C", or "D" (string)
-- "marks": marks for this question, default to 1 if not specified (number)
-
-If the correct answer is not clear, use "A" as default.
-If there are no valid MCQ questions, return an empty array [].
-
-TEXT TO EXTRACT FROM:
-${importText}`
-          }]
-        })
-      });
-
-      const data = await res.json();
-      const text = data.content?.[0]?.text ?? "[]";
-      
-      // Clean and parse
-      const clean = text.replace(/```json|```/g, "").trim();
-      const parsed: ObjQ[] = JSON.parse(clean);
-
-      if (!Array.isArray(parsed) || parsed.length === 0) {
-        toast.error("No valid questions found. Make sure your text has A/B/C/D options and answers.");
+      const parsed = parseQuestions(importText);
+      if (parsed.length === 0) {
+        toast.error("No valid questions detected. Make sure each question has options A, B, C, D on separate lines.");
         return;
       }
-
-      const limited = parsed.slice(0, 100);
       setObjQuestions(prev => {
         const existing = prev.filter(q => q.question.trim());
-        const combined = [...existing, ...limited].slice(0, 100);
-        return combined.length > 0 ? combined : limited;
+        return [...existing, ...parsed].slice(0, 100);
       });
       setImportText("");
       setShowImport(false);
       setExpandedObj(null);
-      toast.success(`${limited.length} question${limited.length !== 1 ? "s" : ""} imported successfully!`);
+      toast.success(`${parsed.length} question${parsed.length !== 1 ? "s" : ""} imported!`);
     } catch (err: any) {
-      toast.error("Import failed. Check the format and try again.");
-      console.error(err);
+      toast.error("Parse failed. Check your format and try again.");
     } finally { setImporting(false); }
   }
 
