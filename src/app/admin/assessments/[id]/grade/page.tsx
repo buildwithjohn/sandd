@@ -55,18 +55,26 @@ export default function GradeAssessmentPage() {
   }, [id]);
 
   async function bulkReleaseObjOnly() {
-    const objOnlyPending = submissions.filter(s =>
-      s.status !== "graded" && theory.length === 0
-    );
-    if (objOnlyPending.length === 0) {
-      toast.error("No objective-only submissions to release.");
+    // Find all pending submissions where the student didn't write any theory answers
+    // OR the assessment has no theory section at all
+    const pending = submissions.filter(s => {
+      if (s.status === "graded") return false;
+      if (theory.length === 0) return true;
+      // Check if student left all theory empty
+      const answers = s.theory_answers ?? {};
+      const hasAnyTheoryAnswer = Object.values(answers).some((a: any) => a && String(a).trim().length > 0);
+      return !hasAnyTheoryAnswer;
+    });
+
+    if (pending.length === 0) {
+      toast.error("No submissions to auto-release. Students have written theory answers that need grading.");
       return;
     }
-    if (!confirm(`Release results for ${objOnlyPending.length} submission${objOnlyPending.length !== 1 ? "s" : ""}? Students will see their scores immediately.`)) return;
+    if (!confirm(`Release results for ${pending.length} submission${pending.length !== 1 ? "s" : ""}? Students will see their objective score immediately. Theory score will be 0 for any with no theory answer.`)) return;
 
     const supabase = createClient();
     try {
-      await Promise.all(objOnlyPending.map(sub =>
+      await Promise.all(pending.map(sub =>
         supabase.from("assessment_submissions").update({
           theory_score: 0,
           total_score: sub.obj_score || 0,
@@ -74,9 +82,9 @@ export default function GradeAssessmentPage() {
           results_released: true,
         }).eq("id", sub.id)
       ));
-      toast.success(`Released ${objOnlyPending.length} result${objOnlyPending.length !== 1 ? "s" : ""}!`);
+      toast.success(`Released ${pending.length} result${pending.length !== 1 ? "s" : ""}!`);
       setSubmissions(prev => prev.map(s => {
-        const match = objOnlyPending.find(p => p.id === s.id);
+        const match = pending.find(p => p.id === s.id);
         return match ? { ...s, theory_score: 0, total_score: s.obj_score || 0, status: "graded", results_released: true } : s;
       }));
     } catch (err: any) {
@@ -130,24 +138,29 @@ export default function GradeAssessmentPage() {
               {assessment?.title} · {assessment?.courses?.title}
             </p>
           </div>
-          {theory.length === 0 && submissions.some(s => s.status !== "graded") && (
+          {submissions.some(s => s.status !== "graded") && (
             <button onClick={bulkReleaseObjOnly}
               className="flex items-center gap-1.5 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] text-xs font-bold font-sans px-4 py-2.5 rounded-full transition-all">
-              ⚡ Release All Obj Scores
+              ⚡ Release Obj Scores
             </button>
           )}
         </div>
 
-        {/* Obj-only info banner */}
-        {theory.length === 0 && (
+        {/* Info banner */}
+        {submissions.some(s => s.status !== "graded") && (
           <div className="bg-[#D4A85C]/[0.06] border border-[#D4A85C]/20 rounded-2xl px-5 py-4 flex items-start gap-3">
             <div className="w-8 h-8 rounded-lg bg-[#D4A85C]/15 flex items-center justify-center flex-shrink-0">
               <span className="text-[#D4A85C] text-sm">⚡</span>
             </div>
             <div className="flex-1">
-              <p className="text-[#D4A85C] text-sm font-semibold font-sans">Objective-only assessment</p>
+              <p className="text-[#D4A85C] text-sm font-semibold font-sans">
+                {theory.length === 0 ? "Objective-only assessment" : "Quick release available"}
+              </p>
               <p className="text-white/50 text-xs font-sans mt-0.5">
-                All questions are auto-marked. New submissions will release results to students instantly. Use the button above to release any pending older submissions.
+                {theory.length === 0
+                  ? "All questions auto-marked. Click 'Release Obj Scores' to make all pending results visible to students immediately."
+                  : "If a student didn't write any theory answer, you can release just their objective score. Or expand each submission below to grade their theory individually."
+                }
               </p>
             </div>
           </div>
