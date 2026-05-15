@@ -17,7 +17,7 @@ const navLinks = [
   { href: "/admin/students",      icon: Users,           label: "Students"      },
   { href: "/admin/upload",        icon: Upload,          label: "Course Builder"},
   { href: "/admin/assignments",   icon: FileText,        label: "Assignments"   },
-  { href: "/admin/assessments/new", icon: Star,           label: "New Assessment"},
+  { href: "/admin/assessments",     icon: Star,           label: "Assessments"   },
 
   { href: "/admin/announcements", icon: Megaphone,       label: "Announcements" },
   { href: "/admin/certificates",  icon: Award,           label: "Certificates"  },
