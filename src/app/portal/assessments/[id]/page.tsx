@@ -66,19 +66,29 @@ export default function StudentAssessmentPage() {
         if (objAnswers[q.id] === q.correct_option) objScore += q.marks;
       });
 
+      // If no theory questions, auto-release results immediately
+      const isObjOnly = theory.length === 0;
+
       const { data: sub, error } = await supabase.from("assessment_submissions").insert({
         assessment_id: id,
         student_id: studentId,
         obj_answers: objAnswers,
         theory_answers: theoryAnswers,
         obj_score: objScore,
-        status: "submitted",
+        theory_score: isObjOnly ? 0 : null,
+        total_score: isObjOnly ? objScore : null,
+        status: isObjOnly ? "graded" : "submitted",
+        results_released: isObjOnly,
       }).select().single();
 
       if (error) throw error;
       setSubmission(sub);
-      setPhase("submitted");
-      toast.success("Assessment submitted successfully!");
+      // If obj-only, go straight to results, else show "submitted, awaiting grading"
+      setPhase(isObjOnly ? "results" : "submitted");
+      toast.success(isObjOnly
+        ? `Assessment graded! You scored ${objScore}/${assessment?.total_marks}.`
+        : "Assessment submitted! Theory section will be graded by your instructor."
+      );
     } catch (err: any) {
       toast.error(err.message || "Submission failed.");
     } finally { setSubmitting(false); }

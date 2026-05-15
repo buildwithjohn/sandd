@@ -54,6 +54,36 @@ export default function GradeAssessmentPage() {
     load();
   }, [id]);
 
+  async function bulkReleaseObjOnly() {
+    const objOnlyPending = submissions.filter(s =>
+      s.status !== "graded" && theory.length === 0
+    );
+    if (objOnlyPending.length === 0) {
+      toast.error("No objective-only submissions to release.");
+      return;
+    }
+    if (!confirm(`Release results for ${objOnlyPending.length} submission${objOnlyPending.length !== 1 ? "s" : ""}? Students will see their scores immediately.`)) return;
+
+    const supabase = createClient();
+    try {
+      await Promise.all(objOnlyPending.map(sub =>
+        supabase.from("assessment_submissions").update({
+          theory_score: 0,
+          total_score: sub.obj_score || 0,
+          status: "graded",
+          results_released: true,
+        }).eq("id", sub.id)
+      ));
+      toast.success(`Released ${objOnlyPending.length} result${objOnlyPending.length !== 1 ? "s" : ""}!`);
+      setSubmissions(prev => prev.map(s => {
+        const match = objOnlyPending.find(p => p.id === s.id);
+        return match ? { ...s, theory_score: 0, total_score: s.obj_score || 0, status: "graded", results_released: true } : s;
+      }));
+    } catch (err: any) {
+      toast.error(err.message || "Failed");
+    }
+  }
+
   async function saveGrade(subId: string) {
     const sub = submissions.find(s => s.id === subId);
     if (!sub) return;
@@ -91,14 +121,37 @@ export default function GradeAssessmentPage() {
   return (
     <AdminShell>
       <div className="max-w-3xl space-y-5">
-        <div>
-          <h1 className="text-2xl font-medium text-white" style={{ fontFamily: "'Georgia', serif" }}>
-            Grade Assessment
-          </h1>
-          <p className="text-white/35 text-sm font-sans mt-1">
-            {assessment?.title} · {assessment?.courses?.title}
-          </p>
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h1 className="text-2xl font-medium text-white" style={{ fontFamily: "'Georgia', serif" }}>
+              Grade Assessment
+            </h1>
+            <p className="text-white/35 text-sm font-sans mt-1">
+              {assessment?.title} · {assessment?.courses?.title}
+            </p>
+          </div>
+          {theory.length === 0 && submissions.some(s => s.status !== "graded") && (
+            <button onClick={bulkReleaseObjOnly}
+              className="flex items-center gap-1.5 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] text-xs font-bold font-sans px-4 py-2.5 rounded-full transition-all">
+              ⚡ Release All Obj Scores
+            </button>
+          )}
         </div>
+
+        {/* Obj-only info banner */}
+        {theory.length === 0 && (
+          <div className="bg-[#D4A85C]/[0.06] border border-[#D4A85C]/20 rounded-2xl px-5 py-4 flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#D4A85C]/15 flex items-center justify-center flex-shrink-0">
+              <span className="text-[#D4A85C] text-sm">⚡</span>
+            </div>
+            <div className="flex-1">
+              <p className="text-[#D4A85C] text-sm font-semibold font-sans">Objective-only assessment</p>
+              <p className="text-white/50 text-xs font-sans mt-0.5">
+                All questions are auto-marked. New submissions will release results to students instantly. Use the button above to release any pending older submissions.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4">
