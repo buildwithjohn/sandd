@@ -183,7 +183,7 @@ export default function StudentDashboard() {
             { label: "Courses",      sublabel: "Enrolled",  value: stats.coursesEnrolled,     suffix: null },
             { label: "Completed",    sublabel: "Courses",   value: stats.coursesCompleted,    suffix: stats.coursesEnrolled },
             { label: "Subtopics",    sublabel: "Watched",   value: stats.subtopicsWatched,    suffix: null },
-            { label: stats.assessmentCount > 0 ? "Average" : "No Exams", sublabel: stats.assessmentCount > 0 ? `${stats.assessmentCount} graded` : "yet",
+            { label: stats.assessmentCount > 0 ? "Overall Grade" : "No Grades", sublabel: stats.assessmentCount > 0 ? `Avg of ${stats.assessmentCount} exam${stats.assessmentCount !== 1 ? "s" : ""}` : "yet",
               value: stats.assessmentAvg > 0 ? `${stats.assessmentAvg}` : "—", suffix: stats.assessmentAvg > 0 ? "%" : null },
           ].map((s, i) => (
             <div key={i}

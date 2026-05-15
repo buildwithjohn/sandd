@@ -24,11 +24,30 @@ export default function GradeAssessmentPage() {
       const supabase = createClient();
       const [{ data: a }, { data: subs }, { data: th }] = await Promise.all([
         supabase.from("assessments").select("*, courses(title)").eq("id", id).single(),
-        supabase.from("assessment_submissions").select("*, profiles(full_name, email, student_number)").eq("assessment_id", id).order("submitted_at"),
+        supabase.from("assessment_submissions").select("*").eq("assessment_id", id).order("submitted_at"),
         supabase.from("assessment_theory").select("*").eq("assessment_id", id).order("order_index"),
       ]);
+
+      // Fetch profiles separately via admin API to bypass RLS
+      if (subs && subs.length > 0) {
+        const studentIds = subs.map((s: any) => s.student_id);
+        const res = await fetch("/api/admin/get-profiles", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ids: studentIds }),
+        });
+        const { profiles } = await res.json();
+        const profileMap: Record<string, any> = {};
+        profiles?.forEach((p: any) => { profileMap[p.id] = p; });
+
+        // Merge profiles into submissions
+        const enriched = subs.map((s: any) => ({ ...s, profile: profileMap[s.student_id] }));
+        setSubmissions(enriched);
+      } else {
+        setSubmissions([]);
+      }
+
       setAssessment(a);
-      setSubmissions(subs ?? []);
       setTheory(th ?? []);
       setLoading(false);
     }
@@ -50,7 +69,7 @@ export default function GradeAssessmentPage() {
         theory_feedback: feedback[subId] ?? {},
         results_released: true,
       }).eq("id", subId);
-      toast.success(`${sub.profiles?.full_name} graded — ${total} marks. Results released.`);
+      toast.success(`${sub.profile?.full_name} graded — ${total} marks. Results released.`);
       setSubmissions(prev => prev.map(s => s.id === subId
         ? { ...s, theory_score: theoryScore, total_score: total, status: "graded", results_released: true }
         : s
@@ -104,7 +123,7 @@ export default function GradeAssessmentPage() {
         ) : (
           <div className="space-y-3">
             {submissions.map(sub => {
-              const profile  = sub.profiles;
+              const profile  = sub.profile;
               const isOpen   = expanded === sub.id;
               const isGraded = sub.status === "graded";
               const theoryAnswers: Record<string, string> = sub.theory_answers ?? {};
