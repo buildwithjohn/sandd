@@ -14,6 +14,7 @@ import {
 interface Lesson {
   id: string; title: string; order_index: number;
   youtube_video_id?: string;
+  audio_url?: string;
   courses: { id: string; title: string; slug: string; year: number; notes_url?: string; };
 }
 
@@ -127,7 +128,7 @@ export default function LessonPage() {
           )}
         </div>
 
-        {/* Video */}
+        {/* Video or Audio */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           {lesson.youtube_video_id ? (
             <div className="rounded-2xl overflow-hidden bg-black border theme-border"
@@ -137,9 +138,30 @@ export default function LessonPage() {
                 className="w-full h-full" allow="autoplay; fullscreen" allowFullScreen
               />
             </div>
+          ) : lesson.audio_url ? (
+            <div className="rounded-2xl theme-bg-elevated border theme-border p-6 sm:p-8"
+              style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.1)" }}>
+              <div className="flex items-center gap-4 mb-5">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zm5 9a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="theme-text-faint text-[10px] uppercase tracking-widest font-sans mb-1">Audio Recording</div>
+                  <div className="theme-text text-base font-semibold font-sans truncate">{lesson.title}</div>
+                </div>
+              </div>
+              <audio controls className="w-full" preload="metadata" controlsList="nodownload">
+                <source src={lesson.audio_url} />
+                Your browser does not support audio playback.
+              </audio>
+              <a href={lesson.audio_url} download
+                className="mt-4 inline-flex items-center gap-1.5 text-xs theme-accent hover:opacity-70 font-sans transition-opacity">
+                Download audio file →
+              </a>
+            </div>
           ) : (
             <div className="rounded-2xl theme-bg-elevated border theme-border p-12 text-center">
-              <p className="theme-text-muted text-sm font-sans">Video not available yet.</p>
+              <p className="theme-text-muted text-sm font-sans">Content not available yet.</p>
             </div>
           )}
         </motion.div>

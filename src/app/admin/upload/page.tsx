@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import {
-  Youtube, FileText, ClipboardList,
+  Youtube, FileText, ClipboardList, Mic, Music,
   CheckCircle, AlertCircle, Upload, Loader2, Calendar
 } from "lucide-react";
 
@@ -22,7 +22,7 @@ function extractYouTubeId(url: string): string | null {
   return null;
 }
 
-type Tab = "video" | "material" | "assignment";
+type Tab = "video" | "audio" | "material" | "assignment";
 
 const inp = `w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 
   text-sm text-white/90 font-sans placeholder-white/20 
@@ -45,6 +45,16 @@ export default function CourseBuilderPage() {
   const [vLessons, setVLessons] = useState<Lesson[]>([]);
   const [mLessons, setMLessons] = useState<Lesson[]>([]);
   const [aLessons, setALessons] = useState<Lesson[]>([]);
+
+  // ── Audio state ──────────────────────────────────────────────────────
+  const [auTitle, setAuTitle] = useState("");
+  const [auFile, setAuFile] = useState<File|null>(null);
+  const [auCourseId, setAuCourseId] = useState("");
+  const [auOrderIndex, setAuOrderIndex] = useState("1");
+  const [auPublishMode, setAuPublishMode] = useState<"now"|"schedule">("now");
+  const [auScheduledAt, setAuScheduledAt] = useState("");
+  const [savingAudio, setSavingAudio] = useState(false);
+  const [auLessons, setAuLessons] = useState<Lesson[]>([]);
 
   // ── Video state ──────────────────────────────────────────────────────
   const [lessonTitle, setLessonTitle] = useState("");
@@ -84,6 +94,7 @@ export default function CourseBuilderPage() {
   }
 
   useEffect(() => { loadLessons(vCourseId, setVLessons); }, [vCourseId]);
+  useEffect(() => { loadLessons(auCourseId, setAuLessons); }, [auCourseId]);
   useEffect(() => { loadLessons(mCourseId, setMLessons); setMLessonId(""); }, [mCourseId]);
   useEffect(() => { loadLessons(aCourseId, setALessons); setALessonId(""); }, [aCourseId]);
 
@@ -117,6 +128,39 @@ export default function CourseBuilderPage() {
     } catch (err: any) {
       toast.error(err.message || "Failed to publish.");
     } finally { setSavingVideo(false); }
+  }
+
+  // ── Upload Audio Subtopic ────────────────────────────────────────────
+  async function handleUploadAudio() {
+    if (!auCourseId) { toast.error("Select a course first."); return; }
+    if (!auTitle)    { toast.error("Enter a subtopic title."); return; }
+    if (!auFile)     { toast.error("Choose an audio file."); return; }
+    if (auFile.size > 100 * 1024 * 1024) { toast.error("Audio must be under 100MB."); return; }
+    if (auPublishMode === "schedule" && !auScheduledAt) { toast.error("Pick a date and time."); return; }
+    setSavingAudio(true);
+    try {
+      const isNow = auPublishMode === "now";
+      const form = new FormData();
+      form.append("file", auFile);
+      form.append("courseId", auCourseId);
+      form.append("title", auTitle.trim());
+      form.append("orderIndex", auOrderIndex);
+      form.append("isPublished", isNow ? "true" : "false");
+      if (!isNow) form.append("scheduledAt", auScheduledAt);
+
+      const res = await fetch("/api/admin/upload-audio", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed");
+
+      toast.success(isNow
+        ? "Audio subtopic published!"
+        : `Scheduled for ${new Date(auScheduledAt).toLocaleString("en-NG")}`);
+      setAuTitle(""); setAuFile(null); setAuOrderIndex("1");
+      setAuPublishMode("now"); setAuScheduledAt("");
+      loadLessons(auCourseId, setAuLessons);
+    } catch (err: any) {
+      toast.error(err.message || "Upload failed.");
+    } finally { setSavingAudio(false); }
   }
 
   // ── Upload Material via server API (bypasses RLS) ───────────────────
@@ -165,9 +209,9 @@ export default function CourseBuilderPage() {
   }
 
   const tabs: { id: Tab; icon: any; label: string; desc: string }[] = [
-    { id: "video",      icon: Youtube,       label: "Video Subtopic",    desc: "Add a YouTube video for a subtopic" },
-    { id: "material",   icon: FileText,      label: "Course Material", desc: "One PDF per course" },
-    { id: "assignment", icon: ClipboardList, label: "Assignment",      desc: "Set exam questions" },
+    { id: "video",      icon: Youtube,       label: "Video",    desc: "YouTube video link" },
+    { id: "audio",      icon: Mic,           label: "Audio",    desc: "Upload MP3 recording" },
+    { id: "material",   icon: FileText,      label: "Material", desc: "Course PDF" },
   ];
 
   const CourseSelect = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
@@ -325,6 +369,112 @@ export default function CourseBuilderPage() {
             </button>
           </div>
         )}
+
+        {/* ── AUDIO TAB ──────────────────────────────────────────────── */}
+        {tab === "audio" && (
+          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-6 space-y-5">
+            <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
+              <Mic className="w-4 h-4 text-purple-400" />
+              <div>
+                <div className="text-white text-sm font-semibold font-sans">Add Audio Subtopic</div>
+                <div className="text-white/30 text-xs font-sans">Upload an MP3 recording (up to 100MB)</div>
+              </div>
+            </div>
+
+            <CourseSelect value={auCourseId} onChange={setAuCourseId} />
+
+            <div>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Title *</label>
+              <input value={auTitle} onChange={e => setAuTitle(e.target.value)}
+                placeholder="e.g. The Office of Prophet"
+                className={inp} />
+            </div>
+
+            <div>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Audio File *</label>
+              <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-all ${
+                auFile ? "border-purple-400/40 bg-purple-400/[0.03]" : "border-white/10 hover:border-white/25"
+              }`}>
+                <input type="file" accept="audio/*,.mp3,.m4a,.wav,.aac"
+                  onChange={e => setAuFile(e.target.files?.[0] || null)}
+                  id="audio-file-input"
+                  className="hidden" />
+                <label htmlFor="audio-file-input" className="cursor-pointer block">
+                  <Music className={`w-8 h-8 mx-auto mb-3 ${auFile ? "text-purple-400" : "text-white/20"}`} />
+                  {auFile ? (
+                    <>
+                      <p className="text-white/80 text-sm font-semibold font-sans">{auFile.name}</p>
+                      <p className="text-white/30 text-xs font-sans mt-1">{(auFile.size / 1024 / 1024).toFixed(2)} MB · click to change</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-white/50 text-sm font-sans">Click to select audio file</p>
+                      <p className="text-white/25 text-xs font-sans mt-1">MP3, M4A, WAV, AAC — max 100MB</p>
+                    </>
+                  )}
+                </label>
+              </div>
+              {auFile && (
+                <div className="mt-3">
+                  <audio controls className="w-full" src={URL.createObjectURL(auFile)} />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Number</label>
+              <input type="number" min="0" value={auOrderIndex} onChange={e => setAuOrderIndex(e.target.value)}
+                className="w-28 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-sans focus:outline-none focus:border-[#D4A85C]/50" />
+              <p className="text-white/20 text-xs font-sans mt-1">Use 1, 2, 3... for each subtopic in the course</p>
+            </div>
+
+            <div>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">When to Publish</label>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {(["now", "schedule"] as const).map(m => (
+                  <button key={m} type="button" onClick={() => setAuPublishMode(m)}
+                    className={`py-2.5 rounded-xl text-xs font-semibold font-sans transition-all border flex items-center justify-center gap-2 ${
+                      auPublishMode === m
+                        ? "bg-[#D4A85C] border-[#D4A85C] text-[#080C14]"
+                        : "bg-white/[0.04] border-white/10 text-white/50 hover:border-white/25"
+                    }`}>
+                    {m === "schedule" && <Calendar className="w-3.5 h-3.5" />}
+                    {m === "now" ? "Publish Now" : "Schedule"}
+                  </button>
+                ))}
+              </div>
+              {auPublishMode === "schedule" && (
+                <input type="datetime-local" value={auScheduledAt} onChange={e => setAuScheduledAt(e.target.value)}
+                  className={inp} />
+              )}
+            </div>
+
+            {auLessons.length > 0 && (
+              <div className="rounded-xl border border-white/[0.07] overflow-hidden">
+                <div className="px-4 py-2 border-b border-white/[0.06]">
+                  <span className="text-white/30 text-[10px] uppercase tracking-widest font-sans">
+                    {auLessons.length} subtopic{auLessons.length !== 1 ? "s" : ""} in this course
+                  </span>
+                </div>
+                {auLessons.map((l, i) => (
+                  <div key={l.id} className={`flex items-center gap-3 px-4 py-3 ${i < auLessons.length - 1 ? "border-b border-white/[0.04]" : ""}`}>
+                    <span className="text-[#D4A85C]/40 text-xs font-mono w-5">{String(l.order_index).padStart(2,"0")}</span>
+                    <span className="text-white/60 text-xs font-sans flex-1 truncate">{l.title}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button onClick={handleUploadAudio} disabled={savingAudio || !auFile || !auTitle || !auCourseId}
+              className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(212,168,92,0.3)]">
+              {savingAudio
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> {auPublishMode === "now" ? "Uploading..." : "Scheduling..."}</>
+                : <><Mic className="w-4 h-4" /> {auPublishMode === "now" ? "Publish Audio Subtopic" : "Schedule Audio Subtopic"}</>
+              }
+            </button>
+          </div>
+        )}
+
 
         {/* ── MATERIAL TAB ──────────────────────────────────────────── */}
         {tab === "material" && (

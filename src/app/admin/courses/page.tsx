@@ -8,7 +8,7 @@ import Link from "next/link";
 import {
   ChevronDown, ChevronRight, Youtube, FileText,
   ClipboardList, Plus, Eye, EyeOff, Calendar,
-  CheckCircle, Clock, Trash2, Star
+  CheckCircle, Clock, Trash2, Star, Lock
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -30,6 +30,7 @@ interface Assessment {
 interface Course {
   id: string; title: string; year: number; order_index: number;
   description?: string; notes_url?: string;
+  is_closed?: boolean; closed_at?: string;
   subtopics: Subtopic[];
   assessments: Assessment[];
 }
@@ -63,6 +64,23 @@ export default function CourseManagerPage() {
   }
 
   useEffect(() => { load(); }, []);
+
+  async function toggleCourseClosed(courseId: string, title: string, currentlyClosed: boolean) {
+    const action = currentlyClosed ? "reopen" : "close";
+    const confirmMsg = currentlyClosed
+      ? `Reopen "${title}"? Students will regain access to its content and assessments.`
+      : `Close "${title}"?\n\nThis will:\n- Mark the course as closed\n- Unpublish all assessments (students cannot take them anymore)\n- Students can still view subtopics and material but as read-only\n\nYou can reopen at any time.`;
+    if (!confirm(confirmMsg)) return;
+
+    const res = await fetch("/api/admin/close-course", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ courseId, action }),
+    });
+    const data = await res.json();
+    if (!res.ok) { toast.error(data.error || "Failed."); return; }
+    toast.success(currentlyClosed ? "Course reopened!" : "Course closed.");
+    load();
+  }
 
   async function togglePublish(subtopicId: string, current: boolean) {
     const res = await fetch("/api/admin/delete-lesson", {
@@ -166,6 +184,11 @@ export default function CourseManagerPage() {
                           <span className="text-white/30 text-[10px] font-sans">
                             {course.subtopics.length} subtopic{course.subtopics.length !== 1 ? "s" : ""}
                           </span>
+                          {course.is_closed && (
+                            <span className="text-orange-400 text-[10px] font-sans flex items-center gap-1 bg-orange-500/10 border border-orange-500/20 px-1.5 py-0.5 rounded">
+                              <Lock className="w-2.5 h-2.5" /> Closed
+                            </span>
+                          )}
                           {course.notes_url && (
                             <span className="text-green-400 text-[10px] font-sans flex items-center gap-1">
                               <FileText className="w-2.5 h-2.5" /> Material
@@ -178,6 +201,14 @@ export default function CourseManagerPage() {
                           )}
                         </div>
                       </div>
+                      <button onClick={(e) => { e.stopPropagation(); toggleCourseClosed(course.id, course.title, !!course.is_closed); }}
+                        className={`text-[10px] font-semibold font-sans px-2.5 py-1 rounded-lg border transition-all whitespace-nowrap ${
+                          course.is_closed
+                            ? "bg-green-500/10 border-green-500/20 text-green-400 hover:bg-green-500/20"
+                            : "bg-white/[0.04] border-white/10 text-white/50 hover:bg-orange-500/10 hover:border-orange-500/20 hover:text-orange-400"
+                        }`}>
+                        {course.is_closed ? "Reopen" : "Close"}
+                      </button>
                       {expanded[course.id]
                         ? <ChevronDown className="w-4 h-4 text-white/30 flex-shrink-0" />
                         : <ChevronRight className="w-4 h-4 text-white/30 flex-shrink-0" />
