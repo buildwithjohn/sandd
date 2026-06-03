@@ -242,19 +242,19 @@ export default function CourseBuilderPage() {
         </div>
 
         {/* Tabs */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {tabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={`rounded-2xl border p-4 text-left transition-all ${
+              className={`rounded-2xl border p-2.5 sm:p-4 text-left transition-all ${
                 tab === t.id
                   ? "bg-[#D4A85C]/10 border-[#D4A85C]/30"
                   : "bg-[#0D1320] border-white/[0.07] hover:border-white/20"
               }`}>
-              <t.icon className={`w-4 h-4 mb-2 ${tab === t.id ? "text-[#D4A85C]" : "text-white/30"}`} />
-              <div className={`text-xs font-semibold font-sans mb-0.5 ${tab === t.id ? "text-white" : "text-white/50"}`}>
+              <t.icon className={`w-4 h-4 mb-1.5 sm:mb-2 ${tab === t.id ? "text-[#D4A85C]" : "text-white/30"}`} />
+              <div className={`text-[11px] sm:text-xs font-semibold font-sans mb-0.5 ${tab === t.id ? "text-white" : "text-white/50"}`}>
                 {t.label}
               </div>
-              <div className="text-[10px] text-white/25 font-sans">{t.desc}</div>
+              <div className="text-[9px] sm:text-[10px] text-white/25 font-sans hidden sm:block">{t.desc}</div>
             </button>
           ))}
         </div>
@@ -392,7 +392,7 @@ export default function CourseBuilderPage() {
 
             <div>
               <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Audio File *</label>
-              <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-all ${
+              <div className={`border-2 border-dashed rounded-xl p-4 sm:p-6 text-center transition-all ${
                 auFile ? "border-purple-400/40 bg-purple-400/[0.03]" : "border-white/10 hover:border-white/25"
               }`}>
                 <input type="file" accept="audio/*,.mp3,.m4a,.wav,.aac"
@@ -403,7 +403,7 @@ export default function CourseBuilderPage() {
                   <Music className={`w-8 h-8 mx-auto mb-3 ${auFile ? "text-purple-400" : "text-white/20"}`} />
                   {auFile ? (
                     <>
-                      <p className="text-white/80 text-sm font-semibold font-sans">{auFile.name}</p>
+                      <p className="text-white/80 text-sm font-semibold font-sans truncate max-w-full px-2">{auFile.name}</p>
                       <p className="text-white/30 text-xs font-sans mt-1">{(auFile.size / 1024 / 1024).toFixed(2)} MB · click to change</p>
                     </>
                   ) : (

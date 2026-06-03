@@ -197,21 +197,22 @@ export default function GradeAssessmentPage() {
               return (
                 <div key={sub.id} className={`bg-[#0D1320] border rounded-2xl overflow-hidden ${isGraded ? "border-green-500/20" : "border-white/[0.07]"}`}>
                   <button onClick={() => setExpanded(isOpen ? null : sub.id)}
-                    className="w-full flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors text-left">
+                    className="w-full flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-white/[0.02] transition-colors text-left">
                     <div className="w-9 h-9 rounded-full bg-white/[0.06] flex items-center justify-center flex-shrink-0">
                       <span className="text-white/60 text-xs font-bold">
                         {profile?.full_name?.split(" ").map((n: string) => n[0]).slice(0,2).join("")}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-white/80 text-sm font-semibold font-sans">{profile?.full_name}</div>
-                      <div className="text-white/30 text-xs font-sans mt-0.5">
-                        {profile?.student_number} · Submitted {new Date(sub.submitted_at).toLocaleString("en-NG")}
+                      <div className="text-white/80 text-sm font-semibold font-sans truncate">{profile?.full_name}</div>
+                      <div className="text-white/30 text-[11px] sm:text-xs font-sans mt-0.5 truncate">
+                        <span className="hidden sm:inline">{profile?.student_number} · Submitted {new Date(sub.submitted_at).toLocaleString("en-NG")}</span>
+                        <span className="sm:hidden">{profile?.student_number}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 flex-shrink-0">
+                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                       <div className="text-right">
-                        <div className="text-[#D4A85C] text-sm font-bold">
+                        <div className="text-[#D4A85C] text-sm font-bold whitespace-nowrap">
                           {isGraded ? `${sub.total_score}` : `${sub.obj_score ?? 0}`}
                           <span className="text-white/30 text-xs">/{assessment?.total_marks}</span>
                         </div>
@@ -219,14 +220,14 @@ export default function GradeAssessmentPage() {
                           {isGraded ? "Total" : "Obj only"}
                         </div>
                       </div>
-                      <span className={`text-[10px] px-2.5 py-1 rounded-full font-sans ${
+                      <span className={`text-[10px] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-sans whitespace-nowrap ${
                         isGraded
                           ? "bg-green-500/10 border border-green-500/20 text-green-400"
                           : "bg-[#D4A85C]/10 border border-[#D4A85C]/20 text-[#D4A85C]"
                       }`}>
                         {isGraded ? "Graded" : "Pending"}
                       </span>
-                      {isOpen ? <ChevronUp className="w-4 h-4 text-white/30" /> : <ChevronDown className="w-4 h-4 text-white/30" />}
+                      {isOpen ? <ChevronUp className="w-4 h-4 text-white/30 hidden sm:block" /> : <ChevronDown className="w-4 h-4 text-white/30 hidden sm:block" />}
                     </div>
                   </button>
 

@@ -168,52 +168,59 @@ export default function CourseManagerPage() {
 
                   {/* Course header */}
                   <div className="bg-[#0D1320] border border-white/[0.09] rounded-2xl overflow-hidden">
-                    <button
-                      onClick={() => setExpanded(e => ({ ...e, [course.id]: !e[course.id] }))}
-                      className="w-full flex items-center gap-4 px-5 py-4 hover:bg-white/[0.03] transition-colors text-left">
-                      <div className="w-8 h-8 rounded-lg bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
-                        <span className="text-[#D4A85C] text-xs font-mono font-bold">
-                          {String(course.order_index || ci + 1).padStart(2,"0")}
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-white font-semibold text-sm" style={{ fontFamily: "'Georgia', serif" }}>
-                          {course.title}
-                        </div>
-                        <div className="flex items-center gap-3 mt-1">
-                          <span className="text-white/30 text-[10px] font-sans">
-                            {course.subtopics.length} subtopic{course.subtopics.length !== 1 ? "s" : ""}
+                    <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-white/[0.03] transition-colors">
+                      <button
+                        onClick={() => setExpanded(e => ({ ...e, [course.id]: !e[course.id] }))}
+                        className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0 text-left">
+                        <div className="w-8 h-8 rounded-lg bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
+                          <span className="text-[#D4A85C] text-xs font-mono font-bold">
+                            {String(course.order_index || ci + 1).padStart(2,"0")}
                           </span>
-                          {course.is_closed && (
-                            <span className="text-orange-400 text-[10px] font-sans flex items-center gap-1 bg-orange-500/10 border border-orange-500/20 px-1.5 py-0.5 rounded">
-                              <Lock className="w-2.5 h-2.5" /> Closed
-                            </span>
-                          )}
-                          {course.notes_url && (
-                            <span className="text-green-400 text-[10px] font-sans flex items-center gap-1">
-                              <FileText className="w-2.5 h-2.5" /> Material
-                            </span>
-                          )}
-                          {course.assessments.length > 0 && (
-                            <span className="text-[#D4A85C] text-[10px] font-sans flex items-center gap-1">
-                              <Star className="w-2.5 h-2.5" /> {course.assessments.length} assessment{course.assessments.length !== 1 ? "s" : ""}
-                            </span>
-                          )}
                         </div>
-                      </div>
-                      <button onClick={(e) => { e.stopPropagation(); toggleCourseClosed(course.id, course.title, !!course.is_closed); }}
-                        className={`text-[10px] font-semibold font-sans px-2.5 py-1 rounded-lg border transition-all whitespace-nowrap ${
-                          course.is_closed
-                            ? "bg-green-500/10 border-green-500/20 text-green-400 hover:bg-green-500/20"
-                            : "bg-white/[0.04] border-white/10 text-white/50 hover:bg-orange-500/10 hover:border-orange-500/20 hover:text-orange-400"
-                        }`}>
-                        {course.is_closed ? "Reopen" : "Close"}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-white font-semibold text-sm truncate" style={{ fontFamily: "'Georgia', serif" }}>
+                            {course.title}
+                          </div>
+                          <div className="flex items-center gap-2 sm:gap-3 mt-1 flex-wrap">
+                            <span className="text-white/30 text-[10px] font-sans">
+                              {course.subtopics.length} sub
+                            </span>
+                            {course.is_closed && (
+                              <span className="text-orange-400 text-[10px] font-sans flex items-center gap-1 bg-orange-500/10 border border-orange-500/20 px-1.5 py-0.5 rounded">
+                                <Lock className="w-2.5 h-2.5" /> Closed
+                              </span>
+                            )}
+                            {course.notes_url && (
+                              <span className="text-green-400 text-[10px] font-sans flex items-center gap-1">
+                                <FileText className="w-2.5 h-2.5" /> PDF
+                              </span>
+                            )}
+                            {course.assessments.length > 0 && (
+                              <span className="text-[#D4A85C] text-[10px] font-sans flex items-center gap-1">
+                                <Star className="w-2.5 h-2.5" /> {course.assessments.length}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </button>
-                      {expanded[course.id]
-                        ? <ChevronDown className="w-4 h-4 text-white/30 flex-shrink-0" />
-                        : <ChevronRight className="w-4 h-4 text-white/30 flex-shrink-0" />
-                      }
-                    </button>
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        <button onClick={() => toggleCourseClosed(course.id, course.title, !!course.is_closed)}
+                          className={`text-[10px] font-semibold font-sans px-2.5 py-1.5 rounded-lg border transition-all whitespace-nowrap ${
+                            course.is_closed
+                              ? "bg-green-500/10 border-green-500/20 text-green-400 hover:bg-green-500/20"
+                              : "bg-white/[0.04] border-white/10 text-white/50 hover:bg-orange-500/10 hover:border-orange-500/20 hover:text-orange-400"
+                          }`}>
+                          {course.is_closed ? "Reopen" : "Close"}
+                        </button>
+                        <button onClick={() => setExpanded(e => ({ ...e, [course.id]: !e[course.id] }))}
+                          className="w-8 h-8 rounded-lg flex items-center justify-center text-white/30 hover:bg-white/[0.05]">
+                          {expanded[course.id]
+                            ? <ChevronDown className="w-4 h-4" />
+                            : <ChevronRight className="w-4 h-4" />
+                          }
+                        </button>
+                      </div>
+                    </div>
 
                     {/* Expanded content */}
                     {expanded[course.id] && (
