@@ -17,6 +17,7 @@ export default function GradeAssessmentPage() {
   const [scores, setScores]           = useState<Record<string, Record<string, number>>>({});
   const [feedback, setFeedback]       = useState<Record<string, Record<string, string>>>({});
   const [saving, setSaving]           = useState<string | null>(null);
+  const [editingId, setEditingId]     = useState<string | null>(null);
   const [loading, setLoading]         = useState(true);
 
   useEffect(() => {
@@ -100,16 +101,28 @@ export default function GradeAssessmentPage() {
       const supabase = createClient();
       const theoryScore = Object.values(scores[subId] ?? {}).reduce((a, b) => a + (b || 0), 0);
       const total = (sub.obj_score || 0) + theoryScore;
+      // Build per-question feedback map with both score and feedback
+      const subScores   = scores[subId]   ?? {};
+      const subFeedback = feedback[subId] ?? {};
+      const theoryFeedback: Record<string, { score: number; feedback: string }> = {};
+      theory.forEach((tq: any) => {
+        theoryFeedback[tq.id] = {
+          score:    subScores[tq.id]   ?? 0,
+          feedback: subFeedback[tq.id] ?? "",
+        };
+      });
+
+      const wasGraded = sub.status === "graded";
       await supabase.from("assessment_submissions").update({
         theory_score: theoryScore,
         total_score: total,
         status: "graded",
-        theory_feedback: feedback[subId] ?? {},
+        theory_feedback: theoryFeedback,
         results_released: true,
       }).eq("id", subId);
-      toast.success(`${sub.profile?.full_name} graded — ${total} marks. Results released.`);
+      toast.success(`${sub.profile?.full_name} ${wasGraded ? "re-graded" : "graded"}: ${total} marks. Released.`);
       setSubmissions(prev => prev.map(s => s.id === subId
-        ? { ...s, theory_score: theoryScore, total_score: total, status: "graded", results_released: true }
+        ? { ...s, theory_score: theoryScore, total_score: total, status: "graded", theory_feedback: theoryFeedback, results_released: true }
         : s
       ));
     } catch (err: any) { toast.error(err.message); }
@@ -269,7 +282,7 @@ export default function GradeAssessmentPage() {
                                       onChange={e => setScores(prev => ({
                                         ...prev, [sub.id]: { ...prev[sub.id], [tq.id]: parseInt(e.target.value) || 0 }
                                       }))}
-                                      disabled={isGraded}
+                                      disabled={isGraded && editingId !== sub.id}
                                       className="w-full bg-white/[0.06] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-sans focus:outline-none focus:border-[#D4A85C]/50 disabled:opacity-40" />
                                   </div>
                                   <div className="col-span-2">
@@ -278,7 +291,7 @@ export default function GradeAssessmentPage() {
                                       onChange={e => setFeedback(prev => ({
                                         ...prev, [sub.id]: { ...prev[sub.id], [tq.id]: e.target.value }
                                       }))}
-                                      disabled={isGraded}
+                                      disabled={isGraded && editingId !== sub.id}
                                       placeholder="Brief feedback..."
                                       className="w-full bg-white/[0.06] border border-white/10 rounded-xl px-3 py-2 text-sm text-white/80 font-sans focus:outline-none focus:border-[#D4A85C]/50 disabled:opacity-40" />
                                   </div>
@@ -298,12 +311,43 @@ export default function GradeAssessmentPage() {
                           }
                         </button>
                       )}
-                      {isGraded && (
+                      {isGraded && editingId !== sub.id && (
                         <div className="flex items-center gap-2 bg-green-500/[0.08] border border-green-500/20 rounded-xl px-4 py-3">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span className="text-green-400 text-sm font-sans">
-                            Graded — {sub.total_score}/{assessment?.total_marks} marks. Results visible to student.
+                          <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                          <span className="text-green-400 text-sm font-sans flex-1">
+                            Graded: {sub.total_score}/{assessment?.total_marks}. Student can see this.
                           </span>
+                          <button onClick={() => {
+                            // Prefill score and feedback state from saved values
+                            const savedScores: Record<string, number> = {};
+                            const savedFeedback: Record<string, string> = {};
+                            theory.forEach((tq: any) => {
+                              const fb = sub.theory_feedback?.[tq.id] || {};
+                              savedScores[tq.id]   = fb.score ?? 0;
+                              savedFeedback[tq.id] = fb.feedback ?? "";
+                            });
+                            setScores(prev => ({ ...prev, [sub.id]: savedScores }));
+                            setFeedback(prev => ({ ...prev, [sub.id]: savedFeedback }));
+                            setEditingId(sub.id);
+                          }}
+                            className="text-xs text-green-400 hover:text-green-300 font-semibold font-sans bg-green-500/15 hover:bg-green-500/25 border border-green-500/20 px-3 py-1.5 rounded-full transition-all whitespace-nowrap">
+                            Re-grade
+                          </button>
+                        </div>
+                      )}
+                      {isGraded && editingId === sub.id && (
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => setEditingId(null)}
+                            className="flex-1 text-white/60 hover:text-white text-sm font-sans bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 py-3 rounded-full transition-all">
+                            Cancel
+                          </button>
+                          <button onClick={() => { saveGrade(sub.id); setEditingId(null); }} disabled={saving === sub.id}
+                            className="flex-1 flex items-center justify-center gap-2 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] font-bold text-sm py-3 rounded-full transition-all font-sans disabled:opacity-50">
+                            {saving === sub.id
+                              ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
+                              : <><Send className="w-4 h-4" /> Update Grade</>
+                            }
+                          </button>
                         </div>
                       )}
                     </div>
