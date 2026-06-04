@@ -14,7 +14,8 @@ import { toast } from "sonner";
 
 interface Subtopic {
   id: string; title: string; order_index: number;
-  youtube_video_id?: string; notes_url?: string;
+  youtube_video_id?: string; audio_url?: string; slides_url?: string;
+  attachment_url?: string; notes_url?: string;
   is_published: boolean; scheduled_at?: string;
 }
 
@@ -250,8 +251,23 @@ export default function CourseManagerPage() {
                                       {sub.youtube_video_id && (
                                         <a href={`https://youtu.be/${sub.youtube_video_id}`} target="_blank" rel="noopener noreferrer"
                                           className="text-red-400/60 hover:text-red-400 text-[10px] font-sans flex items-center gap-0.5 transition-colors">
-                                          <Youtube className="w-2.5 h-2.5" /> YouTube
+                                          <Youtube className="w-2.5 h-2.5" /> Video
                                         </a>
+                                      )}
+                                      {sub.audio_url && (
+                                        <span className="text-purple-400/60 text-[10px] font-sans flex items-center gap-0.5">
+                                          🎙 Audio
+                                        </span>
+                                      )}
+                                      {sub.slides_url && (
+                                        <span className="text-blue-400/60 text-[10px] font-sans flex items-center gap-0.5">
+                                          📊 Slides
+                                        </span>
+                                      )}
+                                      {sub.attachment_url && (
+                                        <span className="text-[#D4A85C]/60 text-[10px] font-sans flex items-center gap-0.5">
+                                          + File
+                                        </span>
                                       )}
                                       {sub.scheduled_at && !sub.is_published && (
                                         <span className="text-[#D4A85C]/60 text-[10px] font-sans flex items-center gap-0.5">

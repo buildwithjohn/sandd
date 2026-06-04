@@ -6,12 +6,22 @@ import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import {
-  Youtube, FileText, ClipboardList, Mic, Music,
-  CheckCircle, AlertCircle, Upload, Loader2, Calendar
+  Youtube, Mic, FileText, Plus, Upload, Loader2, Calendar,
+  CheckCircle, AlertCircle, Music, Presentation, FolderOpen,
+  Image as ImageIcon, Trash2, Eye, FileDown, X
 } from "lucide-react";
 
 interface Course { id: string; title: string; year: number; }
-interface Lesson { id: string; title: string; order_index: number; youtube_video_id?: string; notes_url?: string; }
+interface Subtopic {
+  id: string; title: string; order_index: number;
+  youtube_video_id?: string; audio_url?: string; slides_url?: string;
+  slides_type?: string; attachment_url?: string; attachment_name?: string;
+  is_published: boolean;
+}
+interface Resource {
+  id: string; course_id: string; title: string;
+  file_url: string; category: string; created_at: string;
+}
 
 function extractYouTubeId(url: string): string | null {
   const patterns = [
@@ -22,201 +32,178 @@ function extractYouTubeId(url: string): string | null {
   return null;
 }
 
-type Tab = "video" | "audio" | "material" | "assignment";
+type Tab = "subtopic" | "resources" | "manage";
+type ContentType = "video" | "audio" | "slides";
 
-const inp = `w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 
-  text-sm text-white/90 font-sans placeholder-white/20 
-  focus:outline-none focus:border-[#D4A85C]/50 transition-all`;
-
-const sel = `w-full bg-[#080C14] border border-white/10 rounded-xl px-4 py-3 
-  text-sm text-white/90 font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-all`;
+const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#D4A85C]/50 transition-all";
+const sel = "w-full bg-[#080C14] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-all";
 
 export default function CourseBuilderPage() {
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const [tab, setTab]         = useState<Tab>("video");
+  const [tab, setTab] = useState<Tab>("subtopic");
   const [courses, setCourses] = useState<Course[]>([]);
 
-  // ── Shared: course selection per tab (each tab has its own) ──────────
-  const [vCourseId, setVCourseId] = useState("");
+  // ── Subtopic state (unified) ─────────────────────────────────────
+  const [sCourseId, setSCourseId] = useState("");
+  const [sTitle, setSTitle] = useState("");
+  const [sOrderIndex, setSOrderIndex] = useState("1");
+  const [sContentType, setSContentType] = useState<ContentType>("video");
+  const [sYoutubeUrl, setSYoutubeUrl] = useState("");
+  const [sAudioFile, setSAudioFile] = useState<File | null>(null);
+  const [sSlidesFile, setSSlidesFile] = useState<File | null>(null);
+  const [sAttachment, setSAttachment] = useState<File | null>(null);
+  const [sPublishMode, setSPublishMode] = useState<"now" | "schedule">("now");
+  const [sScheduledAt, setSScheduledAt] = useState("");
+  const [sSaving, setSSaving] = useState(false);
+  const [sSubtopics, setSSubtopics] = useState<Subtopic[]>([]);
+  const audioInputRef = useRef<HTMLInputElement>(null);
+  const slidesInputRef = useRef<HTMLInputElement>(null);
+  const attachInputRef = useRef<HTMLInputElement>(null);
+
+  // ── Resources state ──────────────────────────────────────────────
+  const [rCourseId, setRCourseId] = useState("");
+  const [rTitle, setRTitle] = useState("");
+  const [rCategory, setRCategory] = useState<"Notes" | "Slides" | "Handout" | "Reading">("Notes");
+  const [rFile, setRFile] = useState<File | null>(null);
+  const [rSaving, setRSaving] = useState(false);
+  const [resources, setResources] = useState<Resource[]>([]);
+  const resourceInputRef = useRef<HTMLInputElement>(null);
+
+  // ── Manage state ─────────────────────────────────────────────────
   const [mCourseId, setMCourseId] = useState("");
-  const [aCourseId, setACourseId] = useState("");
+  const [mSubtopics, setMSubtopics] = useState<Subtopic[]>([]);
 
-  const [vLessons, setVLessons] = useState<Lesson[]>([]);
-  const [mLessons, setMLessons] = useState<Lesson[]>([]);
-  const [aLessons, setALessons] = useState<Lesson[]>([]);
+  const videoId = extractYouTubeId(sYoutubeUrl);
 
-  // ── Audio state ──────────────────────────────────────────────────────
-  const [auTitle, setAuTitle] = useState("");
-  const [auFile, setAuFile] = useState<File|null>(null);
-  const [auCourseId, setAuCourseId] = useState("");
-  const [auOrderIndex, setAuOrderIndex] = useState("1");
-  const [auPublishMode, setAuPublishMode] = useState<"now"|"schedule">("now");
-  const [auScheduledAt, setAuScheduledAt] = useState("");
-  const [savingAudio, setSavingAudio] = useState(false);
-  const [auLessons, setAuLessons] = useState<Lesson[]>([]);
-
-  // ── Video state ──────────────────────────────────────────────────────
-  const [lessonTitle, setLessonTitle] = useState("");
-  const [youtubeUrl, setYoutubeUrl]   = useState("");
-  const [orderIndex, setOrderIndex]   = useState("1");
-  const [publishMode, setPublishMode] = useState<"now"|"schedule">("now");
-  const [scheduledAt, setScheduledAt] = useState("");
-  const [savingVideo, setSavingVideo] = useState(false);
-
-  // ── Material state ───────────────────────────────────────────────────
-  const [mLessonId, setMLessonId]   = useState("");
-  const [mFile, setMFile]           = useState<File|null>(null);
-  const [uploadingFile, setUploadingFile] = useState(false);
-
-  // ── Assignment state ─────────────────────────────────────────────────
-  const [aLessonId, setALessonId]   = useState("");
-  const [aTitle, setATitle]         = useState("");
-  const [aDesc, setADesc]           = useState("");
-  const [aDue, setADue]             = useState("");
-  const [savingAssign, setSavingAssign] = useState(false);
-
-  const videoId = extractYouTubeId(youtubeUrl);
-
-  // Load all courses once
   useEffect(() => {
     createClient().from("courses").select("id, title, year").order("year").order("order_index")
       .then(({ data }) => setCourses(data ?? []));
   }, []);
 
-  // Load lessons whenever a course changes per tab
-  async function loadLessons(courseId: string, setter: (l: Lesson[]) => void) {
+  async function loadSubtopics(courseId: string, setter: (s: Subtopic[]) => void) {
     if (!courseId) { setter([]); return; }
     const { data } = await createClient().from("lessons")
-      .select("id, title, order_index, youtube_video_id, notes_url")
-      .eq("course_id", courseId).order("order_index");
+      .select("*").eq("course_id", courseId).order("order_index");
     setter(data ?? []);
   }
-
-  useEffect(() => { loadLessons(vCourseId, setVLessons); }, [vCourseId]);
-  useEffect(() => { loadLessons(auCourseId, setAuLessons); }, [auCourseId]);
-  useEffect(() => { loadLessons(mCourseId, setMLessons); setMLessonId(""); }, [mCourseId]);
-  useEffect(() => { loadLessons(aCourseId, setALessons); setALessonId(""); }, [aCourseId]);
-
-  // ── Publish Video ────────────────────────────────────────────────────
-  async function handlePublishVideo() {
-    if (!vCourseId)    { toast.error("Select a course first."); return; }
-    if (!lessonTitle)  { toast.error("Enter a subtopic title."); return; }
-    if (!videoId)      { toast.error("Enter a valid YouTube URL."); return; }
-    if (publishMode === "schedule" && !scheduledAt) { toast.error("Select a date and time to schedule."); return; }
-    setSavingVideo(true);
-    try {
-      const supabase = createClient();
-      const isNow = publishMode === "now";
-      const { error } = await supabase.from("lessons").insert({
-        course_id:        vCourseId,
-        title:            lessonTitle.trim(),
-        youtube_video_id: videoId,
-        video_url:        `https://www.youtube.com/watch?v=${videoId}`,
-        order_index:      parseInt(orderIndex) || 1,
-        is_published:     isNow,
-        scheduled_at:     isNow ? null : new Date(scheduledAt).toISOString(),
-      });
-      if (error) throw error;
-      const msg = isNow
-        ? "Video lesson published successfully!"
-        : `Lesson scheduled for ${new Date(scheduledAt).toLocaleString("en-NG")}`;
-      toast.success(msg);
-      setLessonTitle(""); setYoutubeUrl(""); setOrderIndex("1");
-      setPublishMode("now"); setScheduledAt("");
-      loadLessons(vCourseId, setVLessons);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to publish.");
-    } finally { setSavingVideo(false); }
+  async function loadResources(courseId: string) {
+    if (!courseId) { setResources([]); return; }
+    const { data } = await createClient().from("course_resources")
+      .select("*").eq("course_id", courseId).order("created_at", { ascending: false });
+    setResources(data ?? []);
   }
 
-  // ── Upload Audio Subtopic ────────────────────────────────────────────
-  async function handleUploadAudio() {
-    if (!auCourseId) { toast.error("Select a course first."); return; }
-    if (!auTitle)    { toast.error("Enter a subtopic title."); return; }
-    if (!auFile)     { toast.error("Choose an audio file."); return; }
-    if (auFile.size > 100 * 1024 * 1024) { toast.error("Audio must be under 100MB."); return; }
-    if (auPublishMode === "schedule" && !auScheduledAt) { toast.error("Pick a date and time."); return; }
-    setSavingAudio(true);
+  useEffect(() => { loadSubtopics(sCourseId, setSSubtopics); }, [sCourseId]);
+  useEffect(() => { loadResources(rCourseId); }, [rCourseId]);
+  useEffect(() => { loadSubtopics(mCourseId, setMSubtopics); }, [mCourseId]);
+
+  // Reset auto-suggest order
+  useEffect(() => {
+    if (sSubtopics.length > 0) {
+      const maxOrder = Math.max(...sSubtopics.map(s => s.order_index));
+      setSOrderIndex(String(maxOrder + 1));
+    } else {
+      setSOrderIndex("1");
+    }
+  }, [sSubtopics]);
+
+  // ── Save Subtopic ─────────────────────────────────────────────────
+  async function handleSaveSubtopic() {
+    if (!sCourseId) { toast.error("Select a course."); return; }
+    if (!sTitle) { toast.error("Enter a subtopic title."); return; }
+    if (sContentType === "video" && !videoId) { toast.error("Enter a valid YouTube URL."); return; }
+    if (sContentType === "audio" && !sAudioFile) { toast.error("Choose an audio file."); return; }
+    if (sContentType === "slides" && !sSlidesFile) { toast.error("Choose a slides file (PDF or PPTX)."); return; }
+    if (sPublishMode === "schedule" && !sScheduledAt) { toast.error("Pick a date and time."); return; }
+
+    setSSaving(true);
     try {
-      const isNow = auPublishMode === "now";
+      const isNow = sPublishMode === "now";
       const form = new FormData();
-      form.append("file", auFile);
-      form.append("courseId", auCourseId);
-      form.append("title", auTitle.trim());
-      form.append("orderIndex", auOrderIndex);
+      form.append("courseId", sCourseId);
+      form.append("title", sTitle.trim());
+      form.append("orderIndex", sOrderIndex);
+      form.append("contentType", sContentType);
       form.append("isPublished", isNow ? "true" : "false");
-      if (!isNow) form.append("scheduledAt", auScheduledAt);
+      if (!isNow) form.append("scheduledAt", sScheduledAt);
+      if (sContentType === "video") form.append("youtubeId", videoId!);
+      if (sContentType === "audio" && sAudioFile) form.append("audio", sAudioFile);
+      if (sContentType === "slides" && sSlidesFile) form.append("slides", sSlidesFile);
+      if (sAttachment) form.append("attachment", sAttachment);
 
-      const res = await fetch("/api/admin/upload-audio", { method: "POST", body: form });
+      const res = await fetch("/api/admin/upload-subtopic", { method: "POST", body: form });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(data.error || "Failed");
 
-      toast.success(isNow
-        ? "Audio subtopic published!"
-        : `Scheduled for ${new Date(auScheduledAt).toLocaleString("en-NG")}`);
-      setAuTitle(""); setAuFile(null); setAuOrderIndex("1");
-      setAuPublishMode("now"); setAuScheduledAt("");
-      loadLessons(auCourseId, setAuLessons);
+      toast.success(isNow ? "Subtopic published!" : `Scheduled for ${new Date(sScheduledAt).toLocaleString("en-NG")}`);
+      setSTitle("");
+      setSYoutubeUrl("");
+      setSAudioFile(null);
+      setSSlidesFile(null);
+      setSAttachment(null);
+      setSPublishMode("now");
+      setSScheduledAt("");
+      if (audioInputRef.current) audioInputRef.current.value = "";
+      if (slidesInputRef.current) slidesInputRef.current.value = "";
+      if (attachInputRef.current) attachInputRef.current.value = "";
+      loadSubtopics(sCourseId, setSSubtopics);
     } catch (err: any) {
       toast.error(err.message || "Upload failed.");
-    } finally { setSavingAudio(false); }
+    } finally { setSSaving(false); }
   }
 
-  // ── Upload Material via server API (bypasses RLS) ───────────────────
-  async function handleUploadMaterial() {
-    if (!mCourseId) { toast.error("Select a course first."); return; }
-    if (!mFile)     { toast.error("Select a file to upload."); return; }
-    if (mFile.size > 20 * 1024 * 1024) { toast.error("File must be under 20MB."); return; }
-    setUploadingFile(true);
+  // ── Upload Resource ───────────────────────────────────────────────
+  async function handleSaveResource() {
+    if (!rCourseId) { toast.error("Select a course."); return; }
+    if (!rTitle) { toast.error("Enter a title."); return; }
+    if (!rFile) { toast.error("Choose a file."); return; }
+
+    setRSaving(true);
     try {
       const form = new FormData();
-      form.append("courseId", mCourseId);
-      form.append("file", mFile);
-      const res = await fetch("/api/admin/upload-material", { method: "POST", body: form });
+      form.append("courseId", rCourseId);
+      form.append("title", rTitle.trim());
+      form.append("category", rCategory);
+      form.append("file", rFile);
+
+      const res = await fetch("/api/admin/upload-resource", { method: "POST", body: form });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
-      toast.success("Course material uploaded! Students can download it from their portal.");
-      setMFile(null);
-      if (fileRef.current) fileRef.current.value = "";
+      if (!res.ok) throw new Error(data.error || "Failed");
+
+      toast.success(`${rCategory} uploaded!`);
+      setRTitle("");
+      setRFile(null);
+      if (resourceInputRef.current) resourceInputRef.current.value = "";
+      loadResources(rCourseId);
     } catch (err: any) {
       toast.error(err.message || "Upload failed.");
-    } finally { setUploadingFile(false); }
+    } finally { setRSaving(false); }
   }
 
-  // ── Create Assignment ────────────────────────────────────────────────
-  async function handleCreateAssignment() {
-    if (!aCourseId) { toast.error("Select a course first."); return; }
-    if (!aTitle)    { toast.error("Enter an assignment title."); return; }
-    if (!aDesc)     { toast.error("Enter the questions / instructions."); return; }
-    setSavingAssign(true);
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.from("assignments").insert({
-        course_id:  aCourseId,
-        lesson_id:  aLessonId || null,
-        title:      aTitle.trim(),
-        description: aDesc.trim(),
-        due_date:   aDue || null,
-        max_score:  100,
-      });
-      if (error) throw error;
-      toast.success("Assignment created!");
-      setATitle(""); setADesc(""); setADue(""); setALessonId("");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to create.");
-    } finally { setSavingAssign(false); }
+  async function handleDeleteResource(id: string) {
+    if (!confirm("Delete this resource?")) return;
+    const res = await fetch("/api/admin/delete-resource", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ resourceId: id }),
+    });
+    if (!res.ok) { toast.error("Failed"); return; }
+    toast.success("Resource deleted.");
+    loadResources(rCourseId);
   }
 
-  const tabs: { id: Tab; icon: any; label: string; desc: string }[] = [
-    { id: "video",      icon: Youtube,       label: "Video",    desc: "YouTube video link" },
-    { id: "audio",      icon: Mic,           label: "Audio",    desc: "Upload MP3 recording" },
-    { id: "material",   icon: FileText,      label: "Material", desc: "Course PDF" },
-  ];
+  async function handleDeleteSubtopic(id: string, title: string) {
+    if (!confirm(`Delete "${title}"?`)) return;
+    const res = await fetch("/api/admin/delete-lesson", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lessonId: id, action: "delete" }),
+    });
+    if (!res.ok) { toast.error("Failed"); return; }
+    toast.success("Subtopic deleted.");
+    loadSubtopics(mCourseId, setMSubtopics);
+  }
 
-  const CourseSelect = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
-    <div className="mb-5">
-      <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Select Course *</label>
+  const CourseSelect = ({ value, onChange, label = "Course" }: { value: string; onChange: (v: string) => void; label?: string }) => (
+    <div>
+      <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">{label} *</label>
       <select value={value} onChange={e => onChange(e.target.value)} className={sel}>
         <option value="">Choose a course...</option>
         <optgroup label="── Year 1">
@@ -229,97 +216,201 @@ export default function CourseBuilderPage() {
     </div>
   );
 
+  const tabs: { id: Tab; icon: any; label: string }[] = [
+    { id: "subtopic",  icon: Plus,        label: "Add Subtopic" },
+    { id: "resources", icon: FolderOpen,  label: "Resources" },
+    { id: "manage",    icon: Eye,         label: "Manage" },
+  ];
+
   return (
     <AdminShell>
       <div className="max-w-2xl space-y-5">
 
-        {/* Header */}
         <div>
           <h1 className="text-2xl font-medium text-white mb-1" style={{ fontFamily: "'Georgia', serif" }}>
             Course Builder
           </h1>
-          <p className="text-white/35 text-sm font-sans">Add subtopics, upload course materials, and create assignments.</p>
+          <p className="text-white/35 text-sm font-sans">Add subtopics with video, audio or slides. Upload course resources of any type.</p>
         </div>
 
         {/* Tabs */}
         <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {tabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={`rounded-2xl border p-2.5 sm:p-4 text-left transition-all ${
+              className={`rounded-2xl border p-3 sm:p-4 text-left transition-all ${
                 tab === t.id
                   ? "bg-[#D4A85C]/10 border-[#D4A85C]/30"
                   : "bg-[#0D1320] border-white/[0.07] hover:border-white/20"
               }`}>
               <t.icon className={`w-4 h-4 mb-1.5 sm:mb-2 ${tab === t.id ? "text-[#D4A85C]" : "text-white/30"}`} />
-              <div className={`text-[11px] sm:text-xs font-semibold font-sans mb-0.5 ${tab === t.id ? "text-white" : "text-white/50"}`}>
+              <div className={`text-[11px] sm:text-xs font-semibold font-sans ${tab === t.id ? "text-white" : "text-white/50"}`}>
                 {t.label}
               </div>
-              <div className="text-[9px] sm:text-[10px] text-white/25 font-sans hidden sm:block">{t.desc}</div>
             </button>
           ))}
         </div>
 
-        {/* ── VIDEO TAB ─────────────────────────────────────────────── */}
-        {tab === "video" && (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-6 space-y-5">
-            <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
-              <Youtube className="w-4 h-4 text-red-400" />
-              <div>
-                <div className="text-white text-sm font-semibold font-sans">Add Video Subtopic</div>
-                <div className="text-white/30 text-xs font-sans">Upload to YouTube as Unlisted first, then paste the link here</div>
+        {/* ── SUBTOPIC TAB ───────────────────────────────────────────── */}
+        {tab === "subtopic" && (
+          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
+            <div className="pb-4 border-b border-white/[0.06]">
+              <div className="text-white text-sm font-semibold font-sans">Add a Subtopic</div>
+              <div className="text-white/30 text-xs font-sans mt-0.5">Pick a content type (video, audio, or slides) and optionally attach a file.</div>
+            </div>
+
+            <CourseSelect value={sCourseId} onChange={setSCourseId} />
+
+            <div>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Title *</label>
+              <input value={sTitle} onChange={e => setSTitle(e.target.value)}
+                placeholder="e.g. The Office of Prophet" className={inp} />
+            </div>
+
+            <div>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Number</label>
+              <input type="number" min="0" value={sOrderIndex} onChange={e => setSOrderIndex(e.target.value)}
+                className="w-28 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-sans focus:outline-none focus:border-[#D4A85C]/50" />
+              <p className="text-white/20 text-xs font-sans mt-1">Auto-suggested based on existing subtopics</p>
+            </div>
+
+            {/* Content Type picker */}
+            <div>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Content Type *</label>
+              <div className="grid grid-cols-3 gap-2">
+                {([
+                  { id: "video",  icon: Youtube,       label: "Video",  color: "text-red-400" },
+                  { id: "audio",  icon: Mic,           label: "Audio",  color: "text-purple-400" },
+                  { id: "slides", icon: Presentation, label: "Slides", color: "text-blue-400" },
+                ] as const).map(c => (
+                  <button key={c.id} type="button" onClick={() => setSContentType(c.id)}
+                    className={`rounded-xl border p-3 transition-all ${
+                      sContentType === c.id
+                        ? "bg-[#D4A85C]/10 border-[#D4A85C]/30"
+                        : "bg-white/[0.04] border-white/10 hover:border-white/25"
+                    }`}>
+                    <c.icon className={`w-4 h-4 mx-auto mb-1.5 ${sContentType === c.id ? "text-[#D4A85C]" : c.color}`} />
+                    <div className={`text-xs font-semibold font-sans text-center ${sContentType === c.id ? "text-white" : "text-white/60"}`}>
+                      {c.label}
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Step 1 — Course */}
-            <CourseSelect value={vCourseId} onChange={setVCourseId} />
-
-            {/* Step 2 — Title */}
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Title *</label>
-              <input value={lessonTitle} onChange={e => setLessonTitle(e.target.value)}
-                placeholder="e.g. What is NT Prophecy?"
-                className={inp} />
-            </div>
-
-            {/* Step 3 — YouTube URL */}
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">YouTube URL *</label>
-              <input value={youtubeUrl} onChange={e => setYoutubeUrl(e.target.value)}
-                placeholder="https://youtu.be/... or https://www.youtube.com/watch?v=..."
-                className={inp} />
-              {youtubeUrl && (
-                <p className={`text-xs mt-2 flex items-center gap-1.5 font-sans ${videoId ? "text-green-400" : "text-red-400"}`}>
-                  {videoId
-                    ? <><CheckCircle className="w-3.5 h-3.5" /> Valid — Video ID: {videoId}</>
-                    : <><AlertCircle className="w-3.5 h-3.5" /> Invalid URL — paste the full YouTube link</>
-                  }
-                </p>
-              )}
-            </div>
-
-            {/* Preview */}
-            {videoId && (
-              <div className="rounded-xl overflow-hidden border border-white/10" style={{ aspectRatio: "16/9" }}>
-                <iframe src={`https://www.youtube.com/embed/${videoId}?rel=0`} className="w-full h-full" allowFullScreen />
+            {/* Content input based on type */}
+            {sContentType === "video" && (
+              <div>
+                <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">YouTube URL *</label>
+                <input value={sYoutubeUrl} onChange={e => setSYoutubeUrl(e.target.value)}
+                  placeholder="https://youtu.be/... or paste full URL" className={inp} />
+                {sYoutubeUrl && (
+                  <p className={`text-xs mt-2 flex items-center gap-1.5 font-sans ${videoId ? "text-green-400" : "text-red-400"}`}>
+                    {videoId
+                      ? <><CheckCircle className="w-3.5 h-3.5" /> Valid — preview below</>
+                      : <><AlertCircle className="w-3.5 h-3.5" /> Invalid URL</>}
+                  </p>
+                )}
+                {videoId && (
+                  <div className="rounded-xl overflow-hidden border border-white/10 mt-3" style={{ aspectRatio: "16/9" }}>
+                    <iframe src={`https://www.youtube.com/embed/${videoId}?rel=0`} className="w-full h-full" allowFullScreen />
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Step 4 — Lesson number */}
+            {sContentType === "audio" && (
+              <div>
+                <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Audio File *</label>
+                <div className={`border-2 border-dashed rounded-xl p-4 sm:p-6 text-center transition-all ${
+                  sAudioFile ? "border-purple-400/40 bg-purple-400/[0.03]" : "border-white/10 hover:border-white/25"
+                }`}>
+                  <input ref={audioInputRef} type="file" accept="audio/*,.mp3,.m4a,.wav,.aac"
+                    onChange={e => setSAudioFile(e.target.files?.[0] || null)} className="hidden" id="aud-input" />
+                  <label htmlFor="aud-input" className="cursor-pointer block">
+                    <Music className={`w-8 h-8 mx-auto mb-3 ${sAudioFile ? "text-purple-400" : "text-white/20"}`} />
+                    {sAudioFile ? (
+                      <>
+                        <p className="text-white/80 text-sm font-semibold font-sans truncate px-2">{sAudioFile.name}</p>
+                        <p className="text-white/30 text-xs font-sans mt-1">{(sAudioFile.size / 1024 / 1024).toFixed(2)} MB · click to change</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-white/50 text-sm font-sans">Click to select audio file</p>
+                        <p className="text-white/25 text-xs font-sans mt-1">MP3, M4A, WAV — max 100MB</p>
+                      </>
+                    )}
+                  </label>
+                </div>
+                {sAudioFile && (
+                  <audio controls className="w-full mt-3" src={URL.createObjectURL(sAudioFile)} />
+                )}
+              </div>
+            )}
+
+            {sContentType === "slides" && (
+              <div>
+                <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Slides File (PDF or PPTX) *</label>
+                <div className={`border-2 border-dashed rounded-xl p-4 sm:p-6 text-center transition-all ${
+                  sSlidesFile ? "border-blue-400/40 bg-blue-400/[0.03]" : "border-white/10 hover:border-white/25"
+                }`}>
+                  <input ref={slidesInputRef} type="file" accept=".pdf,.pptx,.ppt,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                    onChange={e => setSSlidesFile(e.target.files?.[0] || null)} className="hidden" id="slides-input" />
+                  <label htmlFor="slides-input" className="cursor-pointer block">
+                    <Presentation className={`w-8 h-8 mx-auto mb-3 ${sSlidesFile ? "text-blue-400" : "text-white/20"}`} />
+                    {sSlidesFile ? (
+                      <>
+                        <p className="text-white/80 text-sm font-semibold font-sans truncate px-2">{sSlidesFile.name}</p>
+                        <p className="text-white/30 text-xs font-sans mt-1">{(sSlidesFile.size / 1024 / 1024).toFixed(2)} MB · click to change</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-white/50 text-sm font-sans">Click to select slides</p>
+                        <p className="text-white/25 text-xs font-sans mt-1">PDF or PPTX — max 50MB</p>
+                      </>
+                    )}
+                  </label>
+                </div>
+                <p className="text-white/30 text-[11px] font-sans mt-2">
+                  PDFs embed natively. PPTX uses Microsoft Office Online viewer.
+                </p>
+              </div>
+            )}
+
+            {/* Optional Attachment */}
             <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Number</label>
-              <input type="number" min="0" value={orderIndex} onChange={e => setOrderIndex(e.target.value)}
-                className="w-28 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-sans focus:outline-none focus:border-[#D4A85C]/50" />
-              <p className="text-white/20 text-xs font-sans mt-1">Use 1, 2, 3... for each subtopic in the course</p>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">
+                Attachment <span className="text-white/20 normal-case tracking-normal">(optional handout, image, etc)</span>
+              </label>
+              <div className={`border border-dashed rounded-xl p-3 text-center transition-all ${
+                sAttachment ? "border-[#D4A85C]/40 bg-[#D4A85C]/[0.03]" : "border-white/10 hover:border-white/25"
+              }`}>
+                <input ref={attachInputRef} type="file" accept=".pdf,.docx,.doc,.pptx,.ppt,.png,.jpg,.jpeg,.zip"
+                  onChange={e => setSAttachment(e.target.files?.[0] || null)} className="hidden" id="attach-input" />
+                <label htmlFor="attach-input" className="cursor-pointer block py-1">
+                  {sAttachment ? (
+                    <div className="flex items-center justify-center gap-2 text-sm">
+                      <FileText className="w-4 h-4 text-[#D4A85C]" />
+                      <span className="text-white/80 truncate font-sans">{sAttachment.name}</span>
+                      <button type="button" onClick={(e) => { e.preventDefault(); setSAttachment(null); if (attachInputRef.current) attachInputRef.current.value = ""; }}
+                        className="text-white/30 hover:text-red-400 ml-1">
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="text-white/40 text-xs font-sans">Click to attach a file</p>
+                  )}
+                </label>
+              </div>
             </div>
 
-            {/* Step 5 — Publish or Schedule */}
+            {/* Publish mode */}
             <div>
               <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">When to Publish</label>
               <div className="grid grid-cols-2 gap-2 mb-3">
                 {(["now", "schedule"] as const).map(m => (
-                  <button key={m} type="button" onClick={() => setPublishMode(m)}
+                  <button key={m} type="button" onClick={() => setSPublishMode(m)}
                     className={`py-2.5 rounded-xl text-xs font-semibold font-sans transition-all border flex items-center justify-center gap-2 ${
-                      publishMode === m
+                      sPublishMode === m
                         ? "bg-[#D4A85C] border-[#D4A85C] text-[#080C14]"
                         : "bg-white/[0.04] border-white/10 text-white/50 hover:border-white/25"
                     }`}>
@@ -328,277 +419,179 @@ export default function CourseBuilderPage() {
                   </button>
                 ))}
               </div>
-              {publishMode === "schedule" && (
-                <div>
-                  <input type="datetime-local" value={scheduledAt} onChange={e => setScheduledAt(e.target.value)}
-                    className={inp} />
-                  <p className="text-white/20 text-xs font-sans mt-1.5">
-                    Students cannot see the lesson until this date and time.
-                  </p>
-                </div>
+              {sPublishMode === "schedule" && (
+                <input type="datetime-local" value={sScheduledAt} onChange={e => setSScheduledAt(e.target.value)}
+                  className={inp} />
               )}
             </div>
 
-            {/* Existing lessons */}
-            {vLessons.length > 0 && (
+            {/* Existing subtopics */}
+            {sSubtopics.length > 0 && (
               <div className="rounded-xl border border-white/[0.07] overflow-hidden">
                 <div className="px-4 py-2 border-b border-white/[0.06]">
                   <span className="text-white/30 text-[10px] uppercase tracking-widest font-sans">
-                    {vLessons.length} subtopic{vLessons.length !== 1 ? "s" : ""} in this course
+                    {sSubtopics.length} subtopic{sSubtopics.length !== 1 ? "s" : ""} already in this course
                   </span>
                 </div>
-                {vLessons.map((l, i) => (
-                  <div key={l.id} className={`flex items-center gap-3 px-4 py-3 ${i < vLessons.length - 1 ? "border-b border-white/[0.04]" : ""}`}>
-                    <span className="text-[#D4A85C]/40 text-xs font-mono w-5">{String(l.order_index).padStart(2,"0")}</span>
+                {sSubtopics.map((l, i) => (
+                  <div key={l.id} className={`flex items-center gap-3 px-4 py-3 ${i < sSubtopics.length - 1 ? "border-b border-white/[0.04]" : ""}`}>
+                    <span className="text-[#D4A85C]/40 text-xs font-mono w-5">{String(l.order_index).padStart(2, "0")}</span>
                     <span className="text-white/60 text-xs font-sans flex-1 truncate">{l.title}</span>
-                    <div className="flex gap-1.5">
-                      {l.youtube_video_id && <span className="text-[9px] bg-red-500/10 border border-red-500/20 text-red-400 px-1.5 py-0.5 rounded font-sans">Video</span>}
-                      {l.notes_url && <span className="text-[9px] bg-green-500/10 border border-green-500/20 text-green-400 px-1.5 py-0.5 rounded font-sans">Material</span>}
+                    <div className="flex gap-1 flex-shrink-0">
+                      {l.youtube_video_id && <span className="text-[9px] bg-red-500/10 text-red-400 px-1.5 py-0.5 rounded">V</span>}
+                      {l.audio_url && <span className="text-[9px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded">A</span>}
+                      {l.slides_url && <span className="text-[9px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">S</span>}
                     </div>
                   </div>
                 ))}
               </div>
             )}
 
-            <button onClick={handlePublishVideo} disabled={savingVideo || !videoId || !lessonTitle || !vCourseId}
+            <button onClick={handleSaveSubtopic} disabled={sSaving || !sTitle || !sCourseId}
               className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(212,168,92,0.3)]">
-              {savingVideo
-                ? <><Loader2 className="w-4 h-4 animate-spin" /> {publishMode === "now" ? "Publishing..." : "Scheduling..."}</>
-                : <><Youtube className="w-4 h-4" /> {publishMode === "now" ? "Publish Subtopic" : "Schedule Subtopic"}</>
-              }
+              {sSaving
+                ? <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>
+                : <><Plus className="w-4 h-4" /> {sPublishMode === "now" ? "Publish Subtopic" : "Schedule Subtopic"}</>}
             </button>
           </div>
         )}
 
-        {/* ── AUDIO TAB ──────────────────────────────────────────────── */}
-        {tab === "audio" && (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-6 space-y-5">
-            <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
-              <Mic className="w-4 h-4 text-purple-400" />
-              <div>
-                <div className="text-white text-sm font-semibold font-sans">Add Audio Subtopic</div>
-                <div className="text-white/30 text-xs font-sans">Upload an MP3 recording (up to 100MB)</div>
-              </div>
+        {/* ── RESOURCES TAB ──────────────────────────────────────────── */}
+        {tab === "resources" && (
+          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
+            <div className="pb-4 border-b border-white/[0.06]">
+              <div className="text-white text-sm font-semibold font-sans">Course Resources</div>
+              <div className="text-white/30 text-xs font-sans mt-0.5">Upload multiple files per course. Students see them grouped by category.</div>
             </div>
 
-            <CourseSelect value={auCourseId} onChange={setAuCourseId} />
+            <CourseSelect value={rCourseId} onChange={setRCourseId} />
 
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Title *</label>
-              <input value={auTitle} onChange={e => setAuTitle(e.target.value)}
-                placeholder="e.g. The Office of Prophet"
-                className={inp} />
-            </div>
-
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Audio File *</label>
-              <div className={`border-2 border-dashed rounded-xl p-4 sm:p-6 text-center transition-all ${
-                auFile ? "border-purple-400/40 bg-purple-400/[0.03]" : "border-white/10 hover:border-white/25"
-              }`}>
-                <input type="file" accept="audio/*,.mp3,.m4a,.wav,.aac"
-                  onChange={e => setAuFile(e.target.files?.[0] || null)}
-                  id="audio-file-input"
-                  className="hidden" />
-                <label htmlFor="audio-file-input" className="cursor-pointer block">
-                  <Music className={`w-8 h-8 mx-auto mb-3 ${auFile ? "text-purple-400" : "text-white/20"}`} />
-                  {auFile ? (
-                    <>
-                      <p className="text-white/80 text-sm font-semibold font-sans truncate max-w-full px-2">{auFile.name}</p>
-                      <p className="text-white/30 text-xs font-sans mt-1">{(auFile.size / 1024 / 1024).toFixed(2)} MB · click to change</p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-white/50 text-sm font-sans">Click to select audio file</p>
-                      <p className="text-white/25 text-xs font-sans mt-1">MP3, M4A, WAV, AAC — max 100MB</p>
-                    </>
-                  )}
-                </label>
-              </div>
-              {auFile && (
-                <div className="mt-3">
-                  <audio controls className="w-full" src={URL.createObjectURL(auFile)} />
-                </div>
-              )}
-            </div>
-
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Number</label>
-              <input type="number" min="0" value={auOrderIndex} onChange={e => setAuOrderIndex(e.target.value)}
-                className="w-28 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-sans focus:outline-none focus:border-[#D4A85C]/50" />
-              <p className="text-white/20 text-xs font-sans mt-1">Use 1, 2, 3... for each subtopic in the course</p>
-            </div>
-
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">When to Publish</label>
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                {(["now", "schedule"] as const).map(m => (
-                  <button key={m} type="button" onClick={() => setAuPublishMode(m)}
-                    className={`py-2.5 rounded-xl text-xs font-semibold font-sans transition-all border flex items-center justify-center gap-2 ${
-                      auPublishMode === m
-                        ? "bg-[#D4A85C] border-[#D4A85C] text-[#080C14]"
-                        : "bg-white/[0.04] border-white/10 text-white/50 hover:border-white/25"
+            {rCourseId && (
+              <>
+                {/* Upload form */}
+                <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 space-y-3">
+                  <div>
+                    <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Title *</label>
+                    <input value={rTitle} onChange={e => setRTitle(e.target.value)}
+                      placeholder="e.g. Module 1 Reading List" className={inp} />
+                  </div>
+                  <div>
+                    <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Category</label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {(["Notes", "Slides", "Handout", "Reading"] as const).map(c => (
+                        <button key={c} type="button" onClick={() => setRCategory(c)}
+                          className={`py-2 rounded-lg text-xs font-semibold font-sans transition-all border ${
+                            rCategory === c
+                              ? "bg-[#D4A85C] border-[#D4A85C] text-[#080C14]"
+                              : "bg-white/[0.04] border-white/10 text-white/50 hover:border-white/25"
+                          }`}>
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">File *</label>
+                    <div className={`border-2 border-dashed rounded-xl p-4 text-center transition-all ${
+                      rFile ? "border-[#D4A85C]/40 bg-[#D4A85C]/[0.03]" : "border-white/10 hover:border-white/25"
                     }`}>
-                    {m === "schedule" && <Calendar className="w-3.5 h-3.5" />}
-                    {m === "now" ? "Publish Now" : "Schedule"}
+                      <input ref={resourceInputRef} type="file" accept=".pdf,.docx,.doc,.pptx,.ppt,.zip,.png,.jpg,.jpeg"
+                        onChange={e => setRFile(e.target.files?.[0] || null)} className="hidden" id="res-input" />
+                      <label htmlFor="res-input" className="cursor-pointer block">
+                        <Upload className={`w-7 h-7 mx-auto mb-2 ${rFile ? "text-[#D4A85C]" : "text-white/20"}`} />
+                        {rFile ? (
+                          <>
+                            <p className="text-white/80 text-sm font-semibold font-sans truncate px-2">{rFile.name}</p>
+                            <p className="text-white/30 text-xs font-sans mt-1">{(rFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-white/50 text-sm font-sans">Click to select file</p>
+                            <p className="text-white/25 text-xs font-sans mt-1">PDF, DOCX, PPTX, ZIP, image — max 50MB</p>
+                          </>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+                  <button onClick={handleSaveResource} disabled={rSaving || !rFile || !rTitle}
+                    className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-2.5 rounded-full transition-all font-sans flex items-center justify-center gap-2">
+                    {rSaving ? <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</> : <><Upload className="w-4 h-4" /> Add Resource</>}
                   </button>
-                ))}
-              </div>
-              {auPublishMode === "schedule" && (
-                <input type="datetime-local" value={auScheduledAt} onChange={e => setAuScheduledAt(e.target.value)}
-                  className={inp} />
-              )}
-            </div>
-
-            {auLessons.length > 0 && (
-              <div className="rounded-xl border border-white/[0.07] overflow-hidden">
-                <div className="px-4 py-2 border-b border-white/[0.06]">
-                  <span className="text-white/30 text-[10px] uppercase tracking-widest font-sans">
-                    {auLessons.length} subtopic{auLessons.length !== 1 ? "s" : ""} in this course
-                  </span>
                 </div>
-                {auLessons.map((l, i) => (
-                  <div key={l.id} className={`flex items-center gap-3 px-4 py-3 ${i < auLessons.length - 1 ? "border-b border-white/[0.04]" : ""}`}>
-                    <span className="text-[#D4A85C]/40 text-xs font-mono w-5">{String(l.order_index).padStart(2,"0")}</span>
-                    <span className="text-white/60 text-xs font-sans flex-1 truncate">{l.title}</span>
+
+                {/* Existing resources by category */}
+                {resources.length > 0 && (
+                  <div className="space-y-3">
+                    <h3 className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans">{resources.length} resource{resources.length !== 1 ? "s" : ""} in this course</h3>
+                    {(["Notes", "Slides", "Handout", "Reading"] as const).map(cat => {
+                      const items = resources.filter(r => r.category === cat);
+                      if (items.length === 0) return null;
+                      return (
+                        <div key={cat}>
+                          <div className="text-[#D4A85C] text-[10px] uppercase tracking-widest font-sans mb-2">{cat}</div>
+                          <div className="space-y-1.5">
+                            {items.map(r => (
+                              <div key={r.id} className="flex items-center gap-3 bg-white/[0.03] rounded-lg px-3 py-2.5">
+                                <FileText className="w-3.5 h-3.5 text-white/40 flex-shrink-0" />
+                                <a href={r.file_url} target="_blank" rel="noopener noreferrer"
+                                  className="text-white/70 text-xs font-sans flex-1 truncate hover:text-[#D4A85C]">
+                                  {r.title}
+                                </a>
+                                <button onClick={() => handleDeleteResource(r.id)}
+                                  className="text-white/30 hover:text-red-400">
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* ── MANAGE TAB ─────────────────────────────────────────────── */}
+        {tab === "manage" && (
+          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
+            <div className="pb-4 border-b border-white/[0.06]">
+              <div className="text-white text-sm font-semibold font-sans">Manage Subtopics</div>
+              <div className="text-white/30 text-xs font-sans mt-0.5">View, delete subtopics. Use Course Manager for full publish controls.</div>
+            </div>
+            <CourseSelect value={mCourseId} onChange={setMCourseId} />
+
+            {mCourseId && mSubtopics.length === 0 && (
+              <div className="text-white/30 text-sm font-sans text-center py-8">No subtopics in this course yet.</div>
+            )}
+
+            {mSubtopics.length > 0 && (
+              <div className="rounded-xl border border-white/[0.07] overflow-hidden">
+                {mSubtopics.map((l, i) => (
+                  <div key={l.id} className={`flex items-center gap-3 px-4 py-3 ${i < mSubtopics.length - 1 ? "border-b border-white/[0.04]" : ""}`}>
+                    <span className="text-[#D4A85C]/40 text-xs font-mono w-5">{String(l.order_index).padStart(2, "0")}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-white/80 text-sm font-sans truncate">{l.title}</div>
+                      <div className="flex items-center gap-2 mt-1">
+                        {l.youtube_video_id && <span className="text-[9px] bg-red-500/10 text-red-400 px-1.5 py-0.5 rounded font-sans">Video</span>}
+                        {l.audio_url && <span className="text-[9px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded font-sans">Audio</span>}
+                        {l.slides_url && <span className="text-[9px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-sans">Slides</span>}
+                        {l.attachment_url && <span className="text-[9px] bg-[#D4A85C]/10 text-[#D4A85C] px-1.5 py-0.5 rounded font-sans">+ File</span>}
+                        <span className={`text-[9px] px-1.5 py-0.5 rounded font-sans ${l.is_published ? "bg-green-500/10 text-green-400" : "bg-white/5 text-white/30"}`}>
+                          {l.is_published ? "Live" : "Draft"}
+                        </span>
+                      </div>
+                    </div>
+                    <button onClick={() => handleDeleteSubtopic(l.id, l.title)}
+                      className="text-white/30 hover:text-red-400 flex-shrink-0">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 ))}
               </div>
             )}
-
-            <button onClick={handleUploadAudio} disabled={savingAudio || !auFile || !auTitle || !auCourseId}
-              className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(212,168,92,0.3)]">
-              {savingAudio
-                ? <><Loader2 className="w-4 h-4 animate-spin" /> {auPublishMode === "now" ? "Uploading..." : "Scheduling..."}</>
-                : <><Mic className="w-4 h-4" /> {auPublishMode === "now" ? "Publish Audio Subtopic" : "Schedule Audio Subtopic"}</>
-              }
-            </button>
-          </div>
-        )}
-
-
-        {/* ── MATERIAL TAB ──────────────────────────────────────────── */}
-        {tab === "material" && (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-6 space-y-5">
-            <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
-              <FileText className="w-4 h-4 text-[#D4A85C]" />
-              <div>
-                <div className="text-white text-sm font-semibold font-sans">Upload Course Material</div>
-                <div className="text-white/30 text-xs font-sans">PDF or Word for the whole course — students download from their portal</div>
-              </div>
-            </div>
-
-            {/* Step 1 — Course */}
-            <CourseSelect value={mCourseId} onChange={setMCourseId} />
-
-            {/* Step 2 — File (one per course) */}
-            {mCourseId && (
-              <div className="bg-[#D4A85C]/[0.05] border border-[#D4A85C]/15 rounded-xl px-4 py-3">
-                <p className="text-[#D4A85C]/80 text-xs font-sans">
-                  One course material per course. Uploading a new file will replace the existing one.
-                  Students download it from the Documents section of their portal.
-                </p>
-              </div>
-            )}
-
-            {/* Step 3 — File */}
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">File (max 20MB) *</label>
-              <div onClick={() => fileRef.current?.click()}
-                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
-                  mFile ? "border-[#D4A85C]/40 bg-[#D4A85C]/[0.03]" : "border-white/10 hover:border-white/25"
-                }`}>
-                <Upload className={`w-8 h-8 mx-auto mb-3 ${mFile ? "text-[#D4A85C]" : "text-white/20"}`} />
-                {mFile ? (
-                  <>
-                    <p className="text-white/80 text-sm font-semibold font-sans">{mFile.name}</p>
-                    <p className="text-white/30 text-xs font-sans mt-1">{(mFile.size / 1024 / 1024).toFixed(2)} MB · click to change</p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-white/50 text-sm font-sans">Click to select file</p>
-                    <p className="text-white/25 text-xs font-sans mt-1">PDF, DOCX, DOC — max 20MB</p>
-                  </>
-                )}
-                <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" className="hidden"
-                  onChange={e => setMFile(e.target.files?.[0] || null)} />
-              </div>
-            </div>
-
-            <button onClick={handleUploadMaterial} disabled={uploadingFile || !mFile || !mCourseId}
-              className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans flex items-center justify-center gap-2">
-              {uploadingFile
-                ? <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>
-                : <><Upload className="w-4 h-4" /> Upload Material</>
-              }
-            </button>
-          </div>
-        )}
-
-        {/* ── ASSIGNMENT TAB ─────────────────────────────────────────── */}
-        {tab === "assignment" && (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-6 space-y-5">
-            <div className="flex items-center gap-2 pb-4 border-b border-white/[0.06]">
-              <ClipboardList className="w-4 h-4 text-blue-400" />
-              <div>
-                <div className="text-white text-sm font-semibold font-sans">Create Assignment</div>
-                <div className="text-white/30 text-xs font-sans">Students submit written responses from their portal</div>
-              </div>
-            </div>
-
-            {/* Step 1 — Course */}
-            <CourseSelect value={aCourseId} onChange={setACourseId} />
-
-            {/* Step 2 — Lesson (optional) */}
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">
-                Link to Subtopic <span className="text-white/20 normal-case tracking-normal">(optional)</span>
-              </label>
-              {!aCourseId ? (
-                <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3">
-                  <p className="text-white/25 text-sm font-sans">← Select a course above first</p>
-                </div>
-              ) : (
-                <select value={aLessonId} onChange={e => setALessonId(e.target.value)} className={sel}>
-                  <option value="">General course assignment (not tied to a specific subtopic)</option>
-                  {aLessons.map(l => (
-                    <option key={l.id} value={l.id}>{String(l.order_index).padStart(2,"0")} — {l.title}</option>
-                  ))}
-                </select>
-              )}
-            </div>
-
-            {/* Step 3 — Title */}
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Assignment Title *</label>
-              <input value={aTitle} onChange={e => setATitle(e.target.value)}
-                placeholder="e.g. Course 1 — Written Exam"
-                className={inp} />
-            </div>
-
-            {/* Step 4 — Questions */}
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Questions / Instructions *</label>
-              <textarea value={aDesc} onChange={e => setADesc(e.target.value)} rows={10}
-                placeholder={`Type all questions here. Example:\n\nPart A — Written Exam (40 marks)\nAnswer ALL five questions.\n\n1. Define NT prophecy...\n2. Explain the three purposes...`}
-                className={`${inp} resize-none leading-relaxed`} />
-              <p className="text-white/20 text-xs font-sans mt-1.5">Students see this exactly as typed and write their response below it.</p>
-            </div>
-
-            {/* Step 5 — Due date */}
-            <div>
-              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">
-                Due Date <span className="text-white/20 normal-case tracking-normal">(optional)</span>
-              </label>
-              <input type="date" value={aDue} onChange={e => setADue(e.target.value)} className={inp} />
-            </div>
-
-            <button onClick={handleCreateAssignment} disabled={savingAssign || !aTitle || !aDesc || !aCourseId}
-              className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans flex items-center justify-center gap-2">
-              {savingAssign
-                ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating...</>
-                : <><ClipboardList className="w-4 h-4" /> Create Assignment</>
-              }
-            </button>
           </div>
         )}
       </div>

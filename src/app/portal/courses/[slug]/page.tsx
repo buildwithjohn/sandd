@@ -13,7 +13,8 @@ import {
 
 interface Subtopic {
   id: string; title: string; order_index: number;
-  youtube_video_id?: string; notes_url?: string;
+  youtube_video_id?: string; audio_url?: string; slides_url?: string;
+  attachment_url?: string; notes_url?: string;
   is_published: boolean;
 }
 
@@ -28,6 +29,7 @@ export default function CourseDetailPage() {
   const [subtopics, setSubtopics] = useState<Subtopic[]>([]);
   const [progress, setProgress]   = useState<Record<string, string>>({});
   const [assessment, setAssessment] = useState<any>(null);
+  const [resources, setResources] = useState<any[]>([]);
   const [loading, setLoading]     = useState(true);
   const [studentId, setStudentId] = useState("");
 
@@ -47,7 +49,7 @@ export default function CourseDetailPage() {
       // Load published subtopics
       const { data: subs } = await supabase
         .from("lessons")
-        .select("id, title, order_index, youtube_video_id, notes_url, is_published")
+        .select("id, title, order_index, youtube_video_id, audio_url, slides_url, attachment_url, notes_url, is_published")
         .eq("course_id", courseData.id)
         .eq("is_published", true)
         .order("order_index");
@@ -61,6 +63,11 @@ export default function CourseDetailPage() {
       const progMap: Record<string, string> = {};
       prog?.forEach((p: Progress) => { progMap[p.lesson_id] = p.status; });
       setProgress(progMap);
+
+      // Load course resources
+      const { data: res } = await supabase.from("course_resources")
+        .select("*").eq("course_id", courseData.id).order("created_at", { ascending: false });
+      setResources(res ?? []);
 
       // Load published assessment for this course
       const { data: ass } = await supabase
@@ -211,9 +218,19 @@ export default function CourseDetailPage() {
                             <Play className="w-2.5 h-2.5" /> Video
                           </span>
                         )}
-                        {sub.notes_url && (
+                        {sub.audio_url && (
                           <span className="theme-text-muted text-[10px] font-sans flex items-center gap-1">
-                            <FileDown className="w-2.5 h-2.5" /> Notes
+                            🎙 Audio
+                          </span>
+                        )}
+                        {sub.slides_url && (
+                          <span className="theme-text-muted text-[10px] font-sans flex items-center gap-1">
+                            📊 Slides
+                          </span>
+                        )}
+                        {sub.attachment_url && (
+                          <span className="theme-text-muted text-[10px] font-sans flex items-center gap-1">
+                            <FileDown className="w-2.5 h-2.5" /> File
                           </span>
                         )}
                       </div>

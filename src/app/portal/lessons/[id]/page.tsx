@@ -15,6 +15,10 @@ interface Lesson {
   id: string; title: string; order_index: number;
   youtube_video_id?: string;
   audio_url?: string;
+  slides_url?: string;
+  slides_type?: string;
+  attachment_url?: string;
+  attachment_name?: string;
   courses: { id: string; title: string; slug: string; year: number; notes_url?: string; };
 }
 
@@ -159,12 +163,56 @@ export default function LessonPage() {
                 Download audio file →
               </a>
             </div>
+          ) : lesson.slides_url ? (
+            <div className="rounded-2xl theme-bg-elevated border theme-border overflow-hidden"
+              style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.1)" }}>
+              <div className="px-5 sm:px-6 py-4 border-b theme-border-soft flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="theme-text-faint text-[10px] uppercase tracking-widest font-sans mb-0.5">Slides</div>
+                  <div className="theme-text text-sm font-semibold font-sans truncate">{lesson.title}</div>
+                </div>
+                <a href={lesson.slides_url} target="_blank" rel="noopener noreferrer" download
+                  className="text-xs theme-accent hover:opacity-70 font-sans whitespace-nowrap">
+                  Download
+                </a>
+              </div>
+              <div className="bg-black/5" style={{ aspectRatio: "16/10" }}>
+                {lesson.slides_type === "pdf" ? (
+                  <iframe src={`${lesson.slides_url}#toolbar=1`} className="w-full h-full" title={lesson.title} />
+                ) : (
+                  <iframe
+                    src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(lesson.slides_url)}`}
+                    className="w-full h-full" title={lesson.title}
+                    allowFullScreen
+                  />
+                )}
+              </div>
+            </div>
           ) : (
             <div className="rounded-2xl theme-bg-elevated border theme-border p-12 text-center">
               <p className="theme-text-muted text-sm font-sans">Content not available yet.</p>
             </div>
           )}
         </motion.div>
+
+        {/* Per-subtopic attachment */}
+        {lesson.attachment_url && (
+          <a href={lesson.attachment_url} target="_blank" rel="noopener noreferrer" download
+            className="flex items-center gap-3 theme-bg-elevated border theme-border rounded-2xl p-4 hover:border-[var(--accent)] transition-all group">
+            <div className="w-10 h-10 rounded-xl theme-accent-bg flex items-center justify-center flex-shrink-0">
+              <svg className="w-4 h-4 theme-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="theme-text text-sm font-semibold group-hover:theme-accent transition-colors truncate">
+                {lesson.attachment_name || "Subtopic attachment"}
+              </div>
+              <div className="theme-text-muted text-xs font-sans">Tap to download</div>
+            </div>
+          </a>
+        )}
 
         {/* Mark complete */}
         {!completed && (
