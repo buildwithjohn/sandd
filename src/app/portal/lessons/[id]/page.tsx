@@ -14,6 +14,7 @@ import {
 interface Lesson {
   id: string; title: string; order_index: number;
   youtube_video_id?: string;
+  description?: string;
   audio_url?: string;
   slides_url?: string;
   slides_type?: string;
@@ -131,6 +132,16 @@ export default function LessonPage() {
             </div>
           )}
         </div>
+
+        {/* Description / Outline */}
+        {lesson.description && (
+          <div className="theme-bg-elevated border theme-border rounded-2xl p-5 sm:p-6">
+            <div className="theme-text-faint text-[10px] uppercase tracking-widest font-sans mb-3">In this lesson</div>
+            <div className="theme-text text-sm font-sans leading-relaxed whitespace-pre-wrap">
+              {lesson.description}
+            </div>
+          </div>
+        )}
 
         {/* Video or Audio */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>

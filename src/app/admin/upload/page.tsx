@@ -4,23 +4,22 @@ import { useState, useEffect, useRef } from "react";
 import AdminShell from "@/components/admin/AdminShell";
 import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
 import {
   Youtube, Mic, FileText, Plus, Upload, Loader2, Calendar,
   CheckCircle, AlertCircle, Music, Presentation, FolderOpen,
-  Image as ImageIcon, Trash2, Eye, FileDown, X
+  Eye, Trash2, X
 } from "lucide-react";
 
 interface Course { id: string; title: string; year: number; }
 interface Subtopic {
-  id: string; title: string; order_index: number;
+  id: string; title: string; description?: string; order_index: number;
   youtube_video_id?: string; audio_url?: string; slides_url?: string;
   slides_type?: string; attachment_url?: string; attachment_name?: string;
   is_published: boolean;
 }
 interface Resource {
   id: string; course_id: string; title: string;
-  file_url: string; category: string; created_at: string;
+  file_url: string; file_name?: string; category: string; created_at: string;
 }
 
 function extractYouTubeId(url: string): string | null {
@@ -30,6 +29,51 @@ function extractYouTubeId(url: string): string | null {
   ];
   for (const p of patterns) { const m = url.trim().match(p); if (m) return m[1]; }
   return null;
+}
+
+// Direct upload to Supabase Storage with progress tracking
+async function uploadToStorage(
+  supabase: any, file: File, folder: string, courseId: string,
+  onProgress: (pct: number) => void
+): Promise<{ url: string; path: string }> {
+  const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
+  const path = `${folder}/${courseId}-${Date.now()}.${ext}`;
+
+  // Use XMLHttpRequest for actual progress tracking
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { reject(new Error("Not authenticated")); return; }
+
+      const { data: { publicUrl } } = supabase.storage.from("materials").getPublicUrl(path);
+      const xhr = new XMLHttpRequest();
+      const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/materials/${path}`;
+
+      xhr.upload.addEventListener("progress", (e) => {
+        if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+      });
+
+      xhr.addEventListener("load", () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve({ url: publicUrl, path });
+        } else {
+          let msg = "Upload failed";
+          try {
+            const err = JSON.parse(xhr.responseText);
+            msg = err.message || err.error || msg;
+          } catch {}
+          reject(new Error(msg));
+        }
+      });
+      xhr.addEventListener("error", () => reject(new Error("Network error during upload")));
+
+      xhr.open("POST", url);
+      xhr.setRequestHeader("Authorization", `Bearer ${session.access_token}`);
+      xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+      xhr.setRequestHeader("x-upsert", "false");
+      xhr.send(file);
+    } catch (err) { reject(err); }
+  });
 }
 
 type Tab = "subtopic" | "resources" | "manage";
@@ -42,9 +86,9 @@ export default function CourseBuilderPage() {
   const [tab, setTab] = useState<Tab>("subtopic");
   const [courses, setCourses] = useState<Course[]>([]);
 
-  // ── Subtopic state (unified) ─────────────────────────────────────
   const [sCourseId, setSCourseId] = useState("");
   const [sTitle, setSTitle] = useState("");
+  const [sDescription, setSDescription] = useState("");
   const [sOrderIndex, setSOrderIndex] = useState("1");
   const [sContentType, setSContentType] = useState<ContentType>("video");
   const [sYoutubeUrl, setSYoutubeUrl] = useState("");
@@ -54,21 +98,22 @@ export default function CourseBuilderPage() {
   const [sPublishMode, setSPublishMode] = useState<"now" | "schedule">("now");
   const [sScheduledAt, setSScheduledAt] = useState("");
   const [sSaving, setSSaving] = useState(false);
+  const [sProgress, setSProgress] = useState(0);
+  const [sStatusMsg, setSStatusMsg] = useState("");
   const [sSubtopics, setSSubtopics] = useState<Subtopic[]>([]);
   const audioInputRef = useRef<HTMLInputElement>(null);
   const slidesInputRef = useRef<HTMLInputElement>(null);
   const attachInputRef = useRef<HTMLInputElement>(null);
 
-  // ── Resources state ──────────────────────────────────────────────
   const [rCourseId, setRCourseId] = useState("");
   const [rTitle, setRTitle] = useState("");
   const [rCategory, setRCategory] = useState<"Notes" | "Slides" | "Handout" | "Reading">("Notes");
   const [rFile, setRFile] = useState<File | null>(null);
   const [rSaving, setRSaving] = useState(false);
+  const [rProgress, setRProgress] = useState(0);
   const [resources, setResources] = useState<Resource[]>([]);
   const resourceInputRef = useRef<HTMLInputElement>(null);
 
-  // ── Manage state ─────────────────────────────────────────────────
   const [mCourseId, setMCourseId] = useState("");
   const [mSubtopics, setMSubtopics] = useState<Subtopic[]>([]);
 
@@ -96,7 +141,6 @@ export default function CourseBuilderPage() {
   useEffect(() => { loadResources(rCourseId); }, [rCourseId]);
   useEffect(() => { loadSubtopics(mCourseId, setMSubtopics); }, [mCourseId]);
 
-  // Reset auto-suggest order
   useEffect(() => {
     if (sSubtopics.length > 0) {
       const maxOrder = Math.max(...sSubtopics.map(s => s.order_index));
@@ -106,77 +150,119 @@ export default function CourseBuilderPage() {
     }
   }, [sSubtopics]);
 
-  // ── Save Subtopic ─────────────────────────────────────────────────
   async function handleSaveSubtopic() {
     if (!sCourseId) { toast.error("Select a course."); return; }
     if (!sTitle) { toast.error("Enter a subtopic title."); return; }
     if (sContentType === "video" && !videoId) { toast.error("Enter a valid YouTube URL."); return; }
     if (sContentType === "audio" && !sAudioFile) { toast.error("Choose an audio file."); return; }
-    if (sContentType === "slides" && !sSlidesFile) { toast.error("Choose a slides file (PDF or PPTX)."); return; }
+    if (sContentType === "slides" && !sSlidesFile) { toast.error("Choose a slides file."); return; }
     if (sPublishMode === "schedule" && !sScheduledAt) { toast.error("Pick a date and time."); return; }
 
     setSSaving(true);
+    setSProgress(0);
     try {
-      const isNow = sPublishMode === "now";
-      const form = new FormData();
-      form.append("courseId", sCourseId);
-      form.append("title", sTitle.trim());
-      form.append("orderIndex", sOrderIndex);
-      form.append("contentType", sContentType);
-      form.append("isPublished", isNow ? "true" : "false");
-      if (!isNow) form.append("scheduledAt", sScheduledAt);
-      if (sContentType === "video") form.append("youtubeId", videoId!);
-      if (sContentType === "audio" && sAudioFile) form.append("audio", sAudioFile);
-      if (sContentType === "slides" && sSlidesFile) form.append("slides", sSlidesFile);
-      if (sAttachment) form.append("attachment", sAttachment);
+      const supabase = createClient();
+      let audioUrl: string | undefined;
+      let slidesUrl: string | undefined;
+      let slidesType: string | undefined;
+      let attachmentUrl: string | undefined;
+      let attachmentName: string | undefined;
 
-      const res = await fetch("/api/admin/upload-subtopic", { method: "POST", body: form });
+      // Upload primary content
+      if (sContentType === "audio" && sAudioFile) {
+        setSStatusMsg(`Uploading audio (${(sAudioFile.size / 1024 / 1024).toFixed(1)}MB)...`);
+        const { url } = await uploadToStorage(supabase, sAudioFile, "audio", sCourseId, setSProgress);
+        audioUrl = url;
+      } else if (sContentType === "slides" && sSlidesFile) {
+        setSStatusMsg(`Uploading slides (${(sSlidesFile.size / 1024 / 1024).toFixed(1)}MB)...`);
+        const { url } = await uploadToStorage(supabase, sSlidesFile, "slides", sCourseId, setSProgress);
+        slidesUrl = url;
+        slidesType = sSlidesFile.name.split(".").pop()?.toLowerCase() || "pdf";
+      }
+
+      // Upload attachment if present
+      if (sAttachment) {
+        setSStatusMsg(`Uploading attachment...`);
+        setSProgress(0);
+        const { url } = await uploadToStorage(supabase, sAttachment, "attachments", sCourseId, setSProgress);
+        attachmentUrl = url;
+        attachmentName = sAttachment.name;
+      }
+
+      // Create lesson row via API
+      setSStatusMsg("Creating subtopic...");
+      const isNow = sPublishMode === "now";
+      const res = await fetch("/api/admin/upload-subtopic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courseId: sCourseId,
+          title: sTitle,
+          description: sDescription,
+          orderIndex: sOrderIndex,
+          contentType: sContentType,
+          isPublished: isNow,
+          scheduledAt: isNow ? null : sScheduledAt,
+          youtubeId: sContentType === "video" ? videoId : null,
+          audioUrl, slidesUrl, slidesType,
+          attachmentUrl, attachmentName,
+        }),
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
 
       toast.success(isNow ? "Subtopic published!" : `Scheduled for ${new Date(sScheduledAt).toLocaleString("en-NG")}`);
-      setSTitle("");
-      setSYoutubeUrl("");
-      setSAudioFile(null);
-      setSSlidesFile(null);
-      setSAttachment(null);
-      setSPublishMode("now");
-      setSScheduledAt("");
+      setSTitle(""); setSDescription("");
+      setSYoutubeUrl(""); setSAudioFile(null); setSSlidesFile(null); setSAttachment(null);
+      setSPublishMode("now"); setSScheduledAt("");
       if (audioInputRef.current) audioInputRef.current.value = "";
       if (slidesInputRef.current) slidesInputRef.current.value = "";
       if (attachInputRef.current) attachInputRef.current.value = "";
       loadSubtopics(sCourseId, setSSubtopics);
     } catch (err: any) {
       toast.error(err.message || "Upload failed.");
-    } finally { setSSaving(false); }
+    } finally {
+      setSSaving(false);
+      setSProgress(0);
+      setSStatusMsg("");
+    }
   }
 
-  // ── Upload Resource ───────────────────────────────────────────────
   async function handleSaveResource() {
     if (!rCourseId) { toast.error("Select a course."); return; }
     if (!rTitle) { toast.error("Enter a title."); return; }
     if (!rFile) { toast.error("Choose a file."); return; }
 
     setRSaving(true);
+    setRProgress(0);
     try {
-      const form = new FormData();
-      form.append("courseId", rCourseId);
-      form.append("title", rTitle.trim());
-      form.append("category", rCategory);
-      form.append("file", rFile);
+      const supabase = createClient();
+      const { url } = await uploadToStorage(supabase, rFile, "resources", rCourseId, setRProgress);
 
-      const res = await fetch("/api/admin/upload-resource", { method: "POST", body: form });
+      const res = await fetch("/api/admin/upload-resource", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courseId: rCourseId,
+          title: rTitle,
+          category: rCategory,
+          fileUrl: url,
+          fileName: rFile.name,
+        }),
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
 
       toast.success(`${rCategory} uploaded!`);
-      setRTitle("");
-      setRFile(null);
+      setRTitle(""); setRFile(null);
       if (resourceInputRef.current) resourceInputRef.current.value = "";
       loadResources(rCourseId);
     } catch (err: any) {
       toast.error(err.message || "Upload failed.");
-    } finally { setRSaving(false); }
+    } finally {
+      setRSaving(false);
+      setRProgress(0);
+    }
   }
 
   async function handleDeleteResource(id: string) {
@@ -225,7 +311,6 @@ export default function CourseBuilderPage() {
   return (
     <AdminShell>
       <div className="max-w-2xl space-y-5">
-
         <div>
           <h1 className="text-2xl font-medium text-white mb-1" style={{ fontFamily: "'Georgia', serif" }}>
             Course Builder
@@ -250,12 +335,12 @@ export default function CourseBuilderPage() {
           ))}
         </div>
 
-        {/* ── SUBTOPIC TAB ───────────────────────────────────────────── */}
+        {/* SUBTOPIC TAB */}
         {tab === "subtopic" && (
           <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="pb-4 border-b border-white/[0.06]">
               <div className="text-white text-sm font-semibold font-sans">Add a Subtopic</div>
-              <div className="text-white/30 text-xs font-sans mt-0.5">Pick a content type (video, audio, or slides) and optionally attach a file.</div>
+              <div className="text-white/30 text-xs font-sans mt-0.5">Pick a content type and optionally attach a file. Large audio uploads run directly to storage so no size limit besides 100MB per file.</div>
             </div>
 
             <CourseSelect value={sCourseId} onChange={setSCourseId} />
@@ -263,7 +348,17 @@ export default function CourseBuilderPage() {
             <div>
               <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Title *</label>
               <input value={sTitle} onChange={e => setSTitle(e.target.value)}
-                placeholder="e.g. The Office of Prophet" className={inp} />
+                placeholder="e.g. The Person and Work of the Holy Spirit" className={inp} />
+            </div>
+
+            <div>
+              <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">
+                Description / Lesson Outline <span className="text-white/20 normal-case tracking-normal">(optional)</span>
+              </label>
+              <textarea value={sDescription} onChange={e => setSDescription(e.target.value)} rows={8}
+                placeholder={"Paste lesson outline, summary, or full description here. Line breaks are preserved.\n\nLesson 1: ...\nLesson 2: ..."}
+                className={`${inp} resize-y font-sans leading-relaxed whitespace-pre-wrap`} />
+              <p className="text-white/20 text-xs font-sans mt-1">Tip: paste multiple lines, each on its own row. Students see them formatted.</p>
             </div>
 
             <div>
@@ -297,7 +392,6 @@ export default function CourseBuilderPage() {
               </div>
             </div>
 
-            {/* Content input based on type */}
             {sContentType === "video" && (
               <div>
                 <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">YouTube URL *</label>
@@ -353,7 +447,7 @@ export default function CourseBuilderPage() {
                 <div className={`border-2 border-dashed rounded-xl p-4 sm:p-6 text-center transition-all ${
                   sSlidesFile ? "border-blue-400/40 bg-blue-400/[0.03]" : "border-white/10 hover:border-white/25"
                 }`}>
-                  <input ref={slidesInputRef} type="file" accept=".pdf,.pptx,.ppt,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                  <input ref={slidesInputRef} type="file" accept=".pdf,.pptx,.ppt"
                     onChange={e => setSSlidesFile(e.target.files?.[0] || null)} className="hidden" id="slides-input" />
                   <label htmlFor="slides-input" className="cursor-pointer block">
                     <Presentation className={`w-8 h-8 mx-auto mb-3 ${sSlidesFile ? "text-blue-400" : "text-white/20"}`} />
@@ -365,21 +459,18 @@ export default function CourseBuilderPage() {
                     ) : (
                       <>
                         <p className="text-white/50 text-sm font-sans">Click to select slides</p>
-                        <p className="text-white/25 text-xs font-sans mt-1">PDF or PPTX — max 50MB</p>
+                        <p className="text-white/25 text-xs font-sans mt-1">PDF or PPTX — max 100MB</p>
                       </>
                     )}
                   </label>
                 </div>
-                <p className="text-white/30 text-[11px] font-sans mt-2">
-                  PDFs embed natively. PPTX uses Microsoft Office Online viewer.
-                </p>
               </div>
             )}
 
             {/* Optional Attachment */}
             <div>
               <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">
-                Attachment <span className="text-white/20 normal-case tracking-normal">(optional handout, image, etc)</span>
+                Attachment <span className="text-white/20 normal-case tracking-normal">(optional handout, PDF, image, etc)</span>
               </label>
               <div className={`border border-dashed rounded-xl p-3 text-center transition-all ${
                 sAttachment ? "border-[#D4A85C]/40 bg-[#D4A85C]/[0.03]" : "border-white/10 hover:border-white/25"
@@ -403,7 +494,6 @@ export default function CourseBuilderPage() {
               </div>
             </div>
 
-            {/* Publish mode */}
             <div>
               <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">When to Publish</label>
               <div className="grid grid-cols-2 gap-2 mb-3">
@@ -425,8 +515,22 @@ export default function CourseBuilderPage() {
               )}
             </div>
 
-            {/* Existing subtopics */}
-            {sSubtopics.length > 0 && (
+            {/* Progress bar shown during upload */}
+            {sSaving && (
+              <div className="bg-[#D4A85C]/[0.05] border border-[#D4A85C]/20 rounded-xl p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-[#D4A85C]" />
+                  <span className="text-[#D4A85C] text-xs font-semibold font-sans">{sStatusMsg}</span>
+                  <span className="text-white/40 text-xs font-sans ml-auto tabular-nums">{sProgress}%</span>
+                </div>
+                <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                  <div className="h-full bg-[#D4A85C] transition-all duration-200 rounded-full"
+                    style={{ width: `${sProgress}%` }} />
+                </div>
+              </div>
+            )}
+
+            {sSubtopics.length > 0 && !sSaving && (
               <div className="rounded-xl border border-white/[0.07] overflow-hidden">
                 <div className="px-4 py-2 border-b border-white/[0.06]">
                   <span className="text-white/30 text-[10px] uppercase tracking-widest font-sans">
@@ -456,7 +560,7 @@ export default function CourseBuilderPage() {
           </div>
         )}
 
-        {/* ── RESOURCES TAB ──────────────────────────────────────────── */}
+        {/* RESOURCES TAB */}
         {tab === "resources" && (
           <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="pb-4 border-b border-white/[0.06]">
@@ -468,7 +572,6 @@ export default function CourseBuilderPage() {
 
             {rCourseId && (
               <>
-                {/* Upload form */}
                 <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 space-y-3">
                   <div>
                     <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Title *</label>
@@ -507,19 +610,33 @@ export default function CourseBuilderPage() {
                         ) : (
                           <>
                             <p className="text-white/50 text-sm font-sans">Click to select file</p>
-                            <p className="text-white/25 text-xs font-sans mt-1">PDF, DOCX, PPTX, ZIP, image — max 50MB</p>
+                            <p className="text-white/25 text-xs font-sans mt-1">PDF, DOCX, PPTX, ZIP, image — max 100MB</p>
                           </>
                         )}
                       </label>
                     </div>
                   </div>
+
+                  {rSaving && (
+                    <div className="bg-[#D4A85C]/[0.05] border border-[#D4A85C]/20 rounded-xl p-3 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-[#D4A85C]" />
+                        <span className="text-[#D4A85C] text-xs font-semibold font-sans">Uploading...</span>
+                        <span className="text-white/40 text-xs font-sans ml-auto tabular-nums">{rProgress}%</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                        <div className="h-full bg-[#D4A85C] transition-all duration-200 rounded-full"
+                          style={{ width: `${rProgress}%` }} />
+                      </div>
+                    </div>
+                  )}
+
                   <button onClick={handleSaveResource} disabled={rSaving || !rFile || !rTitle}
                     className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-2.5 rounded-full transition-all font-sans flex items-center justify-center gap-2">
                     {rSaving ? <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</> : <><Upload className="w-4 h-4" /> Add Resource</>}
                   </button>
                 </div>
 
-                {/* Existing resources by category */}
                 {resources.length > 0 && (
                   <div className="space-y-3">
                     <h3 className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans">{resources.length} resource{resources.length !== 1 ? "s" : ""} in this course</h3>
@@ -554,12 +671,12 @@ export default function CourseBuilderPage() {
           </div>
         )}
 
-        {/* ── MANAGE TAB ─────────────────────────────────────────────── */}
+        {/* MANAGE TAB */}
         {tab === "manage" && (
           <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="pb-4 border-b border-white/[0.06]">
               <div className="text-white text-sm font-semibold font-sans">Manage Subtopics</div>
-              <div className="text-white/30 text-xs font-sans mt-0.5">View, delete subtopics. Use Course Manager for full publish controls.</div>
+              <div className="text-white/30 text-xs font-sans mt-0.5">View and delete subtopics. Use Course Manager for full publish controls.</div>
             </div>
             <CourseSelect value={mCourseId} onChange={setMCourseId} />
 
