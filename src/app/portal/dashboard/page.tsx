@@ -38,7 +38,7 @@ export default function StudentDashboard() {
       if (!user) { router.push("/auth/login"); return; }
       const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
       if (!profile) return;
-      if (profile.role === "admin" || profile.role === "super_admin") { router.push("/admin/dashboard"); return; }
+      // Admins can view portal too (View as Student mode) — no redirect
 
       setStudent({
         name: profile.full_name ?? "Student",

@@ -8,6 +8,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import {
   LogOut, LayoutDashboard, BookOpen,
   Megaphone, User, Award, FolderOpen, Menu, X, Star
+, Shield
 } from "lucide-react";
 
 const navLinks = [
@@ -36,6 +37,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router   = useRouter();
   const [profile, setProfile] = useState<Profile>({ name: "Student", initials: "ST", church: "", year: 1, avatarUrl: null });
+  const [isAdmin, setIsAdmin] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -46,7 +48,25 @@ export default function PortalShell({ children }: { children: React.ReactNode })
       const { data: p } = await supabase.from("profiles")
         .select("full_name, church, current_year, avatar_url, role").eq("id", user.id).single();
       if (!p) return;
-      if (p.role === "admin" || p.role === "super_admin") { router.push("/admin/dashboard"); return; }
+
+      const adminRole = (p.role === "admin" || p.role === "super_admin");
+      setIsAdmin(adminRole);
+
+      // Auto-enroll admins in any courses they're not yet enrolled in
+      if (adminRole) {
+        const [{ data: allCourses }, { data: existingEnrollments }] = await Promise.all([
+          supabase.from("courses").select("id"),
+          supabase.from("enrollments").select("course_id").eq("student_id", user.id),
+        ]);
+        const enrolledIds = new Set((existingEnrollments ?? []).map((e: any) => e.course_id));
+        const missing = (allCourses ?? []).filter((c: any) => !enrolledIds.has(c.id));
+        if (missing.length > 0) {
+          await supabase.from("enrollments").insert(
+            missing.map((c: any) => ({ student_id: user.id, course_id: c.id, status: "active" }))
+          );
+        }
+      }
+
       const name = p.full_name ?? "Student";
       setProfile({
         name, initials: name.split(" ").map((n: string) => n[0]).slice(0, 2).join("").toUpperCase(),
@@ -118,6 +138,13 @@ export default function PortalShell({ children }: { children: React.ReactNode })
 
           {/* Theme toggle + Avatar */}
           <div className="flex items-center gap-2 flex-shrink-0">
+            {isAdmin && (
+              <Link href="/admin/dashboard"
+                className="hidden sm:flex items-center gap-1.5 bg-[#D4A85C]/10 border border-[#D4A85C]/30 text-[#D4A85C] hover:bg-[#D4A85C]/20 px-3 py-1.5 rounded-full text-xs font-semibold font-sans transition-all">
+                <Shield className="w-3.5 h-3.5" />
+                Admin
+              </Link>
+            )}
             <ThemeToggle className="!w-9 !h-9" />
           <Link href="/portal/profile" className="flex-shrink-0">
             <div className="w-8 h-8 rounded-full overflow-hidden bg-royal-700 flex items-center justify-center border-2 border-transparent hover:border-[#D4A85C] transition-all">
@@ -154,6 +181,18 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                 </div>
               </div>
             </div>
+
+            {/* Admin switch button (for admins only) */}
+            {isAdmin && (
+              <Link href="/admin/dashboard" onClick={() => setDrawerOpen(false)}
+                className="mx-3 mt-3 mb-1 flex items-center gap-3 px-4 py-3 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/30 text-[#D4A85C] hover:bg-[#D4A85C]/20 transition-all">
+                <Shield className="w-5 h-5 flex-shrink-0" />
+                <div className="flex-1">
+                  <div className="text-sm font-semibold">Switch to Admin</div>
+                  <div className="text-[10px] opacity-70">Return to admin panel</div>
+                </div>
+              </Link>
+            )}
 
             {/* Nav links */}
             <div className="px-3 py-3">

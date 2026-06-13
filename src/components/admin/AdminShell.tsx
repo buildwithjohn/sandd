@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase";
 import {
   LogOut, LayoutDashboard, Users, Upload, FileText,
   Award, Megaphone, UserCircle, ClipboardList, Menu, X, BookOpen, Star
+, Eye
 } from "lucide-react";
 
 const navLinks = [
@@ -95,6 +96,13 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             </div>
           </Link>
 
+          {/* View as Student */}
+          <Link href="/portal/dashboard"
+            className="hidden sm:flex items-center gap-1.5 bg-[#D4A85C]/10 hover:bg-[#D4A85C]/20 border border-[#D4A85C]/30 text-[#D4A85C] rounded-xl px-3 py-1.5 mr-2 transition-all">
+            <Eye className="w-3.5 h-3.5" />
+            <span className="text-xs font-semibold font-sans">View as Student</span>
+          </Link>
+
           {/* Right — user pill */}
           <Link href="/admin/profile"
             className="flex items-center gap-2 bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.08] rounded-xl px-3 py-1.5 transition-all">
@@ -140,6 +148,16 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 </div>
               </div>
             </div>
+
+            {/* View as Student button in mobile drawer */}
+            <Link href="/portal/dashboard" onClick={() => setDrawerOpen(false)}
+              className="mx-3 mt-3 mb-1 flex items-center gap-3 px-4 py-3 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/30 text-[#D4A85C] hover:bg-[#D4A85C]/20 transition-all">
+              <Eye className="w-5 h-5 flex-shrink-0" />
+              <div className="flex-1">
+                <div className="text-sm font-semibold">View as Student</div>
+                <div className="text-[10px] opacity-70">Experience the student portal</div>
+              </div>
+            </Link>
 
             {/* Nav links */}
             <div className="px-3 py-3">
