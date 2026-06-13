@@ -8,6 +8,7 @@ import {
   LogOut, LayoutDashboard, Users, Upload, FileText,
   Award, Megaphone, UserCircle, ClipboardList, Menu, X, BookOpen, Star
 , Eye
+, Shield
 } from "lucide-react";
 
 const navLinks = [
@@ -16,6 +17,7 @@ const navLinks = [
 
   { href: "/admin/applications",  icon: ClipboardList,   label: "Applications"  },
   { href: "/admin/students",      icon: Users,           label: "Students"      },
+  { href: "/admin/admins",        icon: Shield,          label: "Admins"        },
   { href: "/admin/upload",        icon: Upload,          label: "Course Builder"},
   { href: "/admin/assignments",   icon: FileText,        label: "Assignments"   },
   { href: "/admin/assessments",     icon: Star,           label: "Assessments"   },
