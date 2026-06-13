@@ -62,7 +62,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         const missing = (allCourses ?? []).filter((c: any) => !enrolledIds.has(c.id));
         if (missing.length > 0) {
           await supabase.from("enrollments").insert(
-            missing.map((c: any) => ({ student_id: user.id, course_id: c.id, status: "active" }))
+            missing.map((c: any) => ({ student_id: user.id, course_id: c.id }))
           );
         }
       }
