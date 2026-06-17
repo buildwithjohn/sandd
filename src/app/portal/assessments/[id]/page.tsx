@@ -35,17 +35,21 @@ export default function StudentAssessmentPage() {
       if (!user) { router.push("/auth/login"); return; }
       setStudentId(user.id);
 
-      const [{ data: a }, { data: q }, { data: th }, { data: sub }] = await Promise.all([
+      const [{ data: a }, { data: q }, { data: th }, { data: subList }] = await Promise.all([
         supabase.from("assessments").select("*, courses(title)").eq("id", id).single(),
         supabase.from("assessment_questions").select("*").eq("assessment_id", id).order("order_index"),
         supabase.from("assessment_theory").select("*").eq("assessment_id", id).order("order_index"),
-        supabase.from("assessment_submissions").select("*").eq("assessment_id", id).eq("student_id", user.id).single(),
+        // Use plain select (no .single()) so duplicate rows don't crash the load
+        supabase.from("assessment_submissions").select("*").eq("assessment_id", id).eq("student_id", user.id)
+          .order("submitted_at", { ascending: false }),
       ]);
 
       setAssessment(a);
       setQuestions(q ?? []);
       setTheory(th ?? []);
 
+      // Pick the most recent submission (handles legacy duplicate rows gracefully)
+      const sub = subList && subList.length > 0 ? subList[0] : null;
       if (sub) {
         setSubmission(sub);
         setPhase(sub.status === "graded" && sub.results_released ? "results" : "submitted");
@@ -56,6 +60,30 @@ export default function StudentAssessmentPage() {
   }, [id]);
 
   async function submitExam() {
+    // Block double-submission via UI state
+    if (submission) {
+      toast.error("You already submitted this assessment.");
+      setPhase(submission.status === "graded" && submission.results_released ? "results" : "submitted");
+      return;
+    }
+
+    // Validate: must answer SOMETHING. If a lot is blank, warn loudly.
+    const objAnswered    = Object.keys(objAnswers).length;
+    const theoryAnswered = Object.values(theoryAnswers).filter(a => a.trim().length > 0).length;
+    const totalQuestions = questions.length + theory.length;
+    const totalAnswered  = objAnswered + theoryAnswered;
+
+    if (totalAnswered === 0) {
+      toast.error("You have not answered any question. Please answer before submitting.");
+      return;
+    }
+    if (totalAnswered < totalQuestions) {
+      const unanswered = totalQuestions - totalAnswered;
+      if (!confirm(`${unanswered} question${unanswered !== 1 ? "s are" : " is"} unanswered. Submitting now will mark ${unanswered === 1 ? "it" : "them"} as 0. Continue?`)) {
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
       const supabase = createClient();
@@ -69,7 +97,16 @@ export default function StudentAssessmentPage() {
       // If no theory questions, auto-release results immediately
       const isObjOnly = theory.length === 0;
 
-      const { data: sub, error } = await supabase.from("assessment_submissions").insert({
+      // Re-check for existing submission server-side (defensive against race conditions)
+      const { data: existing } = await supabase
+        .from("assessment_submissions")
+        .select("id")
+        .eq("assessment_id", id)
+        .eq("student_id", studentId)
+        .order("submitted_at", { ascending: false })
+        .limit(1);
+
+      const payload = {
         assessment_id: id,
         student_id: studentId,
         obj_answers: objAnswers,
@@ -79,11 +116,21 @@ export default function StudentAssessmentPage() {
         total_score: isObjOnly ? objScore : null,
         status: isObjOnly ? "graded" : "submitted",
         results_released: isObjOnly,
-      }).select().single();
+      };
+
+      let sub: any; let error: any = null;
+      if (existing && existing.length > 0) {
+        // Update the existing row (avoids creating a duplicate)
+        const r = await supabase.from("assessment_submissions")
+          .update(payload).eq("id", existing[0].id).select().single();
+        sub = r.data; error = r.error;
+      } else {
+        const r = await supabase.from("assessment_submissions").insert(payload).select().single();
+        sub = r.data; error = r.error;
+      }
 
       if (error) throw error;
       setSubmission(sub);
-      // If obj-only, go straight to results, else show "submitted, awaiting grading"
       setPhase(isObjOnly ? "results" : "submitted");
       toast.success(isObjOnly
         ? `Assessment graded! You scored ${objScore}/${assessment?.total_marks}.`

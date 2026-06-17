@@ -21,22 +21,40 @@ export default function AssessmentsListPage() {
       if (!user) { router.push("/auth/login"); return; }
 
       const { data: profile } = await supabase.from("profiles").select("current_year").eq("id", user.id).single();
-      const { data: ass } = await supabase.from("assessments")
+
+      // 1) All published assessments
+      const { data: published } = await supabase.from("assessments")
         .select("*, courses(title, year)")
         .eq("is_published", true)
         .order("created_at");
 
-      const yearAssessments = ass?.filter((a: any) => a.courses?.year === (profile?.current_year ?? 1)) ?? [];
-      setAssessments(yearAssessments);
+      // 2) The student's submissions (incl. those for now-unpublished assessments)
+      const { data: subs } = await supabase.from("assessment_submissions")
+        .select("*").eq("student_id", user.id)
+        .order("submitted_at", { ascending: false });
 
-      if (yearAssessments.length > 0) {
-        const { data: subs } = await supabase.from("assessment_submissions")
-          .select("*").eq("student_id", user.id)
-          .in("assessment_id", yearAssessments.map((a: any) => a.id));
-        const subMap: Record<string, any> = {};
-        subs?.forEach((s: any) => { subMap[s.assessment_id] = s; });
-        setSubmissions(subMap);
+      const subMap: Record<string, any> = {};
+      // Keep the latest submission per assessment_id (handles duplicate rows safely)
+      (subs ?? []).forEach((s: any) => { if (!subMap[s.assessment_id]) subMap[s.assessment_id] = s; });
+
+      // 3) Fetch assessments the student has submitted but that aren't in `published`
+      const publishedIds = new Set((published ?? []).map((a: any) => a.id));
+      const missingIds = Object.keys(subMap).filter(id => !publishedIds.has(id));
+      let extras: any[] = [];
+      if (missingIds.length > 0) {
+        const { data } = await supabase.from("assessments")
+          .select("*, courses(title, year)")
+          .in("id", missingIds);
+        extras = data ?? [];
       }
+
+      // 4) Combine, filter by student's year, sort
+      const combined = [...(published ?? []), ...extras]
+        .filter((a: any) => a.courses?.year === (profile?.current_year ?? 1))
+        .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      setAssessments(combined);
+      setSubmissions(subMap);
       setLoading(false);
     }
     load();
