@@ -48,9 +48,13 @@ export default function AssessmentsListPage() {
         extras = data ?? [];
       }
 
-      // 4) Combine, filter by student's year, sort
+      // 4) Combine, filter by student's year, sort.
+      //    Exception: always keep assessments the student already submitted,
+      //    regardless of year, so a submitted exam can never silently disappear.
+      const submittedIds = new Set(Object.keys(subMap));
+      const studentYear = profile?.current_year ?? 1;
       const combined = [...(published ?? []), ...extras]
-        .filter((a: any) => a.courses?.year === (profile?.current_year ?? 1))
+        .filter((a: any) => a.courses?.year === studentYear || submittedIds.has(a.id))
         .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
       setAssessments(combined);

@@ -52,7 +52,11 @@ export default function StudentAssessmentPage() {
       const sub = subList && subList.length > 0 ? subList[0] : null;
       if (sub) {
         setSubmission(sub);
-        setPhase(sub.status === "graded" && sub.results_released ? "results" : "submitted");
+        const isObjOnly = (th ?? []).length === 0;
+        // Obj-only submissions are auto-graded and released, always show results.
+        // Theory submissions show results only once instructor releases them.
+        const showResults = isObjOnly || (sub.status === "graded" && sub.results_released);
+        setPhase(showResults ? "results" : "submitted");
       }
       setLoading(false);
     }
@@ -63,7 +67,9 @@ export default function StudentAssessmentPage() {
     // Block double-submission via UI state
     if (submission) {
       toast.error("You already submitted this assessment.");
-      setPhase(submission.status === "graded" && submission.results_released ? "results" : "submitted");
+      const isObjOnly = theory.length === 0;
+      const showResults = isObjOnly || (submission.status === "graded" && submission.results_released);
+      setPhase(showResults ? "results" : "submitted");
       return;
     }
 
@@ -427,10 +433,18 @@ export default function StudentAssessmentPage() {
                 className="flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#1A1A2E] text-white text-sm font-semibold font-sans hover:bg-[#2A2A4E] transition-all">
                 Next <ChevronRight className="w-4 h-4" />
               </button>
-            ) : (
-              <button onClick={() => setPhase(theory.length > 0 ? "theory" : "submitted")}
+            ) : theory.length > 0 ? (
+              <button onClick={() => setPhase("theory")}
                 className="flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#D4A85C] text-[#080C14] text-sm font-bold font-sans hover:bg-[#C49848] transition-all">
-                {theory.length > 0 ? "Part B →" : "Review & Submit →"}
+                Part B →
+              </button>
+            ) : (
+              <button onClick={submitExam} disabled={submitting}
+                className="flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#D4A85C] text-[#080C14] text-sm font-bold font-sans hover:bg-[#C49848] disabled:opacity-50 transition-all">
+                {submitting
+                  ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
+                  : <><Send className="w-4 h-4" /> Submit Assessment</>
+                }
               </button>
             )}
           </div>
