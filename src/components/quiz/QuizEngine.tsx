@@ -169,8 +169,10 @@ export default function QuizEngine({
                       isCorrect ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"
                     }`}>
                       <div className="font-medium text-slate-700 mb-2">{i + 1}. {q.question}</div>
-                      <div className={`text-xs ${isCorrect ? "text-green-600" : "text-red-500"}`}>
-                        {isCorrect ? "✓ Correct" : `✗ You answered: ${q.options[userAnswer]}`}
+                      <div className={`text-xs flex items-center gap-1 ${isCorrect ? "text-green-600" : "text-red-500"}`}>
+                        {isCorrect
+                          ? <><CheckCircle className="w-3.5 h-3.5" /> Correct</>
+                          : <><XCircle className="w-3.5 h-3.5" /> You answered: {q.options[userAnswer]}</>}
                       </div>
                       {!isCorrect && (
                         <div className="text-xs text-green-600 mt-1">
