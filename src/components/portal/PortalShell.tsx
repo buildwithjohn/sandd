@@ -112,10 +112,10 @@ export default function PortalShell({ children }: { children: React.ReactNode })
           </button>
 
           {/* Brand */}
-          <Link href="/portal/dashboard" className="flex items-center gap-2">
+          <Link href="/portal/dashboard" className="flex items-center gap-2 flex-shrink-0">
             <Image src="/assets/logo.png" alt="S&D" width={30} height={30} className="rounded-lg flex-shrink-0" />
-            <div className="hidden sm:block">
-              <div className="theme-text text-sm font-semibold leading-none" style={{ fontFamily: "'Georgia', serif" }}>
+            <div className="hidden sm:block whitespace-nowrap">
+              <div className="theme-text text-sm font-semibold leading-tight" style={{ fontFamily: "'Georgia', serif" }}>
                 S&D Prophetic School
               </div>
               <div className="text-[9px] theme-accent mt-0.5 tracking-wide uppercase">Student Portal</div>
@@ -123,7 +123,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
+          <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center min-w-0">
             {navLinks.map(l => {
               const active = pathname === l.href;
               return (

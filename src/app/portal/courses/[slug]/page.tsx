@@ -8,7 +8,7 @@ import PortalShell from "@/components/portal/PortalShell";
 import { motion } from "framer-motion";
 import {
   Play, FileDown, CheckCircle, Lock,
-  ChevronRight, BookOpen, Star, Clock
+  ChevronRight, BookOpen, Star, Clock, Mic, Presentation
 } from "lucide-react";
 
 interface Subtopic {
@@ -220,12 +220,12 @@ export default function CourseDetailPage() {
                         )}
                         {sub.audio_url && (
                           <span className="theme-text-muted text-[10px] font-sans flex items-center gap-1">
-                            🎙 Audio
+                            <Mic className="w-2.5 h-2.5" /> Audio
                           </span>
                         )}
                         {sub.slides_url && (
                           <span className="theme-text-muted text-[10px] font-sans flex items-center gap-1">
-                            📊 Slides
+                            <Presentation className="w-2.5 h-2.5" /> Slides
                           </span>
                         )}
                         {sub.attachment_url && (

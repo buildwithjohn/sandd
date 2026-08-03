@@ -1,5 +1,6 @@
 "use client";
 import { useRef } from "react";
+import { Printer } from "lucide-react";
 
 interface CertificateProps {
   studentName: string;
@@ -218,7 +219,7 @@ export default function Certificate({
         onClick={handlePrint}
         className="mt-4 w-full bg-brand-700 hover:bg-brand-800 text-white font-medium text-sm py-3 rounded-xl transition-colors flex items-center justify-center gap-2"
       >
-        🖨️ Print / Save as PDF
+        <Printer className="w-4 h-4" /> Print / Save as PDF
       </button>
     </div>
   );

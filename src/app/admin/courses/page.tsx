@@ -8,7 +8,7 @@ import Link from "next/link";
 import {
   ChevronDown, ChevronRight, Youtube, FileText,
   ClipboardList, Plus, Eye, EyeOff, Calendar,
-  CheckCircle, Clock, Trash2, Star, Lock
+  CheckCircle, Clock, Trash2, Star, Lock, Mic, Presentation
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -256,12 +256,12 @@ export default function CourseManagerPage() {
                                       )}
                                       {sub.audio_url && (
                                         <span className="text-purple-400/60 text-[10px] font-sans flex items-center gap-0.5">
-                                          🎙 Audio
+                                          <Mic className="w-2.5 h-2.5" /> Audio
                                         </span>
                                       )}
                                       {sub.slides_url && (
                                         <span className="text-blue-400/60 text-[10px] font-sans flex items-center gap-0.5">
-                                          📊 Slides
+                                          <Presentation className="w-2.5 h-2.5" /> Slides
                                         </span>
                                       )}
                                       {sub.attachment_url && (
