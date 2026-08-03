@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import AdminShell from "@/components/admin/AdminShell";
 import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
-import { CheckCircle, Clock, ChevronDown, ChevronUp, Star, Send } from "lucide-react";
+import { CheckCircle, Clock, ChevronDown, ChevronUp, Star, Send, Zap } from "lucide-react";
 
 export default function GradeAssessmentPage() {
   const { id } = useParams() as { id: string };
@@ -154,7 +154,7 @@ export default function GradeAssessmentPage() {
           {submissions.some(s => s.status !== "graded") && (
             <button onClick={bulkReleaseObjOnly}
               className="flex items-center gap-1.5 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] text-xs font-bold font-sans px-4 py-2.5 rounded-full transition-all">
-              ⚡ Release Obj Scores
+              <Zap className="w-3.5 h-3.5" /> Release Obj Scores
             </button>
           )}
         </div>
@@ -163,7 +163,7 @@ export default function GradeAssessmentPage() {
         {submissions.some(s => s.status !== "graded") && (
           <div className="bg-[#D4A85C]/[0.06] border border-[#D4A85C]/20 rounded-2xl px-5 py-4 flex items-start gap-3">
             <div className="w-8 h-8 rounded-lg bg-[#D4A85C]/15 flex items-center justify-center flex-shrink-0">
-              <span className="text-[#D4A85C] text-sm">⚡</span>
+              <Zap className="w-4 h-4 text-[#D4A85C]" />
             </div>
             <div className="flex-1">
               <p className="text-[#D4A85C] text-sm font-semibold font-sans">

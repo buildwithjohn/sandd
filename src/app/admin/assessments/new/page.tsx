@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import AdminShell from "@/components/admin/AdminShell";
 import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
-import { Plus, Trash2, ChevronDown, ChevronUp, Loader2, Save } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, Loader2, Save, Zap } from "lucide-react";
 
 interface ObjQ { question: string; a: string; b: string; c: string; d: string; correct: string; marks: number; }
 interface TheoryQ { question: string; marks: number; }
@@ -249,7 +249,7 @@ export default function NewAssessmentPage() {
                     ? "bg-[#D4A85C]/20 border-[#D4A85C]/40 text-[#D4A85C]"
                     : "bg-[#D4A85C]/10 border-[#D4A85C]/25 text-[#D4A85C] hover:bg-[#D4A85C]/20"
                 }`}>
-                ⚡ Paste & Import
+                <Zap className="w-3.5 h-3.5" /> Paste & Import
               </button>
               <button onClick={addObj}
                 className="flex items-center gap-1.5 bg-white/[0.06] hover:bg-white/[0.10] border border-white/10 text-white/70 text-xs font-sans px-3 py-2 rounded-xl transition-all">
@@ -262,7 +262,7 @@ export default function NewAssessmentPage() {
           {showImport && (
             <div className="bg-[#0D1320] border border-[#D4A85C]/25 rounded-xl p-5 space-y-4">
               <div>
-                <div className="text-[#D4A85C] text-sm font-semibold font-sans mb-1">⚡ Paste Raw Questions</div>
+                <div className="text-[#D4A85C] text-sm font-semibold font-sans mb-1 flex items-center gap-1.5"><Zap className="w-3.5 h-3.5" /> Paste Raw Questions</div>
                 <p className="text-white/40 text-xs font-sans leading-relaxed">
                   Paste questions in any format. The system will automatically detect each question, options A–D, and the correct answer. One question per block.
                 </p>

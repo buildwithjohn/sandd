@@ -6,7 +6,7 @@ import AdminShell from "@/components/admin/AdminShell";
 import { createClient } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Users, Video, FileText, BookOpen, Upload, ClipboardList, Award, Megaphone, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Users, Video, FileText, BookOpen, Upload, ClipboardList, Award, Megaphone, CheckCircle, Clock, XCircle, Mail } from "lucide-react";
 
 const rise = (delay = 0) => ({
   hidden:  { opacity: 0, y: 16 },
@@ -197,7 +197,7 @@ export default function AdminDashboard() {
                 <div key={w.id} className={`flex items-center gap-4 px-5 py-3 hover:bg-white/[0.02] transition-colors
                   ${i < waitlist.length - 1 ? "border-b border-white/[0.05]" : ""}`}>
                   <div className="w-7 h-7 rounded-full bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-[#D4A85C] text-xs">✉</span>
+                    <Mail className="w-3.5 h-3.5 text-[#D4A85C]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-white/70 text-xs font-sans truncate">{w.full_name || "—"}</div>
@@ -216,8 +216,8 @@ export default function AdminDashboard() {
         {enrollResult && enrollResult.enrolled && enrollResult.enrolled.length > 0 && (
           <motion.div variants={rise(0.3)} initial="hidden" animate="visible">
             <div className="flex items-center justify-between mb-3">
-              <div className="text-green-400 text-xs tracking-[0.2em] uppercase font-sans">
-                ✓ {enrollResult.enrolled.length} Enrolled — Send them these login details
+              <div className="text-green-400 text-xs tracking-[0.2em] uppercase font-sans flex items-center gap-1.5">
+                <CheckCircle className="w-3.5 h-3.5" /> {enrollResult.enrolled.length} Enrolled — Send them these login details
               </div>
               <button onClick={() => setEnrollResult(null)}
                 className="text-white/30 hover:text-white/60 text-xs font-sans transition-colors">

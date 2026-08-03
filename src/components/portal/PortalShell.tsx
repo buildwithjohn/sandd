@@ -122,23 +122,11 @@ export default function PortalShell({ children }: { children: React.ReactNode })
             </div>
           </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center min-w-0">
-            {navLinks.map(l => {
-              const active = pathname === l.href;
-              return (
-                <Link key={l.href} href={l.href}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    active ? "bg-royal-700 text-white" : "theme-text-faint hover:theme-text hover:bg-[#F0EDE8]"
-                  }`}>
-                  <l.icon className="w-3.5 h-3.5" />
-                  {l.label}
-                </Link>
-              );
-            })}
-          </div>
+          {/* Desktop navigation lives in the left sidebar (below) — the top
+              bar stays a clean header. This avoids duplicating the full nav. */}
+          <div className="hidden lg:block flex-1" />
 
-          {/* Theme toggle + Avatar */}
+          {/* Admin switch + Theme toggle + Avatar */}
           <div className="flex items-center gap-2 flex-shrink-0">
             {isAdmin && (
               <Link href="/admin/dashboard"
