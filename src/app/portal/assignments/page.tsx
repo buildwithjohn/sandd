@@ -64,21 +64,21 @@ export default function AssignmentsPage() {
     <PortalShell>
       <div className="space-y-5">
         <motion.div variants={rise()} initial="hidden" animate="visible">
-          <h1 className="text-2xl font-semibold text-[#1A1A2E] mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
             Assignments
           </h1>
-          <p className="text-[#9B9B9B] text-sm font-sans">{assignments.length} assignment{assignments.length !== 1 ? "s" : ""} across your courses</p>
+          <p className="theme-text-faint text-sm font-sans">{assignments.length} assignment{assignments.length !== 1 ? "s" : ""} across your courses</p>
         </motion.div>
 
         {loading ? (
-          <div className="bg-white rounded-2xl border border-[#E8E2D9] p-12 text-center">
-            <p className="text-[#9B9B9B] text-sm font-sans">Loading...</p>
+          <div className="theme-bg-elevated rounded-2xl border theme-border p-12 text-center">
+            <p className="theme-text-faint text-sm font-sans">Loading...</p>
           </div>
         ) : assignments.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-[#E8E2D9] p-12 text-center"
+          <div className="theme-bg-elevated rounded-2xl border theme-border p-12 text-center"
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
-            <FileText className="w-10 h-10 text-[#E8E2D9] mx-auto mb-3" />
-            <p className="text-[#9B9B9B] text-sm font-sans">No assignments yet.</p>
+            <FileText className="w-10 h-10 theme-text-faint mx-auto mb-3" />
+            <p className="theme-text-faint text-sm font-sans">No assignments yet.</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -88,16 +88,16 @@ export default function AssignmentsPage() {
               const isSubmitted = sub?.status === "submitted";
               return (
                 <motion.div key={a.id} variants={rise(i * 0.08)} initial="hidden" animate="visible">
-                  <div className={`bg-white rounded-2xl border p-6 ${
-                    isGraded ? "border-green-200" : isSubmitted ? "border-[#D4A85C]/30" : "border-[#E8E2D9]"
+                  <div className={`theme-bg-elevated rounded-2xl border p-6 ${
+                    isGraded ? "border-green-200" : isSubmitted ? "border-[#D4A85C]/30" : "theme-border"
                   }`} style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
 
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div>
-                        <div className="text-[#8B7355] text-[10px] uppercase tracking-widest font-sans mb-1">
+                        <div className="theme-accent text-[10px] uppercase tracking-widest font-sans mb-1">
                           {(a.courses as any)?.title}
                         </div>
-                        <h2 className="text-[#1A1A2E] text-base font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
+                        <h2 className="theme-text text-base font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
                           {a.title}
                         </h2>
                       </div>
@@ -106,18 +106,18 @@ export default function AssignmentsPage() {
                           <CheckCircle className="w-3.5 h-3.5" /> Graded — {sub.grade}%
                         </div>
                       ) : isSubmitted ? (
-                        <div className="flex items-center gap-1.5 bg-[#D4A85C]/10 border border-[#D4A85C]/25 text-[#8B7355] text-xs font-semibold px-3 py-1.5 rounded-full font-sans flex-shrink-0">
+                        <div className="flex items-center gap-1.5 bg-[#D4A85C]/10 border border-[#D4A85C]/25 theme-accent text-xs font-semibold px-3 py-1.5 rounded-full font-sans flex-shrink-0">
                           <Clock className="w-3.5 h-3.5" /> Awaiting Grade
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1.5 bg-[#F5F0E8] border border-[#E8E2D9] text-[#9B9B9B] text-xs font-semibold px-3 py-1.5 rounded-full font-sans flex-shrink-0">
+                        <div className="flex items-center gap-1.5 theme-bg-subtle border theme-border theme-text-faint text-xs font-semibold px-3 py-1.5 rounded-full font-sans flex-shrink-0">
                           Pending
                         </div>
                       )}
                     </div>
 
                     {a.description && (
-                      <p className="text-[#6B6B6B] text-sm font-sans leading-relaxed mb-4">{a.description}</p>
+                      <p className="theme-text-muted text-sm font-sans leading-relaxed mb-4">{a.description}</p>
                     )}
 
                     {isGraded && sub.feedback && (
@@ -129,7 +129,7 @@ export default function AssignmentsPage() {
 
                     {!sub && (
                       <div className="mt-2">
-                        <label className="text-[#9B9B9B] text-xs uppercase tracking-widest font-sans block mb-2">
+                        <label className="theme-text-faint text-xs uppercase tracking-widest font-sans block mb-2">
                           Your Response
                         </label>
                         <textarea
@@ -137,12 +137,12 @@ export default function AssignmentsPage() {
                           onChange={e => setResponses(p => ({ ...p, [a.id]: e.target.value }))}
                           rows={5}
                           placeholder="Write your response here (minimum 50 characters)..."
-                          className="w-full bg-[#FAF9F6] border border-[#E8E2D9] rounded-xl px-4 py-3 text-sm text-[#1A1A2E] font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-colors resize-none"
+                          className="w-full theme-bg-subtle border theme-border rounded-xl px-4 py-3 text-sm theme-text font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-colors resize-none"
                         />
                         <button
                           onClick={() => handleSubmit(a.id)}
                           disabled={submitting === a.id}
-                          className="mt-3 bg-[#1A1A2E] hover:bg-[#2A2A4E] disabled:opacity-50 text-white text-xs font-semibold font-sans px-5 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                          className="mt-3 bg-royal-700 hover:bg-royal-800 disabled:opacity-50 text-white text-xs font-semibold font-sans px-5 py-2.5 rounded-xl transition-all flex items-center gap-2">
                           <Upload className="w-3.5 h-3.5" />
                           {submitting === a.id ? "Submitting..." : "Submit Assignment"}
                         </button>
