@@ -9,11 +9,13 @@ import {
   LogOut, LayoutDashboard, BookOpen,
   Megaphone, User, Award, FolderOpen, Menu, X, Star
 , Shield
+, PlayCircle
 } from "lucide-react";
 
 const navLinks = [
   { href: "/portal/dashboard",     icon: LayoutDashboard, label: "Dashboard"       },
   { href: "/portal/courses",       icon: BookOpen,        label: "My Courses"      },
+  { href: "/portal/library",       icon: PlayCircle,      label: "Library"         },
   { href: "/portal/announcements", icon: Megaphone,       label: "Announcements"   },
   { href: "/portal/admission",     icon: Award,           label: "Admission"       },
   { href: "/portal/assessments",   icon: Star,            label: "Assessments"     },
