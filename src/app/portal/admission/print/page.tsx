@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase";
+import { Printer } from "lucide-react";
 
 function PrintContent() {
   const searchParams = useSearchParams();
@@ -59,8 +60,9 @@ function PrintContent() {
         }
       `}</style>
 
-      <button className="no-print" onClick={() => window.print()}>
-        🖨️ Print / Save as PDF
+      <button className="no-print" onClick={() => window.print()}
+        style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}>
+        <Printer size={16} /> Print / Save as PDF
       </button>
 
       {/* Full A4 letter */}
