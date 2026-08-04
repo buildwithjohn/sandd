@@ -1,25 +1,19 @@
 -- ============================================================
 -- SEED: Hermeneutics Examination (20 theory questions)
--- Run in Supabase SQL Editor AFTER the app is deployed.
--- Creates one DRAFT assessment on the Biblical Hermeneutics course
--- + 20 theory questions. Review it in Admin -> Assessments, then Publish.
--- Safe to re-run: it won't duplicate (guarded by title).
+-- Run in Supabase SQL Editor. Creates one DRAFT assessment on the
+-- Biblical Hermeneutics course (id below) + 20 theory questions.
+-- Review in Admin -> Assessments, then Publish. Idempotent (guarded by title).
 -- ============================================================
-
 DO $$
-DECLARE v_course uuid; v_assess uuid;
+DECLARE v_course uuid := '1136228c-ad82-42e5-b406-6531ee0bcc80'; v_assess uuid;
 BEGIN
-  SELECT id INTO v_course FROM courses WHERE slug = 'biblical-hermeneutics' LIMIT 1;
-  IF v_course IS NULL THEN RAISE EXCEPTION 'biblical-hermeneutics course not found'; END IF;
-
+  IF NOT EXISTS (SELECT 1 FROM courses WHERE id = v_course) THEN
+    RAISE EXCEPTION 'Course % not found', v_course; END IF;
   IF EXISTS (SELECT 1 FROM assessments WHERE title = 'Bible Interpretation (Hermeneutics) — Examination') THEN
-    RAISE NOTICE 'Assessment already exists — skipping.'; RETURN;
-  END IF;
-
+    RAISE NOTICE 'Assessment already exists - skipping.'; RETURN; END IF;
   INSERT INTO assessments (course_id, title, instructions, is_published, obj_marks, theory_marks, total_marks)
   VALUES (v_course, 'Bible Interpretation (Hermeneutics) — Examination', 'This examination evaluates your understanding of biblical hermeneutics, covering the 12 principles of interpretation, key Greek definitions, historical perspectives, and textual analysis from the class syllabus. Answer all 20 questions thoroughly.', false, 0, 100, 100)
   RETURNING id INTO v_assess;
-
   INSERT INTO assessment_theory (assessment_id, question, marks, order_index) VALUES
     (v_assess, 'Origin and Definition of Hermeneutics: What is the etymological origin of the word ''hermeneutics'', and according to Baker''s Dictionary of Practical Theology, when does something stand in need of interpretation?', 5, 1),
     (v_assess, 'The Meaning of ''Rightly Dividing'': Define the Greek word orthotomeo as used in 2 Timothy 2:15, and explain its literal and figurative implications for reading Scripture.', 5, 2),
@@ -41,6 +35,5 @@ BEGIN
     (v_assess, 'Dispensational Frameworks: Contrast the 3 widely recognized dispensations with C.I. Scofield''s 7 dispensations.', 5, 18),
     (v_assess, 'Rule #12 — Personal Application & Authority: What relationship should exist between personal experiences and Scripture when forming Christian beliefs?', 5, 19),
     (v_assess, '20th-Century Moves of God: Identify the primary spiritual emphasis for each move: (a) Azusa Street Revival (1906–1912), (b) Word of Faith Movement (1975–1985), (c) Holy Ghost/Joy Movement (1992–present).', 5, 20);
-
-  RAISE NOTICE 'Created draft assessment with 20 theory questions (% marks total).', 100;
+  RAISE NOTICE 'Created draft assessment with 20 theory questions (100 marks).';
 END $$;
