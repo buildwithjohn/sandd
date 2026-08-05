@@ -10,6 +10,7 @@ import {
 , Eye
 , Shield
 , PlayCircle
+, Mail
 } from "lucide-react";
 
 const navLinks = [
@@ -25,6 +26,7 @@ const navLinks = [
   { href: "/admin/assessments",     icon: Star,           label: "Assessments"   },
 
   { href: "/admin/announcements", icon: Megaphone,       label: "Announcements" },
+  { href: "/admin/broadcast",     icon: Mail,            label: "Email Students"},
   { href: "/admin/certificates",  icon: Award,           label: "Certificates"  },
   { href: "/admin/profile",       icon: UserCircle,      label: "My Profile"    },
 ];
