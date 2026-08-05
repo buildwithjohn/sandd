@@ -2,13 +2,19 @@
 export const dynamic = 'force-dynamic';
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import PortalShell from "@/components/portal/PortalShell";
 import { motion } from "framer-motion";
-import { CheckCircle, Clock, AlertCircle, ChevronLeft, ChevronRight, Send, Loader2 } from "lucide-react";
+import { CheckCircle, Clock, AlertCircle, ChevronLeft, ChevronRight, Send, Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
 
-type Phase = "intro" | "objectives" | "theory" | "submitted" | "results";
+type Phase = "intro" | "objectives" | "theory" | "submitted" | "results" | "closed";
+
+// An assessment auto-closes once its due_date has passed.
+function isPastDeadline(a: any): boolean {
+  return !!(a?.due_date && new Date() > new Date(a.due_date));
+}
 
 export default function StudentAssessmentPage() {
   const { id } = useParams() as { id: string };
@@ -57,6 +63,9 @@ export default function StudentAssessmentPage() {
         // Theory submissions show results only once instructor releases them.
         const showResults = isObjOnly || (sub.status === "graded" && sub.results_released);
         setPhase(showResults ? "results" : "submitted");
+      } else if (isPastDeadline(a)) {
+        // No submission and the deadline has passed → exam is closed.
+        setPhase("closed");
       }
       setLoading(false);
     }
@@ -70,6 +79,13 @@ export default function StudentAssessmentPage() {
       const isObjOnly = theory.length === 0;
       const showResults = isObjOnly || (submission.status === "graded" && submission.results_released);
       setPhase(showResults ? "results" : "submitted");
+      return;
+    }
+
+    // Auto-close: reject any submission after the deadline.
+    if (isPastDeadline(assessment)) {
+      toast.error("This examination has closed — the deadline has passed.");
+      setPhase("closed");
       return;
     }
 
@@ -157,6 +173,29 @@ export default function StudentAssessmentPage() {
 
   const answered  = Object.keys(objAnswers).length;
   const progress  = questions.length > 0 ? Math.round((answered / questions.length) * 100) : 0;
+
+  // ── CLOSED (deadline passed, no submission) ─────────────────────────
+  if (phase === "closed") return (
+    <PortalShell>
+      <div className="max-w-lg mx-auto text-center py-12 space-y-5">
+        <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto">
+          <Lock className="w-8 h-8 text-red-400" />
+        </div>
+        <h1 className="text-2xl font-semibold theme-text" style={{ fontFamily: "'Georgia', serif" }}>
+          This Examination Has Closed
+        </h1>
+        <p className="theme-text-muted text-sm font-sans leading-relaxed">
+          The deadline has passed
+          {assessment?.due_date ? ` (${new Date(assessment.due_date).toLocaleString("en-NG", { dateStyle: "long", timeStyle: "short" })})` : ""}
+          , so submissions are no longer being accepted. Please contact your instructor if you have any concerns.
+        </p>
+        <Link href="/portal/assessments"
+          className="inline-flex items-center gap-1.5 text-sm theme-accent hover:underline font-sans">
+          <ChevronLeft className="w-4 h-4" /> Back to Assessments
+        </Link>
+      </div>
+    </PortalShell>
+  );
 
   // ── SUBMITTED ───────────────────────────────────────────────────────
   if (phase === "submitted") return (
