@@ -6,7 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import PortalShell from "@/components/portal/PortalShell";
 import { motion } from "framer-motion";
-import { Star, CheckCircle, Clock, ChevronRight, AlertCircle } from "lucide-react";
+import { Star, CheckCircle, Clock, ChevronRight, AlertCircle, Lock } from "lucide-react";
 
 export default function AssessmentsListPage() {
   const router = useRouter();
@@ -90,6 +90,7 @@ export default function AssessmentsListPage() {
               const sub    = submissions[a.id];
               const isGraded    = sub?.status === "graded" && sub?.results_released;
               const isSubmitted = sub && !isGraded;
+              const isClosed    = !sub && a.due_date && new Date() > new Date(a.due_date);
               return (
                 <motion.div key={a.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
                   <Link href={`/portal/assessments/${a.id}`}
@@ -129,9 +130,14 @@ export default function AssessmentsListPage() {
                         {isSubmitted && (
                           <span className="theme-accent text-xs font-semibold font-sans">Pending Grade</span>
                         )}
-                        {!sub && (
+                        {!sub && !isClosed && (
                           <span className="theme-text text-xs font-semibold font-sans bg-[#1A1A2E] text-white px-3 py-1.5 rounded-full">
                             Start
+                          </span>
+                        )}
+                        {isClosed && (
+                          <span className="text-xs font-semibold font-sans bg-red-500/10 text-red-500 border border-red-500/20 px-3 py-1.5 rounded-full flex items-center gap-1">
+                            <Lock className="w-3 h-3" /> Closed
                           </span>
                         )}
                         <ChevronRight className="w-4 h-4 text-[#D4D0C8] group-hover:theme-accent transition-colors" />
