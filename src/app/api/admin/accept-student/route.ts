@@ -54,6 +54,13 @@ export async function POST(req: NextRequest) {
 
     const studentId = newUser?.user?.id
 
+    // Current cohort (if the cohort engine is set up). Tolerate absence.
+    let currentCohortId: string | null = null
+    try {
+      const { data: cc } = await adminSupabase.from('cohorts').select('id').eq('is_current', true).maybeSingle()
+      currentCohortId = cc?.id ?? null
+    } catch { /* cohorts table not present yet */ }
+
     // Update profile (auto-created by trigger)
     if (studentId) {
       await adminSupabase.from('profiles').update({
@@ -64,6 +71,7 @@ export async function POST(req: NextRequest) {
         role: 'student',
         enrollment_status: 'active',
         current_year: 1,
+        ...(currentCohortId ? { cohort_id: currentCohortId } : {}),
       }).eq('id', studentId)
 
       // Auto-enroll in all published Year 1 courses
