@@ -30,7 +30,7 @@ const statusConfig: Record<string, { label: string; icon: any; cls: string }> = 
 
 export default function AdminDashboard() {
   const [adminName, setAdminName] = useState("Admin");
-  const [stats, setStats]         = useState({ students: 0, videos: 0, applications: 0 });
+  const [stats, setStats]         = useState({ students: 0, videos: 0, applications: 0, cohorts: 0 });
   const [recentApps, setRecentApps] = useState<any[]>([]);
   const [regOpen, setRegOpen]     = useState(false);
   const [waitlist, setWaitlist]   = useState<any[]>([]);
@@ -45,18 +45,18 @@ export default function AdminDashboard() {
       if (!user) return;
       const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", user.id).single();
       setAdminName(profile?.full_name?.split(" ")[0] ?? "Admin");
-      const [{ count: students }, { count: videos }, { count: applications }, { data: apps }, { data: settings }, { data: wl }] = await Promise.all([
-        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student"),
-        supabase.from("lessons").select("*", { count: "exact", head: true }).eq("is_published", true),
-        supabase.from("applications").select("*", { count: "exact", head: true }).eq("status", "pending"),
-        supabase.from("applications").select("*").order("applied_at", { ascending: false }).limit(5),
-        supabase.from("school_settings").select("value").eq("key", "registration_open").single(),
-        supabase.from("waitlist").select("*").order("created_at", { ascending: false }).limit(10),
-      ]);
-      setStats({ students: students ?? 0, videos: videos ?? 0, applications: applications ?? 0 });
-      setRecentApps(apps ?? []);
-      setRegOpen((settings as any)?.value === "true");
-      setWaitlist(wl ?? []);
+      // Figures via the service role (correct regardless of RLS).
+      const res = await fetch("/api/admin/stats");
+      const data = await res.json();
+      if (res.ok) {
+        setStats({
+          students: data.students ?? 0, videos: data.videos ?? 0,
+          applications: data.pendingApplications ?? 0, cohorts: data.activeCohorts ?? 0,
+        });
+        setRecentApps(data.recentApps ?? []);
+        setRegOpen(!!data.registrationOpen);
+        setWaitlist(data.waitlist ?? []);
+      }
     }
     load();
   }, []);
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
             { icon: Users,    label: "Students",           value: stats.students,     gold: false },
             { icon: Video,    label: "Videos Published",   value: stats.videos,       gold: false },
             { icon: FileText, label: "Pending Applicants", value: stats.applications, gold: true  },
-            { icon: BookOpen, label: "Active Cohorts",     value: 1,                  gold: false },
+            { icon: BookOpen, label: "Active Cohorts",     value: stats.cohorts,      gold: false },
           ].map((s, i) => (
             <motion.div key={s.label} variants={rise(i * 0.08)} initial="hidden" animate="visible">
               <div className={`rounded-2xl border p-5 ${
