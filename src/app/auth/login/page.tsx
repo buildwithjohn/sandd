@@ -59,14 +59,14 @@ function LoginForm() {
 
   return (
     <motion.div variants={rise(0.15)} initial="hidden" animate="visible"
-      className="w-full max-w-sm">
+      className="w-full max-w-sm glass-dark glass-edge rounded-[28px] p-8 sm:p-9 relative z-10">
 
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="h-px w-8 bg-[#D4A85C]/40" />
           <span className="text-[#D4A85C] text-xs tracking-[0.2em] uppercase font-sans">Student Portal</span>
         </div>
-        <h1 className="text-3xl font-medium tracking-tight mb-2"
+        <h1 className="text-3xl font-medium tracking-tight mb-2 text-gilt-gradient"
           style={{ fontFamily: "'Georgia', serif", letterSpacing: "-0.02em" }}>
           Welcome Back
         </h1>
@@ -206,10 +206,12 @@ export default function LoginPage() {
       </div>
 
       {/* ── RIGHT — Form ──────────────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-16 py-16">
+      <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-16 py-16 relative overflow-hidden aurora">
+        <div className="aurora-blob aurora-gold" style={{ width: 400, height: 400, top: "-90px", right: "-110px" }} />
+        <div className="aurora-blob aurora-royal" style={{ width: 440, height: 440, bottom: "-130px", left: "-130px" }} />
 
         {/* Mobile logo */}
-        <div className="lg:hidden mb-10">
+        <div className="lg:hidden mb-10 relative z-10">
           <Link href="/" className="flex items-center gap-3">
             <Image src="/assets/logo.png" alt="S&D" width={36} height={36} className="rounded-lg" />
             <div>
@@ -219,7 +221,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <div className="max-w-sm w-full mx-auto">
+        <div className="max-w-sm w-full mx-auto relative z-10">
           <Suspense fallback={
             <div className="text-white/30 text-sm font-sans text-center">Loading...</div>
           }>

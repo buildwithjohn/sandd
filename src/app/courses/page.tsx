@@ -97,9 +97,7 @@ export default function CoursesPage() {
             {year1.map((course, i) => (
               <motion.div key={course.num}
                 variants={rise(i * 0.07)} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                <div className="group relative rounded-2xl overflow-hidden transition-all duration-300
-                  hover:bg-white/[0.03] cursor-default"
-                  style={{ border: "1px solid rgba(255,255,255,0.07)" }}>
+                <div className="group relative glass-dark glass-edge glass-hover rounded-2xl overflow-hidden cursor-default">
                   <div className="flex items-start gap-5 p-6">
                     {/* Number */}
                     <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20
@@ -160,9 +158,8 @@ export default function CoursesPage() {
             {year2.map((course, i) => (
               <motion.div key={course.num}
                 variants={rise(i * 0.07)} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-                <div className="group relative rounded-2xl overflow-hidden transition-all duration-300
-                  hover:bg-[#D4A85C]/[0.03] cursor-default"
-                  style={{ border: "1px solid rgba(212,168,92,0.12)" }}>
+                <div className="group relative glass-dark glass-edge glass-hover rounded-2xl overflow-hidden cursor-default"
+                  style={{ borderColor: "rgba(212,168,92,0.22)" }}>
                   <div className="flex items-start gap-5 p-6">
                     <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#D4A85C]/8 border border-[#D4A85C]/15
                       flex items-center justify-center">

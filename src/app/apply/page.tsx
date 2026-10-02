@@ -257,7 +257,7 @@ export default function ApplyPage() {
           </div>
 
           {/* Prophet Sule welcome message */}
-          <div className="bg-[#0D1320] border border-[#D4A85C]/20 rounded-2xl p-7 mb-6"
+          <div className="glass-dark glass-edge rounded-2xl p-7 mb-6"
             style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
             <p className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans mb-4">
               A personal word from the Dean
