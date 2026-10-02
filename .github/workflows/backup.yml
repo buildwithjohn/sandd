@@ -1,0 +1,48 @@
+name: Weekly DB Backup
+
+# Off-platform backup for the free-tier Supabase project (free tier has no
+# automated backups). Dumps the public schema weekly and stores it as a
+# downloadable artifact (90-day retention). Also runnable on demand.
+#
+# Requires repo secret SUPABASE_DB_URL = the Supabase "Session pooler"
+# connection URI (Project → Settings → Database → Connection string →
+# Session pooler, IPv4-compatible), with the database password filled in.
+
+on:
+  schedule:
+    - cron: "0 3 * * 0" # every Sunday 03:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install PostgreSQL 17 client
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Dump database (public schema)
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ]; then
+            echo "::error::SUPABASE_DB_URL secret is not set"; exit 1
+          fi
+          ts=$(date +%Y%m%d-%H%M%S)
+          /usr/lib/postgresql/17/bin/pg_dump "$SUPABASE_DB_URL" \
+            --schema=public --no-owner --no-privileges --clean --if-exists \
+            -f "sandd-backup-$ts.sql"
+          gzip "sandd-backup-$ts.sql"
+          ls -lh *.sql.gz
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sandd-db-backup
+          path: "*.sql.gz"
+          retention-days: 90
+          if-no-files-found: error

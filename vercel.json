@@ -3,6 +3,9 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["lhr1"],
+  "crons": [
+    { "path": "/api/cron/daily", "schedule": "0 6 * * *" }
+  ],
   "headers": [
     {
       "source": "/api/(.*)",
