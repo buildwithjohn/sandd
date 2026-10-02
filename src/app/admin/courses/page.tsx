@@ -168,7 +168,7 @@ export default function CourseManagerPage() {
                   transition={{ delay: ci * 0.05 }}>
 
                   {/* Course header */}
-                  <div className="bg-[#0D1320] border border-white/[0.09] rounded-2xl overflow-hidden">
+                  <div className="glass-dark border border-white/[0.09] rounded-2xl overflow-hidden">
                     <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-white/[0.03] transition-colors">
                       <button
                         onClick={() => setExpanded(e => ({ ...e, [course.id]: !e[course.id] }))}

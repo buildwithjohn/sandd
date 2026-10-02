@@ -80,8 +80,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   return (
     <div className="min-h-screen bg-[#080C14] text-white" style={{ fontFamily: "Arial, sans-serif" }}>
 
+      {/* Ambient aurora depth */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+        <div className="aurora-blob aurora-gold" style={{ width: 520, height: 520, top: "-12%", right: "-6%", opacity: 0.32 }} />
+        <div className="aurora-blob aurora-royal" style={{ width: 560, height: 560, bottom: "-14%", left: "-8%", opacity: 0.32 }} />
+      </div>
+
       {/* ── TOP NAV ─────────────────────────────────────── */}
-      <nav className="bg-[#0D1320] border-b border-white/[0.07] sticky top-0 z-50"
+      <nav className="bg-[#0D1320]/70 backdrop-blur-xl border-b border-white/[0.07] sticky top-0 z-50"
         style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.04)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
 
@@ -134,7 +140,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       {drawerOpen && (
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setDrawerOpen(false)}>
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          <div className="absolute top-14 left-0 bottom-0 w-72 bg-[#0D1320] border-r border-white/[0.07] overflow-y-auto"
+          <div className="absolute top-14 left-0 bottom-0 w-72 bg-[#0D1320]/80 backdrop-blur-xl border-r border-white/[0.07] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
 
             {/* Admin profile */}
@@ -195,12 +201,12 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       )}
 
       {/* ── LAYOUT ───────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 lg:py-8 flex gap-8 pb-24 lg:pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 lg:py-8 flex gap-8 pb-24 lg:pb-8 relative z-10">
 
         {/* Desktop Sidebar */}
         <aside className="w-52 flex-shrink-0 hidden lg:block">
           <div className="sticky top-20 space-y-2">
-            <div className="bg-[#0D1320] rounded-2xl border border-white/[0.07] p-4">
+            <div className="glass-dark glass-edge rounded-2xl p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl overflow-hidden bg-[#1A1A2E] flex items-center justify-center flex-shrink-0 border border-white/10">
                   {avatarUrl
@@ -217,7 +223,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               </div>
             </div>
 
-            <div className="bg-[#0D1320] rounded-2xl border border-white/[0.07] p-2">
+            <div className="glass-dark glass-edge rounded-2xl p-2">
               {navLinks.map(l => {
                 const active = pathname === l.href || (l.href !== "/admin/dashboard" && pathname.startsWith(l.href));
                 return (
@@ -249,7 +255,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       </div>
 
       {/* ── MOBILE BOTTOM NAV ────────────────────────────── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0D1320] border-t border-white/[0.07]"
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0D1320]/70 backdrop-blur-xl border-t border-white/[0.07]"
         style={{ boxShadow: "0 -4px 20px rgba(0,0,0,0.4)" }}>
         <div className="flex items-center justify-around px-2 py-1">
           {bottomNav.map(l => {

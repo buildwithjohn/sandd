@@ -190,7 +190,7 @@ export default function AdminLibraryPage() {
         </div>
 
         {/* ── Add form ──────────────────────────────────────── */}
-        <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5 space-y-4">
+        <div className="glass-dark border border-white/[0.07] rounded-2xl p-5 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="sm:col-span-2">
               <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Title *</label>
@@ -303,7 +303,7 @@ export default function AdminLibraryPage() {
           ) : (
             <div className="space-y-2">
               {items.map(item => (
-                <div key={item.id} className="bg-[#0D1320] border border-white/[0.07] rounded-xl p-4 flex items-start gap-3">
+                <div key={item.id} className="glass-dark border border-white/[0.07] rounded-xl p-4 flex items-start gap-3">
                   <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center flex-shrink-0">
                     {item.youtube_video_id ? <Youtube className="w-4 h-4 text-red-400" />
                       : item.audio_url ? <Music className="w-4 h-4 text-purple-400" />

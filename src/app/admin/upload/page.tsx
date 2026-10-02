@@ -325,7 +325,7 @@ export default function CourseBuilderPage() {
               className={`rounded-2xl border p-3 sm:p-4 text-left transition-all ${
                 tab === t.id
                   ? "bg-[#D4A85C]/10 border-[#D4A85C]/30"
-                  : "bg-[#0D1320] border-white/[0.07] hover:border-white/20"
+                  : "glass-dark border-white/[0.07] hover:border-white/20"
               }`}>
               <t.icon className={`w-4 h-4 mb-1.5 sm:mb-2 ${tab === t.id ? "text-[#D4A85C]" : "text-white/30"}`} />
               <div className={`text-[11px] sm:text-xs font-semibold font-sans ${tab === t.id ? "text-white" : "text-white/50"}`}>
@@ -337,7 +337,7 @@ export default function CourseBuilderPage() {
 
         {/* SUBTOPIC TAB */}
         {tab === "subtopic" && (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
+          <div className="glass-dark border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="pb-4 border-b border-white/[0.06]">
               <div className="text-white text-sm font-semibold font-sans">Add a Subtopic</div>
               <div className="text-white/30 text-xs font-sans mt-0.5">Pick a content type and optionally attach a file. Large audio uploads run directly to storage so no size limit besides 100MB per file.</div>
@@ -562,7 +562,7 @@ export default function CourseBuilderPage() {
 
         {/* RESOURCES TAB */}
         {tab === "resources" && (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
+          <div className="glass-dark border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="pb-4 border-b border-white/[0.06]">
               <div className="text-white text-sm font-semibold font-sans">Course Resources</div>
               <div className="text-white/30 text-xs font-sans mt-0.5">Upload multiple files per course. Students see them grouped by category.</div>
@@ -673,7 +673,7 @@ export default function CourseBuilderPage() {
 
         {/* MANAGE TAB */}
         {tab === "manage" && (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
+          <div className="glass-dark border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
             <div className="pb-4 border-b border-white/[0.06]">
               <div className="text-white text-sm font-semibold font-sans">Manage Subtopics</div>
               <div className="text-white/30 text-xs font-sans mt-0.5">View and delete subtopics. Use Course Manager for full publish controls.</div>

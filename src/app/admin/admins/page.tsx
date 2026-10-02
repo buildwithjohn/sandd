@@ -174,7 +174,7 @@ export default function AdminsPage() {
         {/* New admin form */}
         {showForm && isSuperAdmin && !createdCreds && (
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-[#0D1320] border border-[#D4A85C]/20 rounded-2xl p-5 space-y-4">
+            className="glass-dark border border-[#D4A85C]/20 rounded-2xl p-5 space-y-4">
             <div className="text-white text-sm font-semibold font-sans pb-3 border-b border-white/[0.06]">Create New Admin</div>
 
             <div>
@@ -226,7 +226,7 @@ export default function AdminsPage() {
         )}
 
         {/* List */}
-        <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5">
+        <div className="glass-dark border border-white/[0.07] rounded-2xl p-5">
           <div className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans mb-4">
             {admins.length} admin{admins.length !== 1 ? "s" : ""}
           </div>

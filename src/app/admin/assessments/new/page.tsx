@@ -202,7 +202,7 @@ export default function NewAssessmentPage() {
         </div>
 
         {/* Basic info */}
-        <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-6 space-y-4">
+        <div className="glass-dark border border-white/[0.07] rounded-2xl p-6 space-y-4">
           <h2 className="text-white text-sm font-semibold font-sans">Assessment Details</h2>
           <div>
             <label className="text-white/40 text-xs tracking-widest uppercase font-sans block mb-2">Course *</label>
@@ -234,7 +234,7 @@ export default function NewAssessmentPage() {
         </div>
 
         {/* Part A — Objectives */}
-        <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-6 space-y-4">
+        <div className="glass-dark border border-white/[0.07] rounded-2xl p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-white text-sm font-semibold font-sans">Part A — Objectives</h2>
@@ -260,7 +260,7 @@ export default function NewAssessmentPage() {
 
           {/* Paste & Import Panel */}
           {showImport && (
-            <div className="bg-[#0D1320] border border-[#D4A85C]/25 rounded-xl p-5 space-y-4">
+            <div className="glass-dark border border-[#D4A85C]/25 rounded-xl p-5 space-y-4">
               <div>
                 <div className="text-[#D4A85C] text-sm font-semibold font-sans mb-1 flex items-center gap-1.5"><Zap className="w-3.5 h-3.5" /> Paste Raw Questions</div>
                 <p className="text-white/40 text-xs font-sans leading-relaxed">
@@ -369,7 +369,7 @@ Correct: C`}</pre>
         </div>
 
         {/* Part B — Theory */}
-        <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-6 space-y-4">
+        <div className="glass-dark border border-white/[0.07] rounded-2xl p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-white text-sm font-semibold font-sans">Part B — Theory</h2>
