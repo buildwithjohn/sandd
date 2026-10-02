@@ -186,7 +186,7 @@ export default function GradeAssessmentPage() {
             { label: "Graded", value: graded, color: "text-green-400" },
             { label: "Pending", value: submissions.length - graded, color: "text-[#D4A85C]" },
           ].map(s => (
-            <div key={s.label} className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-4 text-center">
+            <div key={s.label} className="glass-dark border border-white/[0.07] rounded-2xl p-4 text-center">
               <div className={`text-2xl font-bold ${s.color}`} style={{ fontFamily: "'Georgia', serif" }}>{s.value}</div>
               <div className="text-white/30 text-xs font-sans mt-1">{s.label}</div>
             </div>
@@ -195,7 +195,7 @@ export default function GradeAssessmentPage() {
 
         {/* Submissions */}
         {submissions.length === 0 ? (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-12 text-center">
+          <div className="glass-dark border border-white/[0.07] rounded-2xl p-12 text-center">
             <Clock className="w-10 h-10 text-white/20 mx-auto mb-3" />
             <p className="text-white/30 text-sm font-sans">No submissions yet.</p>
           </div>
@@ -208,7 +208,7 @@ export default function GradeAssessmentPage() {
               const theoryAnswers: Record<string, string> = sub.theory_answers ?? {};
 
               return (
-                <div key={sub.id} className={`bg-[#0D1320] border rounded-2xl overflow-hidden ${isGraded ? "border-green-500/20" : "border-white/[0.07]"}`}>
+                <div key={sub.id} className={`glass-dark border rounded-2xl overflow-hidden ${isGraded ? "border-green-500/20" : "border-white/[0.07]"}`}>
                   <button onClick={() => setExpanded(isOpen ? null : sub.id)}
                     className="w-full flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-white/[0.02] transition-colors text-left">
                     <div className="w-9 h-9 rounded-full bg-white/[0.06] flex items-center justify-center flex-shrink-0">

@@ -114,7 +114,7 @@ export default function AdminAssessmentsListPage() {
             { label: "Graded",            value: totalGraded,         color: "text-green-400" },
             { label: "Pending Grade",     value: totalPending,        color: totalPending > 0 ? "text-orange-400" : "text-white/40" },
           ].map(s => (
-            <div key={s.label} className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-4">
+            <div key={s.label} className="glass-dark border border-white/[0.07] rounded-2xl p-4">
               <div className={`text-2xl font-bold ${s.color}`} style={{ fontFamily: "'Georgia', serif" }}>{s.value}</div>
               <div className="text-white/30 text-[10px] uppercase tracking-widest font-sans mt-1">{s.label}</div>
             </div>
@@ -142,7 +142,7 @@ export default function AdminAssessmentsListPage() {
 
         {/* List */}
         {filtered.length === 0 ? (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-12 text-center">
+          <div className="glass-dark border border-white/[0.07] rounded-2xl p-12 text-center">
             <Star className="w-10 h-10 text-white/15 mx-auto mb-3" />
             <p className="text-white/40 text-sm font-sans mb-1">
               {filter === "all" ? "No assessments yet" : `No ${filter} assessments`}
@@ -161,7 +161,7 @@ export default function AdminAssessmentsListPage() {
                 <motion.div key={a.id}
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04 }}>
-                  <div className={`bg-[#0D1320] border rounded-2xl p-4 sm:p-5 transition-all ${
+                  <div className={`glass-dark border rounded-2xl p-4 sm:p-5 transition-all ${
                     hasPending
                       ? "border-orange-500/30 hover:border-orange-500/50"
                       : "border-white/[0.07] hover:border-white/15"

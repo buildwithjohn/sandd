@@ -89,9 +89,9 @@ export default function StudentsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search by name, church, or email..."
-              className="w-full bg-[#0D1320] border border-white/[0.08] rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#D4A85C]/40 font-sans" />
+              className="w-full glass-dark border border-white/[0.08] rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#D4A85C]/40 font-sans" />
           </div>
-          <div className="flex gap-1 bg-[#0D1320] border border-white/[0.08] rounded-xl p-1">
+          <div className="flex gap-1 glass-dark border border-white/[0.08] rounded-xl p-1">
             {["all","active","suspended"].map(f => (
               <button key={f} onClick={() => setFilter(f)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all font-sans ${
@@ -102,7 +102,7 @@ export default function StudentsPage() {
         </div>
 
         {loading ? (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-12 text-center">
+          <div className="glass-dark border border-white/[0.07] rounded-2xl p-12 text-center">
             <p className="text-white/30 text-sm font-sans">Loading students...</p>
           </div>
         ) : error ? (
@@ -111,14 +111,14 @@ export default function StudentsPage() {
             <p className="text-red-400/60 text-xs font-sans mt-2">Make sure SUPABASE_SERVICE_ROLE_KEY is set in Vercel</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-12 text-center">
+          <div className="glass-dark border border-white/[0.07] rounded-2xl p-12 text-center">
             <Users className="w-10 h-10 text-white/10 mx-auto mb-3" />
             <p className="text-white/30 text-sm font-sans">
               {students.length === 0 ? "No students registered yet." : "No students match your search."}
             </p>
           </div>
         ) : (
-          <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl overflow-hidden">
+          <div className="glass-dark border border-white/[0.07] rounded-2xl overflow-hidden">
             {filtered.map((s, i) => (
               <div key={s.id}>
                 <div className={`flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors

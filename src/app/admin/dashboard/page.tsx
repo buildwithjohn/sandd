@@ -117,7 +117,7 @@ export default function AdminDashboard() {
           ].map((s, i) => (
             <motion.div key={s.label} variants={rise(i * 0.08)} initial="hidden" animate="visible">
               <div className={`rounded-2xl border p-5 ${
-                s.gold ? "bg-[#D4A85C]/5 border-[#D4A85C]/20" : "bg-[#0D1320] border-white/[0.07]"
+                s.gold ? "bg-[#D4A85C]/5 border-[#D4A85C]/20" : "glass-dark border-white/[0.07]"
               }`}>
                 <s.icon className={`w-4 h-4 mb-3 ${s.gold ? "text-[#D4A85C]" : "text-white/30"}`} />
                 <div className={`text-3xl font-semibold mb-1 ${s.gold ? "text-[#D4A85C]" : "text-white"}`}
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
                 className={`group flex items-center gap-3 p-4 rounded-2xl border transition-all ${
                   a.gold
                     ? "bg-[#D4A85C] border-[#D4A85C] hover:bg-[#C49848] hover:border-[#C49848]"
-                    : "bg-[#0D1320] border-white/[0.07] hover:border-white/20 hover:bg-white/[0.04]"
+                    : "glass-dark border-white/[0.07] hover:border-white/20 hover:bg-white/[0.04]"
                 }`}>
                 <a.icon className={`w-4 h-4 flex-shrink-0 ${a.gold ? "text-[#1A1A2E]" : "text-white/40 group-hover:text-white"}`} />
                 <span className={`text-sm font-medium ${a.gold ? "text-[#1A1A2E]" : "text-white/60 group-hover:text-white"}`}>
@@ -192,7 +192,7 @@ export default function AdminDashboard() {
                 {enrollingAll ? "Enrolling..." : `Enroll All ${waitlist.length}`}
               </button>
             </div>
-            <div className="bg-[#0D1320] rounded-2xl border border-white/[0.07] overflow-hidden">
+            <div className="glass-dark rounded-2xl border border-white/[0.07] overflow-hidden">
               {waitlist.map((w, i) => (
                 <div key={w.id} className={`flex items-center gap-4 px-5 py-3 hover:bg-white/[0.02] transition-colors
                   ${i < waitlist.length - 1 ? "border-b border-white/[0.05]" : ""}`}>
@@ -224,7 +224,7 @@ export default function AdminDashboard() {
                 Dismiss
               </button>
             </div>
-            <div className="bg-[#0D1320] rounded-2xl border border-green-500/20 overflow-hidden">
+            <div className="glass-dark rounded-2xl border border-green-500/20 overflow-hidden">
               {enrollResult.enrolled.map((s: any, i: number) => (
                 <div key={s.email} className={`px-5 py-4 ${i < enrollResult.enrolled.length - 1 ? "border-b border-white/[0.05]" : ""}`}>
                   <div className="flex items-start justify-between gap-4">
@@ -256,7 +256,7 @@ export default function AdminDashboard() {
               View all →
             </Link>
           </div>
-          <div className="bg-[#0D1320] rounded-2xl border border-white/[0.07] overflow-hidden">
+          <div className="glass-dark rounded-2xl border border-white/[0.07] overflow-hidden">
             {recentApps.length === 0 ? (
               <div className="p-10 text-center">
                 <p className="text-white/25 text-sm font-sans">No applications yet.</p>

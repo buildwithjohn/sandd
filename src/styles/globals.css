@@ -49,7 +49,14 @@ body {
 
 /* Theme-aware utility classes */
 .theme-bg          { background-color: var(--bg); }
-.theme-bg-elevated { background-color: var(--bg-elevated); }
+/* Elevated surfaces render as frosted glass across portal + admin: translucent
+   fill + blur so cards float over the page/aurora. Falls back to a near-opaque
+   fill where backdrop-filter isn't supported, so text stays legible. */
+.theme-bg-elevated {
+  background-color: color-mix(in srgb, var(--bg-elevated) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+}
 .theme-bg-subtle   { background-color: var(--bg-subtle); }
 .theme-bg-muted    { background-color: var(--bg-muted); }
 .theme-border      { border-color: var(--border); }

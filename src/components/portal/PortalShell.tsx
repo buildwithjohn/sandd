@@ -100,6 +100,12 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen theme-bg" style={{ fontFamily: "Arial, sans-serif" }}>
 
+      {/* Ambient aurora depth (behind everything) */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+        <div className="aurora-blob aurora-gold" style={{ width: 520, height: 520, top: "-12%", right: "-8%", opacity: 0.4 }} />
+        <div className="aurora-blob aurora-royal" style={{ width: 560, height: 560, bottom: "-14%", left: "-10%", opacity: 0.4 }} />
+      </div>
+
       {/* ── TOP NAV ─────────────────────────────────────── */}
       <nav className="theme-bg-elevated border-b theme-border-soft sticky top-0 z-50"
         style={{ boxShadow: "0 1px 0 rgba(0,0,0,0.04)" }}>
@@ -231,7 +237,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
       )}
 
       {/* ── LAYOUT ───────────────────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 lg:py-8 flex gap-8 pb-24 lg:pb-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 lg:py-8 flex gap-8 pb-24 lg:pb-8 relative z-10">
 
         {/* Desktop Sidebar */}
         <aside className="w-52 flex-shrink-0 hidden lg:block">

@@ -75,7 +75,7 @@ export default function AssessmentDetailPage() {
             { label: "Submissions", value: submissions.length },
             { label: "Graded", value: graded },
           ].map(s => (
-            <div key={s.label} className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-4 text-center">
+            <div key={s.label} className="glass-dark border border-white/[0.07] rounded-2xl p-4 text-center">
               <div className="text-[#D4A85C] text-xl font-bold" style={{ fontFamily: "'Georgia', serif" }}>{s.value}</div>
               <div className="text-white/30 text-[10px] font-sans mt-1">{s.label}</div>
             </div>
@@ -83,7 +83,7 @@ export default function AssessmentDetailPage() {
         </div>
 
         {/* Questions preview */}
-        <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5">
+        <div className="glass-dark border border-white/[0.07] rounded-2xl p-5">
           <h2 className="text-white/60 text-xs uppercase tracking-widest font-sans mb-3">Part A — {questions.length} Objective Questions ({assessment?.obj_marks} marks)</h2>
           {questions.slice(0, 3).map((q, i) => (
             <div key={q.id} className="flex gap-3 py-2 border-b border-white/[0.04] last:border-0">
@@ -94,7 +94,7 @@ export default function AssessmentDetailPage() {
           {questions.length > 3 && <p className="text-white/25 text-xs font-sans mt-2">+{questions.length - 3} more questions</p>}
         </div>
 
-        <div className="bg-[#0D1320] border border-white/[0.07] rounded-2xl p-5">
+        <div className="glass-dark border border-white/[0.07] rounded-2xl p-5">
           <h2 className="text-white/60 text-xs uppercase tracking-widest font-sans mb-3">Part B — {theory.length} Theory Questions ({assessment?.theory_marks} marks)</h2>
           {theory.map((q, i) => (
             <div key={q.id} className="flex gap-3 py-2 border-b border-white/[0.04] last:border-0">
