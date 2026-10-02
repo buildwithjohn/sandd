@@ -223,7 +223,7 @@ export default function Home() {
             </div>
 
             {/* Content side */}
-            <div className="bg-[#0D1320] p-10 lg:p-14 flex flex-col justify-center">
+            <div className="glass-dark p-10 lg:p-14 flex flex-col justify-center">
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-px w-8 bg-[#D4A85C]/50" />
                 <span className="text-[#D4A85C] text-xs tracking-[0.25em] uppercase font-sans">Founder & Dean</span>
@@ -270,11 +270,11 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-white/8 rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {pillars.map((p, i) => (
               <motion.div key={p.label}
                 variants={rise(i * 0.1)} initial="hidden" whileInView="visible" viewport={{ once: true }}
-                className="bg-[#080C14] hover:bg-[#0D1320] p-8 transition-colors group">
+                className="glass-dark glass-edge glass-hover rounded-2xl p-8 group">
                 <div className="text-[#D4A85C]/40 text-xs font-sans tracking-widest mb-3 group-hover:text-[#D4A85C]/70 transition-colors">
                   {String(i + 1).padStart(2, "0")}
                 </div>
@@ -320,7 +320,7 @@ export default function Home() {
                 </div>
                 <span className="text-white/25 text-xs font-sans">15 credits</span>
               </div>
-              <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
+              <div className="glass-dark glass-edge rounded-2xl overflow-hidden">
                 {year1.map((c, i) => (
                   <div key={c.num}
                     className={`flex items-center gap-4 px-5 py-4 hover:bg-white/[0.03] transition-colors
@@ -344,7 +344,7 @@ export default function Home() {
                 </div>
                 <span className="text-white/25 text-xs font-sans">13 credits</span>
               </div>
-              <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(212,168,92,0.15)" }}>
+              <div className="glass-dark glass-edge rounded-2xl overflow-hidden" style={{ borderColor: "rgba(212,168,92,0.22)" }}>
                 {year2.map((c, i) => (
                   <div key={c.num}
                     className={`flex items-center gap-4 px-5 py-4 hover:bg-[#D4A85C]/[0.04] transition-colors
@@ -366,7 +366,7 @@ export default function Home() {
       <section className="py-16 px-6 border-t border-white/8">
         <div className="max-w-5xl mx-auto">
           <motion.div variants={rise()} initial="hidden" whileInView="visible" viewport={{ once: true }}
-            className="flex flex-col sm:flex-row items-center gap-6 bg-[#0D1320] rounded-2xl border border-white/[0.07] px-8 py-7">
+            className="flex flex-col sm:flex-row items-center gap-6 glass-dark glass-edge rounded-2xl px-8 py-7">
             {/* Small label */}
             <div className="flex-shrink-0 hidden sm:block">
               <div className="h-px w-8 bg-[#D4A85C]/40 mb-3" />
