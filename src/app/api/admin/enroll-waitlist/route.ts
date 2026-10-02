@@ -47,6 +47,13 @@ export async function POST() {
       nextNum = lastNum + 1;
     }
 
+    // Current cohort (if the cohort engine has been set up). Tolerate absence.
+    let currentCohortId: string | null = null;
+    try {
+      const { data: cc } = await admin.from("cohorts").select("id").eq("is_current", true).maybeSingle();
+      currentCohortId = cc?.id ?? null;
+    } catch { /* cohorts table not present yet */ }
+
     const enrolled: any[] = [];
     const failed: any[] = [];
 
@@ -82,6 +89,7 @@ export async function POST() {
           enrollment_status: "active",
           current_year: 1,
           student_number: studentNumber,
+          ...(currentCohortId ? { cohort_id: currentCohortId } : {}),
         }, { onConflict: "id" });
 
         // Enroll in Year 1 courses

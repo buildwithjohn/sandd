@@ -10,6 +10,7 @@ import {
 , Eye
 , Shield
 , PlayCircle
+, GraduationCap
 } from "lucide-react";
 
 const navLinks = [
@@ -17,6 +18,7 @@ const navLinks = [
   { href: "/admin/courses",       icon: BookOpen,        label: "Course Manager"},
 
   { href: "/admin/applications",  icon: ClipboardList,   label: "Applications"  },
+  { href: "/admin/cohorts",       icon: GraduationCap,   label: "Cohorts"       },
   { href: "/admin/students",      icon: Users,           label: "Students"      },
   { href: "/admin/admins",        icon: Shield,          label: "Admins"        },
   { href: "/admin/upload",        icon: Upload,          label: "Course Builder"},
