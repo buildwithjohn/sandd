@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAuthorizedCron, touchDatabase } from "@/lib/cron";
+import { runComms } from "@/lib/comms";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -21,8 +22,9 @@ export async function GET(req: Request) {
   // 1) Keep the database awake (free-tier anti-pause)
   steps.keepAlive = await touchDatabase();
 
-  // 2) Cohort lifecycle   — added in Phase 2
-  // 3) Scheduled comms     — added in Phase 2
+  // 2) Scheduled comms (only the automations the admin has switched on)
+  try { steps.comms = await runComms({ dryRun: false }); }
+  catch (e: any) { steps.comms = { error: e?.message ?? "failed" }; }
 
   return NextResponse.json({ ran: new Date().toISOString(), steps });
 }

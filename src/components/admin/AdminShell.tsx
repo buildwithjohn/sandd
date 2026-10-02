@@ -13,6 +13,7 @@ import {
 , GraduationCap
 , Mail
 , Send
+, Zap
 } from "lucide-react";
 
 const navLinks = [
@@ -30,6 +31,7 @@ const navLinks = [
 
   { href: "/admin/inbox",         icon: Mail,            label: "Inbox"         },
   { href: "/admin/broadcast",     icon: Send,            label: "Email Students"},
+  { href: "/admin/automations",   icon: Zap,             label: "Automations"   },
   { href: "/admin/announcements", icon: Megaphone,       label: "Announcements" },
   { href: "/admin/certificates",  icon: Award,           label: "Certificates"  },
   { href: "/admin/profile",       icon: UserCircle,      label: "My Profile"    },
