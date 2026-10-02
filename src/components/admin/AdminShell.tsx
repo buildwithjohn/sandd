@@ -11,6 +11,7 @@ import {
 , Shield
 , PlayCircle
 , GraduationCap
+, Mail
 } from "lucide-react";
 
 const navLinks = [
@@ -26,6 +27,7 @@ const navLinks = [
   { href: "/admin/assignments",   icon: FileText,        label: "Assignments"   },
   { href: "/admin/assessments",     icon: Star,           label: "Assessments"   },
 
+  { href: "/admin/inbox",         icon: Mail,            label: "Inbox"         },
   { href: "/admin/announcements", icon: Megaphone,       label: "Announcements" },
   { href: "/admin/certificates",  icon: Award,           label: "Certificates"  },
   { href: "/admin/profile",       icon: UserCircle,      label: "My Profile"    },

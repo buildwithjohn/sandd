@@ -10,6 +10,7 @@ import {
   Megaphone, User, Award, FolderOpen, Menu, X, Star
 , Shield
 , PlayCircle
+, MessageSquare
 } from "lucide-react";
 
 const navLinks = [
@@ -17,6 +18,7 @@ const navLinks = [
   { href: "/portal/courses",       icon: BookOpen,        label: "My Courses"      },
   { href: "/portal/library",       icon: PlayCircle,      label: "Library"         },
   { href: "/portal/announcements", icon: Megaphone,       label: "Announcements"   },
+  { href: "/portal/messages",      icon: MessageSquare,   label: "Messages"        },
   { href: "/portal/admission",     icon: Award,           label: "Admission"       },
   { href: "/portal/assessments",   icon: Star,            label: "Assessments"     },
   { href: "/portal/documents",     icon: FolderOpen,      label: "Documents"       },
