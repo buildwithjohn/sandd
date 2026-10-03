@@ -147,7 +147,7 @@ export default function CourseManagerPage() {
             <p className="text-white/35 text-sm font-sans">View and manage all courses, subtopics, materials and assignments.</p>
           </div>
           <Link href="/admin/upload"
-            className="flex items-center gap-2 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] text-xs font-bold font-sans px-4 py-2.5 rounded-full transition-all">
+            className="flex items-center gap-2 grad-btn text-white text-xs font-bold font-sans px-4 py-2.5 rounded-full transition-all">
             <Plus className="w-3.5 h-3.5" /> Add Content
           </Link>
         </div>
@@ -168,7 +168,7 @@ export default function CourseManagerPage() {
                   transition={{ delay: ci * 0.05 }}>
 
                   {/* Course header */}
-                  <div className="glass-dark border border-white/[0.09] rounded-2xl overflow-hidden">
+                  <div className="ksurface-d overflow-hidden">
                     <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-white/[0.03] transition-colors">
                       <button
                         onClick={() => setExpanded(e => ({ ...e, [course.id]: !e[course.id] }))}

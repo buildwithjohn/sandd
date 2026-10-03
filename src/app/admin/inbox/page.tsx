@@ -90,7 +90,7 @@ export default function AdminInboxPage() {
           </div>
         </div>
 
-        <div className="glass-dark glass-edge rounded-2xl overflow-hidden grid md:grid-cols-[320px_1fr] min-h-[560px]">
+        <div className="ksurface-d overflow-hidden grid md:grid-cols-[320px_1fr] min-h-[560px]">
           {/* List */}
           <div className={`border-r border-white/[0.07] ${active ? "hidden md:block" : ""}`}>
             {loading ? (

@@ -102,7 +102,7 @@ export default function ApplicationsPage() {
         {loading ? (
           <div className="text-gray-500 text-sm">Loading...</div>
         ) : filtered.length === 0 ? (
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-10 text-center">
+          <div className="ksurface-d p-10 text-center">
             <p className="text-gray-500 text-sm">No applications found.</p>
           </div>
         ) : (
@@ -111,7 +111,7 @@ export default function ApplicationsPage() {
               const s = statusMap[a.status] ?? statusMap.pending;
               const StatusIcon = s.icon;
               return (
-                <div key={a.id} className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+                <div key={a.id} className="ksurface-d p-5">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-brand-900 border border-brand-800 flex items-center justify-center font-display font-semibold text-brand-300 flex-shrink-0">
                       {a.full_name.split(" ").map(n => n[0]).slice(0,2).join("")}

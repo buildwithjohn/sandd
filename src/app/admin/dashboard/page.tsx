@@ -124,7 +124,7 @@ export default function AdminDashboard() {
             { icon: BookOpen, label: "Active Cohorts",     value: stats.cohorts,      gold: false },
           ].map((s, i) => (
             <motion.div key={s.label} variants={rise(i * 0.08)} initial="hidden" animate="visible">
-              <div className="kcard p-5">
+              <div className="kcard-d p-5">
                 <s.icon className={`w-4 h-4 mb-3 ${s.gold ? "text-[#E0A64E]" : "text-white/40"}`} />
                 <div className="grad-text kinetic-display text-4xl mb-1">{s.value}</div>
                 <div className="text-white/50 text-xs font-sans">{s.label}</div>
@@ -193,11 +193,11 @@ export default function AdminDashboard() {
                 Waitlist ({waitlist.length})
               </div>
               <button onClick={enrollAllWaitlist} disabled={enrollingAll || waitlist.length === 0}
-                className="bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] text-xs font-bold font-sans px-4 py-2 rounded-full transition-all flex items-center gap-1.5">
+                className="grad-btn text-white disabled:opacity-40 text-[#080C14] text-xs font-bold font-sans px-4 py-2 rounded-full transition-all flex items-center gap-1.5">
                 {enrollingAll ? "Enrolling..." : `Enroll All ${waitlist.length}`}
               </button>
             </div>
-            <div className="glass-dark rounded-2xl border border-white/[0.07] overflow-hidden">
+            <div className="ksurface-d border border-white/[0.07] overflow-hidden">
               {waitlist.map((w, i) => (
                 <div key={w.id} className={`flex items-center gap-4 px-5 py-3 hover:bg-white/[0.02] transition-colors
                   ${i < waitlist.length - 1 ? "border-b border-white/[0.05]" : ""}`}>
@@ -229,7 +229,7 @@ export default function AdminDashboard() {
                 Dismiss
               </button>
             </div>
-            <div className="glass-dark rounded-2xl border border-green-500/20 overflow-hidden">
+            <div className="ksurface-d border border-green-500/20 overflow-hidden">
               {enrollResult.enrolled.map((s: any, i: number) => (
                 <div key={s.email} className={`px-5 py-4 ${i < enrollResult.enrolled.length - 1 ? "border-b border-white/[0.05]" : ""}`}>
                   <div className="flex items-start justify-between gap-4">
@@ -261,7 +261,7 @@ export default function AdminDashboard() {
               View all →
             </Link>
           </div>
-          <div className="glass-dark rounded-2xl border border-white/[0.07] overflow-hidden">
+          <div className="ksurface-d border border-white/[0.07] overflow-hidden">
             {recentApps.length === 0 ? (
               <div className="p-10 text-center">
                 <p className="text-white/25 text-sm font-sans">No applications yet.</p>

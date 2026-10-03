@@ -45,7 +45,7 @@ export default function BroadcastPage() {
           </div>
         </div>
 
-        <div className="glass-dark glass-edge rounded-2xl p-5 space-y-4">
+        <div className="ksurface-d p-5 space-y-4">
           <div className="flex items-center gap-2 text-white/60 text-sm font-sans bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2.5">
             <Users className="w-4 h-4 text-[#D4A85C]" />
             {count === null ? "Counting recipients…" : <><span className="text-white font-semibold">{count}</span>&nbsp;student{count === 1 ? "" : "s"} will receive this</>}
@@ -69,7 +69,7 @@ export default function BroadcastPage() {
         </div>
 
         {result && (
-          <div className={`glass-dark glass-edge rounded-2xl p-5 flex items-start gap-3 ${result.failed === 0 ? "border-green-500/20" : ""}`}>
+          <div className={`ksurface-d p-5 flex items-start gap-3 ${result.failed === 0 ? "border-green-500/20" : ""}`}>
             {result.failed === 0 ? <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" /> : <AlertCircle className="w-5 h-5 text-[#D4A85C] flex-shrink-0 mt-0.5" />}
             <div className="text-sm font-sans">
               <div className="text-white/90 font-semibold">{result.failed === 0 ? "All emails sent" : "Sent with some failures"}</div>

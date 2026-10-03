@@ -75,11 +75,11 @@ export default function AssessmentsListPage() {
         </div>
 
         {loading ? (
-          <div className="theme-bg-elevated border theme-border rounded-2xl p-12 text-center">
+          <div className="ksurface p-12 text-center">
             <p className="theme-text-muted text-sm font-sans">Loading...</p>
           </div>
         ) : assessments.length === 0 ? (
-          <div className="theme-bg-elevated border theme-border rounded-2xl p-12 text-center" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+          <div className="ksurface p-12 text-center" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
             <Star className="w-10 h-10 text-[#E8E2D9] mx-auto mb-3" />
             <p className="theme-text text-sm font-semibold mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>No assessments yet</p>
             <p className="theme-text-muted text-xs font-sans">Assessments will appear here when published by your instructor.</p>

@@ -88,14 +88,14 @@ export default function MessagesPage() {
           </div>
           {!composing && !active && (
             <button onClick={() => setComposing(true)}
-              className="flex items-center gap-1.5 bg-royal-700 hover:bg-royal-800 text-white text-sm font-semibold font-sans px-4 py-2.5 rounded-xl transition-all">
+              className="flex items-center gap-1.5 grad-btn text-white text-sm font-semibold font-sans px-4 py-2.5 rounded-xl transition-all">
               <Plus className="w-4 h-4" /> New
             </button>
           )}
         </div>
 
         {composing ? (
-          <div className="theme-bg-elevated rounded-2xl border theme-border p-5 space-y-3">
+          <div className="ksurface p-5 space-y-3">
             <div className="flex items-center justify-between">
               <div className="theme-text text-sm font-semibold font-sans">New message</div>
               <button onClick={() => setComposing(false)} className="theme-text-muted hover:theme-text"><X className="w-4 h-4" /></button>
@@ -112,7 +112,7 @@ export default function MessagesPage() {
             </div>
           </div>
         ) : active ? (
-          <div className="theme-bg-elevated rounded-2xl border theme-border overflow-hidden flex flex-col min-h-[440px]">
+          <div className="ksurface overflow-hidden flex flex-col min-h-[440px]">
             <div className="px-5 py-3.5 border-b theme-border flex items-center gap-3">
               <button onClick={() => setActive(null)} className="theme-text-muted hover:theme-text"><ArrowLeft className="w-4 h-4" /></button>
               <div className="theme-text text-sm font-semibold font-sans truncate">{active.subject}</div>
@@ -143,7 +143,7 @@ export default function MessagesPage() {
         ) : loading ? (
           <div className="flex items-center gap-2 theme-text-muted text-sm py-10 justify-center"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</div>
         ) : convos.length === 0 ? (
-          <div className="theme-bg-elevated rounded-2xl border theme-border p-10 text-center">
+          <div className="ksurface p-10 text-center">
             <MessageSquare className="w-8 h-8 theme-text-muted mx-auto mb-3 opacity-40" />
             <p className="theme-text-muted text-sm font-sans mb-4">No messages yet.</p>
             <button onClick={() => setComposing(true)} className="bg-[#D4A85C] hover:bg-[#c39a4f] text-[#0D1320] text-sm font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">Start a conversation</button>

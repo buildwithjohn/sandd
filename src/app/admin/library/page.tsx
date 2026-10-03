@@ -190,7 +190,7 @@ export default function AdminLibraryPage() {
         </div>
 
         {/* ── Add form ──────────────────────────────────────── */}
-        <div className="glass-dark border border-white/[0.07] rounded-2xl p-5 space-y-4">
+        <div className="ksurface-d p-5 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="sm:col-span-2">
               <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Title *</label>

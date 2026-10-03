@@ -114,7 +114,7 @@ export default function ProfilePage() {
                 }
               </div>
               <button onClick={() => fileRef.current?.click()} disabled={uploading}
-                className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-[#D4A85C] hover:bg-[#C49848] border-2 border-[#1A1A2E] flex items-center justify-center transition-colors">
+                className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full grad-hero border-2 border-[#1A1A2E] flex items-center justify-center transition-colors">
                 <Camera className="w-3 h-3 theme-text" />
               </button>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
@@ -141,7 +141,7 @@ export default function ProfilePage() {
 
         {/* Personal info */}
         <motion.div variants={rise(0.2)} initial="hidden" animate="visible">
-          <div className="theme-bg-elevated rounded-2xl border theme-border p-6 space-y-4"
+          <div className="ksurface p-6 space-y-4"
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
             <h2 className="theme-text text-base font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Personal Information
@@ -170,7 +170,7 @@ export default function ProfilePage() {
               <p className="theme-text-faint text-xs font-sans mt-1">Email cannot be changed. Contact admin if needed.</p>
             </div>
             <button onClick={saveProfile} disabled={saving}
-              className="w-full bg-[#1A1A2E] hover:bg-[#2A2A4E] disabled:opacity-50 text-white font-semibold text-sm py-3 rounded-xl transition-all font-sans flex items-center justify-center gap-2">
+              className="w-full grad-btn disabled:opacity-50 text-white font-semibold text-sm py-3 rounded-xl transition-all font-sans flex items-center justify-center gap-2">
               <Save className="w-4 h-4" /> {saving ? "Saving..." : "Save Changes"}
             </button>
           </div>
@@ -178,7 +178,7 @@ export default function ProfilePage() {
 
         {/* Change password */}
         <motion.div variants={rise(0.3)} initial="hidden" animate="visible">
-          <div className="theme-bg-elevated rounded-2xl border theme-border p-6 space-y-4"
+          <div className="ksurface p-6 space-y-4"
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
             <h2 className="theme-text text-base font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Change Password

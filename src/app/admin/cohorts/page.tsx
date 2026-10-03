@@ -117,7 +117,7 @@ export default function CohortsPage() {
           <>
             {/* Current cohort / intake control */}
             {current ? (
-              <div className="glass-dark glass-edge rounded-2xl p-6">
+              <div className="ksurface-d p-6">
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
@@ -167,14 +167,14 @@ export default function CohortsPage() {
                 </div>
               </div>
             ) : (
-              <div className="glass-dark glass-edge rounded-2xl p-6 text-center text-white/50 text-sm font-sans">
+              <div className="ksurface-d p-6 text-center text-white/50 text-sm font-sans">
                 No current cohort set. Create one below (or run <code className="text-[#D4A85C]">cohort-schema.sql</code> if cohorts don't load), then mark it current.
               </div>
             )}
 
             {/* Admit results */}
             {admitResult && admitResult.length > 0 && (
-              <div className="glass-dark glass-edge rounded-2xl p-5">
+              <div className="ksurface-d p-5">
                 <div className="flex items-center justify-between mb-3">
                   <div className="text-green-400 text-xs tracking-[0.15em] uppercase font-sans flex items-center gap-1.5">
                     <CircleCheck className="w-3.5 h-3.5" /> {admitResult.length} admitted — login details (emailed to each)
@@ -196,7 +196,7 @@ export default function CohortsPage() {
             )}
 
             {/* Create cohort */}
-            <div className="glass-dark glass-edge rounded-2xl p-5">
+            <div className="ksurface-d p-5">
               <div className="text-white/50 text-xs tracking-[0.15em] uppercase font-sans mb-3">New cohort</div>
               <div className="flex flex-col sm:flex-row gap-3">
                 <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. 2027 Cohort" className={inp} />

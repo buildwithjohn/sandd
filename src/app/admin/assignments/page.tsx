@@ -160,7 +160,7 @@ export default function AssignmentsPage() {
             )}
 
             {submissions.length === 0 && (
-              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-10 text-center">
+              <div className="ksurface-d p-10 text-center">
                 <p className="text-gray-500 text-sm">No submissions yet.</p>
               </div>
             )}

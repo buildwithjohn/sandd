@@ -62,7 +62,7 @@ export default function LibraryPage() {
             <Loader2 className="w-4 h-4 animate-spin" /> Loading the library...
           </div>
         ) : items.length === 0 ? (
-          <div className="theme-bg-elevated rounded-2xl border theme-border p-10 text-center">
+          <div className="ksurface p-10 text-center">
             <PlayCircle className="w-8 h-8 theme-text-muted mx-auto mb-3 opacity-40" />
             <p className="theme-text-muted text-sm font-sans">Nothing has been added to the library yet. Check back soon.</p>
           </div>
@@ -76,7 +76,7 @@ export default function LibraryPage() {
                     const isOpen = active === item.id;
                     return (
                       <motion.div key={item.id} variants={rise((gi + i) * 0.05)} initial="hidden" animate="visible">
-                        <div className="theme-bg-elevated rounded-2xl border theme-border overflow-hidden"
+                        <div className="ksurface overflow-hidden"
                           style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
                           {/* Header */}
                           <button onClick={() => setActive(isOpen ? null : item.id)}

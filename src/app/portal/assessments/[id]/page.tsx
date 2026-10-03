@@ -210,7 +210,7 @@ export default function StudentAssessmentPage() {
         <p className="theme-text-muted text-sm font-sans leading-relaxed">
           Your responses have been received. Your instructor will review the theory section and release your results.
         </p>
-        <div className="theme-bg-elevated border theme-border rounded-2xl p-5" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+        <div className="ksurface p-5" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
           <div className="theme-text-muted text-xs uppercase tracking-widest font-sans mb-3">Part A — Objectives (Auto-Marked)</div>
           <div className="theme-text text-3xl font-bold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             {submission?.obj_score} <span className="theme-text-muted text-lg font-normal">/ {assessment?.obj_marks}</span>
@@ -257,7 +257,7 @@ export default function StudentAssessmentPage() {
         </div>
 
         {/* Part A review with correct answers */}
-        <div className="theme-bg-elevated border theme-border rounded-2xl overflow-hidden" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+        <div className="ksurface overflow-hidden" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
           <div className="px-5 py-3 border-b theme-border-soft">
             <h2 className="theme-text text-sm font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Part A — Objective Review
@@ -303,7 +303,7 @@ export default function StudentAssessmentPage() {
 
         {/* Theory feedback */}
         {theory.length > 0 && (
-          <div className="theme-bg-elevated border theme-border rounded-2xl overflow-hidden" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+          <div className="ksurface overflow-hidden" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
             <div className="px-5 py-3 border-b theme-border-soft">
               <h2 className="theme-text text-sm font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                 Part B — Theory Feedback
@@ -349,7 +349,7 @@ export default function StudentAssessmentPage() {
           <p className="theme-text-muted text-sm font-sans mt-1">{assessment?.courses?.title}</p>
         </div>
 
-        <div className="theme-bg-elevated border theme-border rounded-2xl p-6 space-y-4" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+        <div className="ksurface p-6 space-y-4" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
           <div className="grid grid-cols-2 gap-4">
             {[
               ["Total Marks", `${assessment?.total_marks}`],
@@ -382,7 +382,7 @@ export default function StudentAssessmentPage() {
         </div>
 
         <button onClick={() => setPhase("objectives")}
-          className="w-full bg-[#1A1A2E] hover:bg-[#2A2A4E] text-white font-bold text-sm py-4 rounded-full transition-all font-sans">
+          className="w-full grad-btn text-white font-bold text-sm py-4 rounded-full transition-all font-sans">
           Start Assessment →
         </button>
       </div>
@@ -410,7 +410,7 @@ export default function StudentAssessmentPage() {
 
           {/* Question */}
           <motion.div key={currentQ} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-            className="theme-bg-elevated border theme-border rounded-2xl p-6" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+            className="ksurface p-6" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
             <div className="flex items-start gap-3 mb-5">
               <span className="w-8 h-8 rounded-full bg-[#1A1A2E] flex items-center justify-center theme-accent text-xs font-bold flex-shrink-0">
                 {currentQ + 1}
@@ -514,7 +514,7 @@ export default function StudentAssessmentPage() {
         </div>
 
         {theory.map((q, i) => (
-          <div key={q.id} className="theme-bg-elevated border theme-border rounded-2xl p-5" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+          <div key={q.id} className="ksurface p-5" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
             <div className="flex items-start justify-between gap-3 mb-4">
               <div className="flex items-start gap-3">
                 <span className="w-7 h-7 rounded-full bg-[#1A1A2E] flex items-center justify-center theme-accent text-xs font-bold flex-shrink-0">
@@ -548,7 +548,7 @@ export default function StudentAssessmentPage() {
         </div>
 
         <button onClick={submitExam} disabled={submitting}
-          className="w-full flex items-center justify-center gap-2 bg-[#1A1A2E] hover:bg-[#2A2A4E] disabled:opacity-50 text-white font-bold text-sm py-4 rounded-full transition-all font-sans">
+          className="w-full flex items-center justify-center gap-2 grad-btn disabled:opacity-50 text-white font-bold text-sm py-4 rounded-full transition-all font-sans">
           {submitting
             ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
             : <><Send className="w-4 h-4" /> Submit Assessment</>

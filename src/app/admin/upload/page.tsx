@@ -337,7 +337,7 @@ export default function CourseBuilderPage() {
 
         {/* SUBTOPIC TAB */}
         {tab === "subtopic" && (
-          <div className="glass-dark border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
+          <div className="ksurface-d p-5 sm:p-6 space-y-5">
             <div className="pb-4 border-b border-white/[0.06]">
               <div className="text-white text-sm font-semibold font-sans">Add a Subtopic</div>
               <div className="text-white/30 text-xs font-sans mt-0.5">Pick a content type and optionally attach a file. Large audio uploads run directly to storage so no size limit besides 100MB per file.</div>
@@ -552,7 +552,7 @@ export default function CourseBuilderPage() {
             )}
 
             <button onClick={handleSaveSubtopic} disabled={sSaving || !sTitle || !sCourseId}
-              className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(212,168,92,0.3)]">
+              className="w-full grad-btn text-white disabled:opacity-40 text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans flex items-center justify-center gap-2 hover:shadow-[0_0_30px_rgba(212,168,92,0.3)]">
               {sSaving
                 ? <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</>
                 : <><Plus className="w-4 h-4" /> {sPublishMode === "now" ? "Publish Subtopic" : "Schedule Subtopic"}</>}
@@ -562,7 +562,7 @@ export default function CourseBuilderPage() {
 
         {/* RESOURCES TAB */}
         {tab === "resources" && (
-          <div className="glass-dark border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
+          <div className="ksurface-d p-5 sm:p-6 space-y-5">
             <div className="pb-4 border-b border-white/[0.06]">
               <div className="text-white text-sm font-semibold font-sans">Course Resources</div>
               <div className="text-white/30 text-xs font-sans mt-0.5">Upload multiple files per course. Students see them grouped by category.</div>
@@ -632,7 +632,7 @@ export default function CourseBuilderPage() {
                   )}
 
                   <button onClick={handleSaveResource} disabled={rSaving || !rFile || !rTitle}
-                    className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-2.5 rounded-full transition-all font-sans flex items-center justify-center gap-2">
+                    className="w-full grad-btn text-white disabled:opacity-40 text-[#080C14] font-bold text-sm py-2.5 rounded-full transition-all font-sans flex items-center justify-center gap-2">
                     {rSaving ? <><Loader2 className="w-4 h-4 animate-spin" /> Uploading...</> : <><Upload className="w-4 h-4" /> Add Resource</>}
                   </button>
                 </div>
@@ -673,7 +673,7 @@ export default function CourseBuilderPage() {
 
         {/* MANAGE TAB */}
         {tab === "manage" && (
-          <div className="glass-dark border border-white/[0.07] rounded-2xl p-5 sm:p-6 space-y-5">
+          <div className="ksurface-d p-5 sm:p-6 space-y-5">
             <div className="pb-4 border-b border-white/[0.06]">
               <div className="text-white text-sm font-semibold font-sans">Manage Subtopics</div>
               <div className="text-white/30 text-xs font-sans mt-0.5">View and delete subtopics. Use Course Manager for full publish controls.</div>

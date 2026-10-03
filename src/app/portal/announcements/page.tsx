@@ -60,11 +60,11 @@ export default function AnnouncementsPage() {
         </motion.div>
 
         {loading ? (
-          <div className="theme-bg-elevated rounded-2xl border theme-border p-12 text-center">
+          <div className="ksurface p-12 text-center">
             <p className="theme-text-muted text-sm font-sans">Loading...</p>
           </div>
         ) : announcements.length === 0 ? (
-          <div className="theme-bg-elevated rounded-2xl border theme-border p-12 text-center"
+          <div className="ksurface p-12 text-center"
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
             <Megaphone className="w-10 h-10 text-[#E8E2D9] mx-auto mb-3" />
             <p className="theme-text-muted text-sm font-sans">No announcements yet.</p>

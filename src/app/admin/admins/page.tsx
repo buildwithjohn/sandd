@@ -131,7 +131,7 @@ export default function AdminsPage() {
           </div>
           {isSuperAdmin && (
             <button onClick={() => { setShowForm(s => !s); setCreatedCreds(null); }}
-              className="flex items-center gap-1.5 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] text-xs font-bold font-sans px-4 py-2.5 rounded-full transition-all flex-shrink-0">
+              className="flex items-center gap-1.5 grad-btn text-white text-xs font-bold font-sans px-4 py-2.5 rounded-full transition-all flex-shrink-0">
               <Plus className="w-3.5 h-3.5" /> {showForm ? "Cancel" : "Add Admin"}
             </button>
           )}
@@ -174,7 +174,7 @@ export default function AdminsPage() {
         {/* New admin form */}
         {showForm && isSuperAdmin && !createdCreds && (
           <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-            className="glass-dark border border-[#D4A85C]/20 rounded-2xl p-5 space-y-4">
+            className="ksurface-d p-5 space-y-4">
             <div className="text-white text-sm font-semibold font-sans pb-3 border-b border-white/[0.06]">Create New Admin</div>
 
             <div>
@@ -219,14 +219,14 @@ export default function AdminsPage() {
             </div>
 
             <button onClick={handleCreate} disabled={saving || !fullName.trim() || !email.trim()}
-              className="w-full bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans flex items-center justify-center gap-2">
+              className="w-full grad-btn text-white disabled:opacity-40 text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans flex items-center justify-center gap-2">
               {saving ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating...</> : <><Plus className="w-4 h-4" /> Create Admin Account</>}
             </button>
           </motion.div>
         )}
 
         {/* List */}
-        <div className="glass-dark border border-white/[0.07] rounded-2xl p-5">
+        <div className="ksurface-d p-5">
           <div className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans mb-4">
             {admins.length} admin{admins.length !== 1 ? "s" : ""}
           </div>

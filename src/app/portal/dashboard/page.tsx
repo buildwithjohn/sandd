@@ -202,7 +202,7 @@ export default function StudentDashboard() {
 
         {/* ── ORIENTATION RECORDING ─────────────────────────────────── */}
         <motion.div variants={rise(0.18)} initial="hidden" animate="visible"
-          className="theme-bg-elevated border theme-border rounded-2xl overflow-hidden"
+          className="ksurface overflow-hidden"
           style={{ boxShadow: "0 4px 20px -8px rgba(45, 27, 94, 0.08)" }}>
           <div className="px-6 py-4 border-b theme-border-soft flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
@@ -233,7 +233,7 @@ export default function StudentDashboard() {
         {nextSubtopic && (
           <motion.div variants={rise(0.22)} initial="hidden" animate="visible">
             <Link href={`/portal/lessons/${nextSubtopic.id}`}
-              className="group block relative theme-bg-elevated border theme-border rounded-2xl p-6 sm:p-8 hover:border-gilt-400/60 transition-all overflow-hidden"
+              className="group block relative ksurface p-6 sm:p-8 hover:border-gilt-400/60 transition-all overflow-hidden"
               style={{ boxShadow: "0 4px 20px -8px rgba(45, 27, 94, 0.08)" }}>
 
               <div className="absolute top-0 right-0 w-1/3 h-full opacity-30 pointer-events-none"
@@ -275,7 +275,7 @@ export default function StudentDashboard() {
             <div className="space-y-2">
               {pendingAssessments.map((a) => (
                 <Link key={a.id} href={`/portal/assessments/${a.id}`}
-                  className="group flex items-center gap-4 theme-bg-elevated border theme-border rounded-2xl px-5 py-4 hover:border-royal-200 transition-all">
+                  className="group flex items-center gap-4 ksurface px-5 py-4 hover:border-royal-200 transition-all">
                   <div className="w-10 h-10 rounded-xl theme-accent-bg border theme-border flex items-center justify-center flex-shrink-0">
                     <Star className="w-4 h-4 theme-accent" />
                   </div>
@@ -314,12 +314,12 @@ export default function StudentDashboard() {
             </div>
 
             {recentCourses.length === 0 ? (
-              <div className="theme-bg-elevated border theme-border rounded-2xl p-12 text-center">
+              <div className="ksurface p-12 text-center">
                 <BookOpen className="w-10 h-10 theme-text-faint mx-auto mb-3" />
                 <p className="theme-text-muted text-sm" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>No courses yet.</p>
               </div>
             ) : (
-              <div className="theme-bg-elevated rounded-2xl border theme-border overflow-hidden"
+              <div className="ksurface overflow-hidden"
                 style={{ boxShadow: "0 4px 20px -8px rgba(45, 27, 94, 0.06)" }}>
                 {recentCourses.map((course, i) => (
                   <Link key={course.id} href={`/portal/courses/${course.slug}`}
@@ -356,14 +356,14 @@ export default function StudentDashboard() {
             </div>
 
             {announcements.length === 0 ? (
-              <div className="theme-bg-elevated border theme-border rounded-2xl p-6 text-center">
+              <div className="ksurface p-6 text-center">
                 <p className="text-ink-400 text-xs" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>No announcements.</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {announcements.map(a => (
                   <Link key={a.id} href="/portal/announcements"
-                    className="block theme-bg-elevated border theme-border rounded-2xl p-4 hover:border-gilt-400/40 transition-all">
+                    className="block ksurface p-4 hover:border-gilt-400/40 transition-all">
                     {a.is_pinned && (
                       <div className="theme-accent text-[9px] tracking-[0.3em] uppercase font-medium mb-2" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
                         ◆ Pinned
