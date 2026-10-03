@@ -41,7 +41,7 @@ export default function AdmissionLetterPage() {
       <div className="space-y-5">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+            <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Admission Letter
             </h1>
             <p className="theme-text-muted text-sm font-sans">

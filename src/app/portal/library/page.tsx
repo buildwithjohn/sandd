@@ -51,7 +51,7 @@ export default function LibraryPage() {
     <PortalShell>
       <div className="space-y-5">
         <motion.div variants={rise()} initial="hidden" animate="visible">
-          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             Library
           </h1>
           <p className="theme-text-muted text-sm font-sans">Recordings and teachings you can revisit anytime — watch, listen, and download the notes.</p>
@@ -87,7 +87,7 @@ export default function LibraryPage() {
                                 : <FileDown className="w-5 h-5 theme-accent" />}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="theme-text text-sm font-semibold mb-0.5" style={{ fontFamily: "'Georgia', serif" }}>{item.title}</div>
+                              <div className="theme-text text-sm font-semibold mb-0.5" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{item.title}</div>
                               {item.description && <p className="theme-text-muted text-xs font-sans leading-relaxed line-clamp-2">{item.description}</p>}
                             </div>
                             <span className="theme-text-muted text-xs font-sans flex-shrink-0">{isOpen ? "Hide" : "Open"}</span>

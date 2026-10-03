@@ -181,7 +181,7 @@ export default function StudentAssessmentPage() {
         <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto">
           <Lock className="w-8 h-8 text-red-400" />
         </div>
-        <h1 className="text-2xl font-semibold theme-text" style={{ fontFamily: "'Georgia', serif" }}>
+        <h1 className="text-2xl font-semibold theme-text" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
           This Examination Has Closed
         </h1>
         <p className="theme-text-muted text-sm font-sans leading-relaxed">
@@ -204,7 +204,7 @@ export default function StudentAssessmentPage() {
         <div className="w-16 h-16 rounded-full bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center mx-auto">
           <CheckCircle className="w-8 h-8 theme-accent" />
         </div>
-        <h1 className="text-2xl font-semibold theme-text" style={{ fontFamily: "'Georgia', serif" }}>
+        <h1 className="text-2xl font-semibold theme-text" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
           Assessment Submitted
         </h1>
         <p className="theme-text-muted text-sm font-sans leading-relaxed">
@@ -212,7 +212,7 @@ export default function StudentAssessmentPage() {
         </p>
         <div className="theme-bg-elevated border theme-border rounded-2xl p-5" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
           <div className="theme-text-muted text-xs uppercase tracking-widest font-sans mb-3">Part A — Objectives (Auto-Marked)</div>
-          <div className="theme-text text-3xl font-bold" style={{ fontFamily: "'Georgia', serif" }}>
+          <div className="theme-text text-3xl font-bold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             {submission?.obj_score} <span className="theme-text-muted text-lg font-normal">/ {assessment?.obj_marks}</span>
           </div>
           <div className="theme-text-muted text-xs font-sans mt-2 flex items-center justify-center gap-1">
@@ -227,7 +227,7 @@ export default function StudentAssessmentPage() {
   if (phase === "results") return (
     <PortalShell>
       <div className="max-w-2xl space-y-5">
-        <h1 className="text-2xl font-semibold theme-text" style={{ fontFamily: "'Georgia', serif" }}>
+        <h1 className="text-2xl font-semibold theme-text" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
           Assessment Results
         </h1>
 
@@ -235,7 +235,7 @@ export default function StudentAssessmentPage() {
         <div className="bg-[#1A1A2E] rounded-2xl p-7 text-center"
           style={{ boxShadow: "0 8px 32px rgba(26,26,46,0.15)" }}>
           <div className="theme-accent text-xs tracking-[0.2em] uppercase font-sans mb-2">Final Score</div>
-          <div className="text-white text-5xl font-bold mb-2" style={{ fontFamily: "'Georgia', serif" }}>
+          <div className="text-white text-5xl font-bold mb-2" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             {submission?.total_score}
             <span className="text-white/30 text-2xl font-normal">/{assessment?.total_marks}</span>
           </div>
@@ -259,7 +259,7 @@ export default function StudentAssessmentPage() {
         {/* Part A review with correct answers */}
         <div className="theme-bg-elevated border theme-border rounded-2xl overflow-hidden" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
           <div className="px-5 py-3 border-b theme-border-soft">
-            <h2 className="theme-text text-sm font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
+            <h2 className="theme-text text-sm font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Part A — Objective Review
             </h2>
           </div>
@@ -305,7 +305,7 @@ export default function StudentAssessmentPage() {
         {theory.length > 0 && (
           <div className="theme-bg-elevated border theme-border rounded-2xl overflow-hidden" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
             <div className="px-5 py-3 border-b theme-border-soft">
-              <h2 className="theme-text text-sm font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
+              <h2 className="theme-text text-sm font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                 Part B — Theory Feedback
               </h2>
             </div>
@@ -343,7 +343,7 @@ export default function StudentAssessmentPage() {
     <PortalShell>
       <div className="max-w-lg space-y-5">
         <div>
-          <h1 className="text-2xl font-semibold theme-text" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             {assessment?.title}
           </h1>
           <p className="theme-text-muted text-sm font-sans mt-1">{assessment?.courses?.title}</p>
@@ -502,7 +502,7 @@ export default function StudentAssessmentPage() {
       <div className="max-w-2xl space-y-5">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold theme-text" style={{ fontFamily: "'Georgia', serif" }}>
+            <h1 className="text-xl font-semibold theme-text" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Part B — Theory
             </h1>
             <p className="theme-text-muted text-xs font-sans mt-0.5">{theory.length} questions · {assessment?.theory_marks} marks · Written answers</p>

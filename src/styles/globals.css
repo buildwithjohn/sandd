@@ -40,7 +40,7 @@ html.dark {
 * { box-sizing: border-box; }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: var(--font-sans), "Manrope", system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -160,4 +160,63 @@ html.dark {
 @media (prefers-reduced-motion: reduce) {
   .aurora-gold, .aurora-royal, .animate-floaty, .animate-fade-up { animation: none !important; }
   .glass-hover { transition: none !important; }
+}
+
+/* ============================================================
+   BOLD CONTEMPORARY — high-contrast, graphic, big type.
+   Solid color blocks (royal / gold / ivory / ink), no glass.
+   ============================================================ */
+:root {
+  --ink:    #0F0B1A;
+  --ivory:  #FAF9F6;
+  --royal2: #2D1B5E;
+  --gold2:  #C9A961;
+}
+.bc-ink    { color: var(--ink); }
+.bc-serif  { font-family: var(--font-display), Georgia, serif; }
+.bc-display { font-family: var(--font-display), Georgia, serif; font-weight: 500; letter-spacing: -0.035em; line-height: 0.95; }
+.block-royal { background: var(--royal2); color: #fff; }
+.block-ivory { background: var(--ivory); color: var(--ink); }
+.block-gold  { background: var(--gold2); color: #1b1526; }
+.block-ink   { background: var(--ink);  color: var(--ivory); }
+.rule-gold   { height: 5px; width: 64px; background: var(--gold2); }
+/* bold, flat, high-contrast card with a decisive hover */
+.bc-card {
+  background: #fff; border: 1.5px solid rgba(15,11,26,0.12);
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s, border-color .3s;
+}
+.bc-card:hover { transform: translateY(-4px); border-color: var(--royal2); box-shadow: 10px 10px 0 0 var(--gold2); }
+.bc-card-dark { background: rgba(255,255,255,0.03); border: 1.5px solid rgba(255,255,255,0.14); }
+/* oversized section index numeral */
+.bc-index { font-family: var(--font-display), Georgia, serif; font-weight: 500; line-height: 1; color: var(--gold2); opacity: .9; }
+/* link/button underline swipe */
+.bc-btn-fill { background: var(--royal2); color:#fff; transition: background .25s, transform .25s; }
+.bc-btn-fill:hover { background: #3d2a74; transform: translateY(-2px); }
+.bc-btn-gold { background: var(--gold2); color:#1b1526; transition: background .25s, transform .25s; }
+.bc-btn-gold:hover { background: #d8ba72; transform: translateY(-2px); }
+
+/* ============================================================
+   KINETIC — animated gradient + flowing line-field (Cornell-inspired)
+   Big bold grotesque, vibrant moving gradient, drifting contour lines.
+   ============================================================ */
+.kinetic-display { font-family: var(--font-display), system-ui, sans-serif; font-weight: 800; letter-spacing: -0.03em; line-height: 0.9; }
+.grad-hero {
+  background: linear-gradient(120deg, #241253 0%, #4C1D95 26%, #7C3AED 48%, #C026A3 72%, #E0A64E 100%);
+  background-size: 220% 220%;
+  animation: gradShift 20s ease infinite;
+}
+.grad-band {
+  background: linear-gradient(120deg, #C026A3 0%, #7C3AED 45%, #241253 100%);
+  background-size: 200% 200%;
+  animation: gradShift 24s ease infinite;
+}
+@keyframes gradShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+.line-drift  { animation: lineDrift 26s linear infinite; }
+.line-drift2 { animation: lineDrift 40s linear infinite reverse; }
+@keyframes lineDrift { from { transform: translateX(0); } to { transform: translateX(-33.333%); } }
+/* word that cycles accent colors */
+.accent-cycle { animation: accentCycle 9s linear infinite; }
+@keyframes accentCycle { 0%,100% { color: #E0A64E; } 33% { color: #F472B6; } 66% { color: #A78BFA; } }
+@media (prefers-reduced-motion: reduce) {
+  .grad-hero, .grad-band, .line-drift, .line-drift2, .accent-cycle { animation: none !important; }
 }

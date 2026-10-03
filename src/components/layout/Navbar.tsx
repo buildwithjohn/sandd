@@ -17,8 +17,8 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 bg-[#080C14]/70 backdrop-blur-xl border-b border-white/[0.07]"
-      style={{ fontFamily: "'Georgia', serif" }}>
+    <nav className="sticky top-0 z-50 bg-[#0B0612]/70 backdrop-blur-xl border-b border-white/[0.07]"
+      style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
@@ -44,7 +44,7 @@ export default function Navbar() {
             </Link>
           ))}
           <Link href="/portal/dashboard"
-            className="flex items-center gap-1.5 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] text-sm font-semibold font-sans px-4 py-2 rounded-full transition-all hover:shadow-[0_0_28px_rgba(212,168,92,0.35)]">
+            className="flex items-center gap-1.5 grad-hero text-white text-sm font-semibold font-sans px-4 py-2 rounded-full transition-all hover:shadow-[0_0_28px_rgba(124,58,237,0.45)]">
             Student Portal <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -58,7 +58,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {open && (
-        <div className="md:hidden border-t border-white/[0.07] bg-[#080C14]/95 backdrop-blur-xl px-4 pb-4 pt-2 flex flex-col gap-1">
+        <div className="md:hidden border-t border-white/[0.07] bg-[#0B0612]/95 backdrop-blur-xl px-4 pb-4 pt-2 flex flex-col gap-1">
           {links.map((l) => (
             <Link key={l.href} href={l.href}
               className={cn("text-sm font-sans py-2.5 transition-colors",
@@ -68,7 +68,7 @@ export default function Navbar() {
             </Link>
           ))}
           <Link href="/portal/dashboard"
-            className="bg-[#D4A85C] text-[#080C14] text-sm font-semibold font-sans px-4 py-2.5 rounded-full text-center mt-2"
+            className="grad-hero text-white text-sm font-semibold font-sans px-4 py-2.5 rounded-full text-center mt-2"
             onClick={() => setOpen(false)}>
             Student Portal
           </Link>

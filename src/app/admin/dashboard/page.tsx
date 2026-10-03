@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Users, Video, FileText, BookOpen, Upload, ClipboardList, Award, Megaphone, CheckCircle, Clock, XCircle, Mail } from "lucide-react";
+import LineField from "@/components/LineField";
 
 const rise = (delay = 0) => ({
   hidden:  { opacity: 0, y: 16 },
@@ -96,15 +97,22 @@ export default function AdminDashboard() {
     <AdminShell>
       <div className="space-y-6">
 
-        {/* Greeting */}
-        <motion.div variants={rise(0)} initial="hidden" animate="visible">
-          <div className="flex items-center gap-3 mb-1">
-            <div className="h-px w-8 bg-[#D4A85C]/40" />
-            <span className="text-[#D4A85C] text-xs tracking-[0.2em] uppercase font-sans">{greeting}</span>
+        {/* Greeting — kinetic hero */}
+        <motion.div variants={rise(0)} initial="hidden" animate="visible"
+          className="relative rounded-[24px] p-7 sm:p-9 overflow-hidden grad-hero"
+          style={{ boxShadow: "0 20px 50px -20px rgba(45,27,94,0.5)" }}>
+          <div className="absolute inset-0 line-drift opacity-80"><LineField stroke="#ffffff" /></div>
+          <div className="absolute inset-0 line-drift2 opacity-40"><LineField stroke="#E0A64E" count={14} /></div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-px w-8 bg-white/50" />
+              <span className="text-white/80 text-xs tracking-[0.2em] uppercase font-sans">{greeting}</span>
+            </div>
+            <h1 className="kinetic-display text-4xl sm:text-5xl text-white leading-[0.9]">
+              {adminName}
+            </h1>
+            <p className="text-white/70 text-sm font-sans mt-3">Here&apos;s what&apos;s happening across the school today.</p>
           </div>
-          <h1 className="text-3xl font-medium text-white" style={{ fontFamily: "'Georgia', serif" }}>
-            {adminName}
-          </h1>
         </motion.div>
 
         {/* Stats */}
@@ -121,7 +129,7 @@ export default function AdminDashboard() {
               }`}>
                 <s.icon className={`w-4 h-4 mb-3 ${s.gold ? "text-[#D4A85C]" : "text-white/30"}`} />
                 <div className={`text-3xl font-semibold mb-1 ${s.gold ? "text-[#D4A85C]" : "text-white"}`}
-                  style={{ fontFamily: "'Georgia', serif" }}>{s.value}</div>
+                  style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{s.value}</div>
                 <div className="text-white/30 text-xs font-sans">{s.label}</div>
               </div>
             </motion.div>

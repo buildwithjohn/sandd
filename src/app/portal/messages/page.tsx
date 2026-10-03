@@ -83,7 +83,7 @@ export default function MessagesPage() {
       <div className="space-y-5">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>Messages</h1>
+            <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>Messages</h1>
             <p className="theme-text-muted text-sm font-sans">Reach the School Office. Replies arrive here and by email.</p>
           </div>
           {!composing && !active && (

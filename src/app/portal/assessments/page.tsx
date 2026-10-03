@@ -68,7 +68,7 @@ export default function AssessmentsListPage() {
     <PortalShell>
       <div className="space-y-5">
         <div>
-          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             Assessments
           </h1>
           <p className="theme-text-muted text-sm font-sans">Your course assessments and exams.</p>
@@ -81,7 +81,7 @@ export default function AssessmentsListPage() {
         ) : assessments.length === 0 ? (
           <div className="theme-bg-elevated border theme-border rounded-2xl p-12 text-center" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
             <Star className="w-10 h-10 text-[#E8E2D9] mx-auto mb-3" />
-            <p className="theme-text text-sm font-semibold mb-1" style={{ fontFamily: "'Georgia', serif" }}>No assessments yet</p>
+            <p className="theme-text text-sm font-semibold mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>No assessments yet</p>
             <p className="theme-text-muted text-xs font-sans">Assessments will appear here when published by your instructor.</p>
           </div>
         ) : (
@@ -107,7 +107,7 @@ export default function AssessmentsListPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="theme-accent text-[10px] uppercase tracking-widest font-sans mb-0.5">{a.courses?.title}</div>
-                        <div className="theme-text text-sm font-semibold group-hover:theme-accent transition-colors" style={{ fontFamily: "'Georgia', serif" }}>
+                        <div className="theme-text text-sm font-semibold group-hover:theme-accent transition-colors" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                           {a.title}
                         </div>
                         <div className="flex items-center gap-3 mt-1">

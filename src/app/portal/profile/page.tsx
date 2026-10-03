@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase";
 import PortalShell from "@/components/portal/PortalShell";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Camera, Save, Upload } from "lucide-react";
+import { Camera, Save, Upload, Eye, EyeOff } from "lucide-react";
 
 const rise = (delay = 0) => ({
   hidden:  { opacity: 0, y: 16 },
@@ -28,6 +28,7 @@ export default function ProfilePage() {
   const [pwNew, setPwNew]         = useState("");
   const [pwConfirm, setPwConfirm] = useState("");
   const [changingPw, setChangingPw] = useState(false);
+  const [showPw, setShowPw]         = useState(false);
 
   const initials = fullName.split(" ").map(n => n[0]).slice(0,2).join("").toUpperCase() || "ST";
 
@@ -95,7 +96,7 @@ export default function ProfilePage() {
     <PortalShell>
       <div className="space-y-5 max-w-lg">
         <motion.div variants={rise()} initial="hidden" animate="visible">
-          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             My Profile
           </h1>
           <p className="theme-text-muted text-sm font-sans">Update your photo, details and password</p>
@@ -109,7 +110,7 @@ export default function ProfilePage() {
               <div className="w-16 h-16 rounded-2xl overflow-hidden bg-[#2A2A4E] border-2 border-white/10 flex items-center justify-center">
                 {avatarUrl
                   ? <img src={avatarUrl} alt={fullName} className="w-full h-full object-cover" />
-                  : <span className="text-white text-lg font-bold" style={{ fontFamily: "'Georgia', serif" }}>{initials}</span>
+                  : <span className="text-white text-lg font-bold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{initials}</span>
                 }
               </div>
               <button onClick={() => fileRef.current?.click()} disabled={uploading}
@@ -119,7 +120,7 @@ export default function ProfilePage() {
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
             </div>
             <div>
-              <h2 className="text-white text-lg font-medium" style={{ fontFamily: "'Georgia', serif" }}>
+              <h2 className="text-white text-lg font-medium" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                 {fullName || "Your Name"}
               </h2>
               <p className="text-white/40 text-xs font-sans mt-0.5">{email}</p>
@@ -142,7 +143,7 @@ export default function ProfilePage() {
         <motion.div variants={rise(0.2)} initial="hidden" animate="visible">
           <div className="theme-bg-elevated rounded-2xl border theme-border p-6 space-y-4"
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
-            <h2 className="theme-text text-base font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
+            <h2 className="theme-text text-base font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Personal Information
             </h2>
             <div>
@@ -179,17 +180,23 @@ export default function ProfilePage() {
         <motion.div variants={rise(0.3)} initial="hidden" animate="visible">
           <div className="theme-bg-elevated rounded-2xl border theme-border p-6 space-y-4"
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
-            <h2 className="theme-text text-base font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
+            <h2 className="theme-text text-base font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Change Password
             </h2>
             <div>
               <label className="theme-text-muted text-xs uppercase tracking-widest font-sans block mb-2">New Password</label>
-              <input type="password" value={pwNew} onChange={e => setPwNew(e.target.value)}
-                placeholder="Min 8 characters" className={inp} />
+              <div className="relative">
+                <input type={showPw ? "text" : "password"} value={pwNew} onChange={e => setPwNew(e.target.value)}
+                  placeholder="Min 8 characters" className={`${inp} pr-11`} />
+                <button type="button" onClick={() => setShowPw(v => !v)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 theme-text-faint hover:theme-text transition-colors">
+                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
             <div>
               <label className="theme-text-muted text-xs uppercase tracking-widest font-sans block mb-2">Confirm Password</label>
-              <input type="password" value={pwConfirm} onChange={e => setPwConfirm(e.target.value)}
+              <input type={showPw ? "text" : "password"} value={pwConfirm} onChange={e => setPwConfirm(e.target.value)}
                 placeholder="Repeat password" className={inp} />
               {pwConfirm && pwNew !== pwConfirm && (
                 <p className="text-red-400 text-xs font-sans mt-1">Passwords do not match</p>

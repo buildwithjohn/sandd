@@ -122,7 +122,7 @@ export default function LessonPage() {
             <p className="theme-accent text-[10px] uppercase tracking-widest font-sans mb-1">
               Subtopic {lesson.order_index}
             </p>
-            <h1 className="text-xl font-semibold theme-text" style={{ fontFamily: "'Georgia', serif" }}>
+            <h1 className="text-xl font-semibold theme-text" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               {lesson.title}
             </h1>
           </div>

@@ -7,8 +7,9 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { Eye, EyeOff, ArrowRight, CheckCircle, Loader2, Mail } from "lucide-react";
+import { Eye, EyeSlash, ArrowRight, CheckCircle, CircleNotch } from "@phosphor-icons/react";
 import RegistrationClosed from "@/components/RegistrationClosed";
+import LineField from "@/components/LineField";
 
 const rise = (delay = 0) => ({
   hidden:  { opacity: 0, y: 24, filter: "blur(3px)" },
@@ -202,8 +203,8 @@ export default function ApplyPage() {
   // ── LOADING ───────────────────────────────────────────────────────────────
   if (checkingReg) {
     return (
-      <div className="bg-[#080C14] min-h-screen flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-[#D4A85C]/30 border-t-[#D4A85C] rounded-full animate-spin" />
+      <div className="bg-[#0B0612] min-h-screen flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-[#7C3AED]/30 border-t-[#7C3AED] rounded-full animate-spin" />
       </div>
     );
   }
@@ -217,12 +218,15 @@ export default function ApplyPage() {
   if (step === "success") {
     const firstName = doneEmail.split("@")[0];
     return (
-      <div className="bg-[#080C14] min-h-screen flex flex-col items-center justify-center px-6 py-16"
-        style={{ fontFamily: "'Georgia', serif" }}>
+      <div className="bg-[#0B0612] min-h-screen flex flex-col items-center justify-center px-6 py-16 relative overflow-hidden"
+        style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
+        <div className="absolute inset-0 grad-hero opacity-30" />
+        <div className="absolute inset-0 line-drift opacity-30"><LineField stroke="#ffffff" /></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0612]/70 via-[#0B0612]/50 to-[#0B0612]" />
         <motion.div
           initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="w-full max-w-lg">
+          className="w-full max-w-lg relative z-10">
 
           {/* Prophet photo + logo */}
           <div className="flex items-center justify-center gap-4 mb-8">
@@ -242,16 +246,16 @@ export default function ApplyPage() {
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-10 bg-[#D4A85C]/40" />
-              <span className="text-[#D4A85C] text-xs tracking-[0.2em] uppercase font-sans">Welcome to the 2026 Cohort</span>
+              <span className="text-[#D4A85C] text-xs tracking-[0.2em] uppercase font-sans">Welcome to Cohort 0.2</span>
               <div className="h-px w-10 bg-[#D4A85C]/40" />
             </div>
-            <h1 className="text-4xl font-medium tracking-tight mb-2" style={{ letterSpacing: "-0.02em" }}>
-              You&apos;re In.
+            <h1 className="kinetic-display text-6xl mb-2 text-white">
+              You&apos;re <span className="accent-cycle">in.</span>
             </h1>
             <div className="flex items-center justify-center gap-2 mt-2">
-              <CheckCircle className="w-4 h-4 text-[#D4A85C]" />
-              <CheckCircle className="w-4 h-4 text-[#D4A85C]" />
-              <CheckCircle className="w-4 h-4 text-[#D4A85C]" />
+              <CheckCircle className="w-4 h-4 text-[#D4A85C]" weight="fill" />
+              <CheckCircle className="w-4 h-4 text-[#D4A85C]" weight="fill" />
+              <CheckCircle className="w-4 h-4 text-[#D4A85C]" weight="fill" />
               <span className="text-white/30 text-xs font-sans ml-1">Account · Courses · Active</span>
             </div>
           </div>
@@ -312,10 +316,10 @@ export default function ApplyPage() {
 
           {/* CTA */}
           <button onClick={() => router.push("/auth/login")}
-            className="w-full bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] font-bold text-sm
+            className="w-full grad-hero text-white font-bold text-sm
               py-4 rounded-full transition-all duration-300 font-sans flex items-center justify-center gap-2
-              hover:shadow-[0_0_40px_rgba(212,168,92,0.35)] hover:-translate-y-0.5">
-            Enter Your Student Portal <ArrowRight className="w-4 h-4" />
+              hover:shadow-[0_0_40px_rgba(124,58,237,0.45)] hover:-translate-y-0.5">
+            Enter Your Student Portal <ArrowRight className="w-4 h-4" weight="bold" />
           </button>
           <p className="text-white/20 text-xs font-sans text-center mt-3">
             Sign in with <span className="text-white/40">{doneEmail}</span> and your password
@@ -331,43 +335,37 @@ export default function ApplyPage() {
     placeholder-white/20 focus:outline-none transition-all duration-200
     ${errors[field]
       ? "border-red-500/50 focus:border-red-400/70 focus:bg-red-500/[0.04]"
-      : "border-white/10 focus:border-[#D4A85C]/50 focus:bg-[#D4A85C]/[0.03]"}`;
+      : "border-white/10 focus:border-[#E0A64E]/60 focus:bg-[#E0A64E]/[0.04]"}`;
 
   return (
-    <div className="bg-[#080C14] min-h-screen" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>
+    <div className="bg-[#0B0612] min-h-screen" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
 
       <div className="min-h-screen flex">
 
-        {/* ── LEFT — Hero panel ─────────────────────────────────────── */}
-        <div className="hidden lg:flex lg:w-[45%] relative flex-col justify-between p-12 overflow-hidden">
-          {/* Background */}
-          <div className="absolute inset-0">
-            <Image src="/assets/hero-bg.jpg" alt="" fill className="object-cover object-center opacity-60" />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#080C14]/70 via-[#080C14]/50 to-[#080C14]/80" />
-            <div className="absolute inset-0"
-              style={{ background: "radial-gradient(ellipse 60% 50% at 40% 60%, rgba(212,168,92,0.15) 0%, transparent 70%)" }} />
-          </div>
+        {/* ── LEFT — Kinetic hero panel ─────────────────────────────── */}
+        <div className="hidden lg:flex lg:w-[45%] relative flex-col justify-between p-12 overflow-hidden grad-hero">
+          <div className="absolute inset-0 line-drift opacity-90"><LineField stroke="#ffffff" /></div>
+          <div className="absolute inset-0 line-drift2 opacity-50"><LineField stroke="#E0A64E" count={18} /></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B0612]/70 via-transparent to-[#0B0612]/30" />
 
           {/* Logo */}
           <div className="relative z-10">
             <div className="flex items-center gap-3">
               <Image src="/assets/logo.png" alt="S&D Logo" width={40} height={40} className="rounded-xl" />
               <div>
-                <div className="text-white text-sm font-medium">S&D Prophetic School</div>
-                <div className="text-white/40 text-xs font-sans">Treasures in Clay Ministries</div>
+                <div className="text-white text-sm font-semibold">S&D Prophetic School</div>
+                <div className="text-white/50 text-xs font-sans">Treasures in Clay Ministries</div>
               </div>
             </div>
           </div>
 
           {/* Center quote */}
           <div className="relative z-10 py-12">
-            <div className="h-px w-12 bg-[#D4A85C]/40 mb-6" />
-            <blockquote className="text-2xl font-medium leading-[1.35] tracking-tight text-white mb-5"
-              style={{ letterSpacing: "-0.01em" }}>
-              &ldquo;But the one who prophesies speaks to people for their strengthening,
-              encouraging and comfort.&rdquo;
+            <div className="h-px w-12 bg-white/50 mb-6" />
+            <blockquote className="kinetic-display text-4xl leading-[1.05] text-white mb-5">
+              Speak for<br />strengthening,<br />encouragement<br />&amp; comfort.
             </blockquote>
-            <cite className="text-[#D4A85C] text-xs font-sans tracking-[0.15em] uppercase not-italic">
+            <cite className="text-white/70 text-xs font-sans tracking-[0.15em] uppercase not-italic">
               — 1 Corinthians 14:3
             </cite>
 
@@ -379,8 +377,8 @@ export default function ApplyPage() {
                 "Certificate & Diploma awarded",
               ].map(item => (
                 <div key={item} className="flex items-center gap-2.5">
-                  <div className="w-1 h-1 rounded-full bg-[#D4A85C]/60" />
-                  <span className="text-white/50 text-sm font-sans">{item}</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/70" />
+                  <span className="text-white/70 text-sm font-sans">{item}</span>
                 </div>
               ))}
             </div>
@@ -388,13 +386,13 @@ export default function ApplyPage() {
 
           {/* Prophet image bottom */}
           <div className="relative z-10 flex items-center gap-3">
-            <div className="w-10 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-white/10">
+            <div className="w-10 h-12 rounded-lg overflow-hidden flex-shrink-0 border border-white/20">
               <Image src="/assets/prophet-sule.png" alt="Prophet Sule" width={40} height={48}
                 className="w-full h-full object-cover object-top" />
             </div>
             <div>
-              <div className="text-white/70 text-xs font-sans">Founded by</div>
-              <div className="text-white text-sm font-medium" style={{ fontFamily: "'Georgia', serif" }}>
+              <div className="text-white/60 text-xs font-sans">Founded by</div>
+              <div className="text-white text-sm font-semibold">
                 Prophet Abiodun Sule
               </div>
             </div>
@@ -418,12 +416,12 @@ export default function ApplyPage() {
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-px w-8 bg-[#D4A85C]/40" />
-                <span className="text-[#D4A85C] text-xs tracking-[0.2em] uppercase font-sans">2026 Cohort</span>
+                <span className="text-[#D4A85C] text-xs tracking-[0.2em] uppercase font-sans">Cohort 0.2 — Now Open</span>
               </div>
-              <h1 className="text-3xl font-medium tracking-tight mb-2" style={{ letterSpacing: "-0.02em" }}>
-                Join the School
+              <h1 className="kinetic-display text-5xl mb-3 text-white leading-[0.95]">
+                Join the<br /><span className="accent-cycle">school.</span>
               </h1>
-              <p className="text-white/35 text-sm font-sans leading-relaxed">
+              <p className="text-white/40 text-sm font-sans leading-relaxed">
                 Create your account and begin your prophetic training journey — completely free.
               </p>
             </div>
@@ -455,7 +453,7 @@ export default function ApplyPage() {
                     placeholder="Min 8 characters" className={`${inp("password")} pr-11`} disabled={loading} />
                   <button type="button" onClick={() => setShowPw(v => !v)}
                     className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60 transition-colors">
-                    {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPw ? <EyeSlash className="w-4 h-4" weight="bold" /> : <Eye className="w-4 h-4" weight="bold" />}
                   </button>
                 </div>
                 {errors.password && <p className="text-red-400/80 text-xs font-sans mt-1.5">{errors.password}</p>}
@@ -487,12 +485,12 @@ export default function ApplyPage() {
 
               {/* Submit */}
               <button type="submit" disabled={loading}
-                className="w-full bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] font-bold text-sm
+                className="w-full grad-hero text-white font-bold text-sm
                   py-4 rounded-full transition-all duration-300 font-sans flex items-center justify-center gap-2
-                  disabled:opacity-50 hover:shadow-[0_0_40px_rgba(212,168,92,0.3)] mt-2">
+                  disabled:opacity-50 hover:shadow-[0_0_40px_rgba(124,58,237,0.45)] mt-2">
                 {loading
-                  ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating your account...</>
-                  : <>"Create Account — Free" <ArrowRight className="w-4 h-4" /></>
+                  ? <><CircleNotch className="w-4 h-4 animate-spin" weight="bold" /> Creating your account...</>
+                  : <>Create Account — Free <ArrowRight className="w-4 h-4" weight="bold" /></>
                 }
               </button>
             </form>

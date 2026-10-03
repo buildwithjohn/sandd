@@ -53,7 +53,7 @@ export default function AnnouncementsPage() {
     <PortalShell>
       <div className="space-y-5">
         <motion.div variants={rise()} initial="hidden" animate="visible">
-          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             Announcements
           </h1>
           <p className="theme-text-muted text-sm font-sans">{announcements.length} message{announcements.length !== 1 ? "s" : ""} from the school</p>
@@ -82,7 +82,7 @@ export default function AnnouncementsPage() {
                       <span className="theme-accent text-[10px] font-sans uppercase tracking-widest">Pinned</span>
                     </div>
                   )}
-                  <h2 className="theme-text text-base font-semibold mb-2" style={{ fontFamily: "'Georgia', serif" }}>
+                  <h2 className="theme-text text-base font-semibold mb-2" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                     {a.title}
                   </h2>
                   <p className="theme-text-muted text-sm font-sans leading-relaxed mb-4 whitespace-pre-wrap">

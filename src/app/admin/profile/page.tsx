@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import AdminShell from "@/components/admin/AdminShell";
 import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
-import { Save, Camera, Upload } from "lucide-react";
+import { Save, Camera, Upload, Eye, EyeOff } from "lucide-react";
 
 export default function AdminProfilePage() {
   const router = useRouter();
@@ -23,6 +23,7 @@ export default function AdminProfilePage() {
   const [pwNew, setPwNew]           = useState("");
   const [pwConfirm, setPwConfirm]   = useState("");
   const [changingPw, setChangingPw] = useState(false);
+  const [showPw, setShowPw]         = useState(false);
 
   const initials = fullName.split(" ").map(n => n[0]).slice(0,2).join("").toUpperCase() || "AD";
 
@@ -170,12 +171,18 @@ export default function AdminProfilePage() {
           <h2 className="font-display text-white text-lg font-medium">Change Password</h2>
           <div>
             <label className="text-xs text-gray-400 uppercase tracking-wide block mb-1.5">New Password</label>
-            <input type="password" value={pwNew} onChange={e => setPwNew(e.target.value)} placeholder="Min 8 characters"
-              className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
+            <div className="relative">
+              <input type={showPw ? "text" : "password"} value={pwNew} onChange={e => setPwNew(e.target.value)} placeholder="Min 8 characters"
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3.5 py-2.5 pr-11 text-sm text-white focus:outline-none focus:border-brand-500" />
+              <button type="button" onClick={() => setShowPw(v => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
+                {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
           <div>
             <label className="text-xs text-gray-400 uppercase tracking-wide block mb-1.5">Confirm Password</label>
-            <input type="password" value={pwConfirm} onChange={e => setPwConfirm(e.target.value)} placeholder="Repeat"
+            <input type={showPw ? "text" : "password"} value={pwConfirm} onChange={e => setPwConfirm(e.target.value)} placeholder="Repeat"
               className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500" />
             {pwConfirm && pwNew !== pwConfirm && <p className="text-red-400 text-xs mt-1">Passwords do not match</p>}
           </div>

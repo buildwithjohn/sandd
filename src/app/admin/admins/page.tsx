@@ -122,7 +122,7 @@ export default function AdminsPage() {
         {/* Header */}
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div>
-            <h1 className="text-2xl font-medium text-white" style={{ fontFamily: "'Georgia', serif" }}>
+            <h1 className="text-2xl font-medium text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Admins
             </h1>
             <p className="text-white/35 text-sm font-sans mt-1">
@@ -257,7 +257,7 @@ export default function AdminsPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <div className="text-white text-sm font-semibold font-sans truncate" style={{ fontFamily: "'Georgia', serif" }}>
+                      <div className="text-white text-sm font-semibold font-sans truncate" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                         {a.full_name}
                       </div>
                       {isMe && <span className="text-[9px] bg-white/[0.06] text-white/40 px-1.5 py-0.5 rounded font-sans">You</span>}

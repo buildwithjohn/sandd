@@ -184,7 +184,7 @@ export default function AdminLibraryPage() {
             <PlayCircle className="w-5 h-5 text-[#D4A85C]" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "'Georgia', serif" }}>Library</h1>
+            <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>Library</h1>
             <p className="text-white/40 text-sm font-sans">Permanent archive of recordings students can access anytime — video, audio, and reading materials.</p>
           </div>
         </div>
@@ -311,7 +311,7 @@ export default function AdminLibraryPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-white/90 text-sm font-semibold font-sans truncate" style={{ fontFamily: "'Georgia', serif" }}>{item.title}</span>
+                      <span className="text-white/90 text-sm font-semibold font-sans truncate" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{item.title}</span>
                       <span className="text-[10px] bg-[#D4A85C]/10 text-[#D4A85C] px-1.5 py-0.5 rounded font-sans">{item.category}</span>
                       {item.is_published
                         ? <span className="text-[10px] text-green-400/80 flex items-center gap-0.5 font-sans"><Eye className="w-3 h-3" /> Live</span>
