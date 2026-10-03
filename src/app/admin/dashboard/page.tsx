@@ -38,6 +38,8 @@ export default function AdminDashboard() {
   const [togglingReg, setTogglingReg] = useState(false);
   const [enrollingAll, setEnrollingAll] = useState(false);
   const [enrollResult, setEnrollResult] = useState<any>(null);
+  const [resending, setResending] = useState(false);
+  const [resendResult, setResendResult] = useState<any>(null);
 
   useEffect(() => {
     async function load() {
@@ -88,6 +90,22 @@ export default function AdminDashboard() {
       toast.error("Enrollment failed: " + err.message);
     } finally {
       setEnrollingAll(false);
+    }
+  }
+
+  async function resendCredentials() {
+    if (!confirm("Email login details to every student who hasn't signed in yet? Each gets a fresh temporary password.")) return;
+    setResending(true);
+    try {
+      const res = await fetch("/api/admin/resend-credentials", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed");
+      setResendResult(data);
+      toast.success(`${data.emailsSent} of ${data.total} login emails sent.`);
+    } catch (err: any) {
+      toast.error("Resend failed: " + err.message);
+    } finally {
+      setResending(false);
     }
   }
 
@@ -184,6 +202,45 @@ export default function AdminDashboard() {
               {togglingReg ? "Saving..." : regOpen ? "Close Registration" : "Open Registration"}
             </button>
           </div>
+        </motion.div>
+
+        {/* Resend login details to students who never signed in */}
+        <motion.div variants={rise(0.26)} initial="hidden" animate="visible">
+          <div className="ksurface-d p-5 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl grad-hero flex items-center justify-center flex-shrink-0">
+                <Mail className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <div className="text-white text-sm font-semibold font-sans">Resend login details</div>
+                <div className="text-white/40 text-xs font-sans mt-0.5">
+                  Emails a fresh password to every student who hasn&apos;t signed in yet (fixes any missed welcome emails).
+                </div>
+              </div>
+            </div>
+            <button onClick={resendCredentials} disabled={resending}
+              className="grad-btn text-white text-xs font-semibold font-sans px-5 py-2.5 rounded-full transition-all disabled:opacity-50 flex-shrink-0">
+              {resending ? "Sending..." : "Email Login Details"}
+            </button>
+          </div>
+          {resendResult && (
+            <div className="mt-2 ksurface-d p-4">
+              <div className="text-xs font-sans text-white/70 mb-2">
+                {resendResult.emailsSent} of {resendResult.total} sent
+                {resendResult.recipients?.some((r: any) => !r.ok) && " · some failed — see below"}
+              </div>
+              <div className="max-h-48 overflow-y-auto space-y-1">
+                {(resendResult.recipients ?? []).map((r: any) => (
+                  <div key={r.email} className="flex items-center justify-between text-xs font-sans">
+                    <span className="text-white/60 truncate">{r.name} · {r.email}</span>
+                    <span className={r.ok ? "text-green-400" : "text-amber-400"}>
+                      {r.ok ? "✓ sent" : `⚠ ${r.error || "failed"}`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </motion.div>
 
         {/* Waitlist */}
