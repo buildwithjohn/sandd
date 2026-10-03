@@ -64,7 +64,7 @@ export default function AssignmentsPage() {
     <PortalShell>
       <div className="space-y-5">
         <motion.div variants={rise()} initial="hidden" animate="visible">
-          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             Assignments
           </h1>
           <p className="theme-text-faint text-sm font-sans">{assignments.length} assignment{assignments.length !== 1 ? "s" : ""} across your courses</p>
@@ -97,7 +97,7 @@ export default function AssignmentsPage() {
                         <div className="theme-accent text-[10px] uppercase tracking-widest font-sans mb-1">
                           {(a.courses as any)?.title}
                         </div>
-                        <h2 className="theme-text text-base font-semibold" style={{ fontFamily: "'Georgia', serif" }}>
+                        <h2 className="theme-text text-base font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                           {a.title}
                         </h2>
                       </div>

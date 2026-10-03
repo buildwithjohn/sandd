@@ -85,7 +85,7 @@ export default function AdminInboxPage() {
             <Mail className="w-5 h-5 text-[#D4A85C]" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "'Georgia', serif" }}>Inbox</h1>
+            <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>Inbox</h1>
             <p className="text-white/40 text-sm font-sans">{unreadCount > 0 ? `${unreadCount} unread · ` : ""}Messages from students.</p>
           </div>
         </div>

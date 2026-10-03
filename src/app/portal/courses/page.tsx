@@ -62,7 +62,7 @@ export default function CoursesPortalPage() {
     <PortalShell>
       <div className="space-y-6">
         <motion.div variants={rise()} initial="hidden" animate="visible">
-          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             My Courses
           </h1>
           <p className="theme-text-muted text-sm font-sans">Your enrolled courses for Year {currentYear}</p>
@@ -94,7 +94,7 @@ export default function CoursesPortalPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="theme-text text-sm font-semibold mb-0.5 group-hover:theme-accent transition-colors"
-                          style={{ fontFamily: "'Georgia', serif" }}>{course.title}</div>
+                          style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{course.title}</div>
                         {course.description && (
                           <p className="theme-text-muted text-xs font-sans leading-relaxed line-clamp-1">{course.description}</p>
                         )}
@@ -117,7 +117,7 @@ export default function CoursesPortalPage() {
                 <div className="theme-bg-elevated rounded-2xl border theme-border p-8 text-center"
                   style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
                   <Lock className="w-8 h-8 text-[#D4D0C8] mx-auto mb-3" />
-                  <p className="theme-text text-sm font-semibold mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+                  <p className="theme-text text-sm font-semibold mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                     Year 2 Unlocks After Year 1
                   </p>
                   <p className="theme-text-muted text-xs font-sans">
@@ -137,7 +137,7 @@ export default function CoursesPortalPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="theme-text text-sm font-semibold mb-0.5 group-hover:theme-accent transition-colors"
-                          style={{ fontFamily: "'Georgia', serif" }}>{course.title}</div>
+                          style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{course.title}</div>
                         {course.description && (
                           <p className="theme-text-muted text-xs font-sans leading-relaxed line-clamp-1">{course.description}</p>
                         )}

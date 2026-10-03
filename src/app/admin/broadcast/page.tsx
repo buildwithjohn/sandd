@@ -40,7 +40,7 @@ export default function BroadcastPage() {
             <Megaphone className="w-5 h-5 text-[#D4A85C]" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "'Georgia', serif" }}>Email Students</h1>
+            <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>Email Students</h1>
             <p className="text-white/40 text-sm font-sans">One email to every student. They're BCC'd, so addresses stay private.</p>
           </div>
         </div>

@@ -84,7 +84,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const isSuperAdmin = adminRole === "super_admin";
 
   return (
-    <div className="min-h-screen bg-[#080C14] text-white" style={{ fontFamily: "Arial, sans-serif" }}>
+    <div className="min-h-screen bg-[#0B0612] text-white" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
 
       {/* Ambient aurora depth */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
@@ -107,7 +107,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <Link href="/admin/dashboard" className="flex items-center gap-2.5">
             <Image src="/assets/logo.png" alt="S&D" width={30} height={30} className="rounded-lg flex-shrink-0" />
             <div className="hidden sm:block">
-              <div className="text-white text-sm font-semibold leading-none" style={{ fontFamily: "'Georgia', serif" }}>
+              <div className="text-white text-sm font-semibold leading-none" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                 S&D Prophetic School
               </div>
               <div className="text-[#D4A85C] text-[9px] tracking-[0.2em] uppercase mt-0.5">Admin Panel</div>
@@ -159,7 +159,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   }
                 </div>
                 <div>
-                  <div className="text-white text-sm font-semibold" style={{ fontFamily: "'Georgia', serif" }}>{adminName}</div>
+                  <div className="text-white text-sm font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{adminName}</div>
                   <div className={`text-xs mt-0.5 ${isSuperAdmin ? "text-[#D4A85C]" : "text-white/40"}`}>
                     {isSuperAdmin ? "Super Admin" : "Admin"}
                   </div>
@@ -185,7 +185,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   <Link key={l.href} href={l.href}
                     className={`flex items-center gap-3 px-4 py-3.5 rounded-xl mb-1 transition-all ${
                       active
-                        ? "bg-[#D4A85C]/10 border border-[#D4A85C]/20 text-[#D4A85C]"
+                        ? "grad-hero text-white shadow-md"
                         : "text-white/50 hover:bg-white/[0.04] hover:text-white"
                     }`}>
                     <l.icon className="w-5 h-5 flex-shrink-0" />
@@ -221,7 +221,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   }
                 </div>
                 <div className="min-w-0">
-                  <div className="text-white text-sm font-medium truncate" style={{ fontFamily: "'Georgia', serif" }}>{adminName}</div>
+                  <div className="text-white text-sm font-medium truncate" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{adminName}</div>
                   <div className={`text-[10px] mt-0.5 ${isSuperAdmin ? "text-[#D4A85C]" : "text-white/35"}`}>
                     {isSuperAdmin ? "Super Admin" : "Admin"}
                   </div>
@@ -236,7 +236,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   <Link key={l.href} href={l.href}
                     className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all ${
                       active
-                        ? "bg-[#D4A85C]/10 text-[#D4A85C] border border-[#D4A85C]/15 font-medium"
+                        ? "grad-hero text-white font-semibold shadow-md"
                         : "text-white/40 hover:bg-white/[0.04] hover:text-white"
                     }`}>
                     <l.icon className="w-4 h-4 flex-shrink-0" />

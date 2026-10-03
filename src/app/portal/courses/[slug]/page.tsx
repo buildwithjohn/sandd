@@ -119,7 +119,7 @@ export default function CourseDetailPage() {
               <span className="text-white/20 text-xs">·</span>
               <span className="text-white/40 text-xs font-sans">{course.credits || 3} Credits</span>
             </div>
-            <h1 className="text-white text-2xl font-semibold mb-2" style={{ fontFamily: "'Georgia', serif" }}>
+            <h1 className="text-white text-2xl font-semibold mb-2" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               {course.title}
             </h1>
             {course.description && (
@@ -163,7 +163,7 @@ export default function CourseDetailPage() {
 
         {/* Subtopics */}
         <div>
-          <h2 className="theme-text text-base font-semibold mb-3" style={{ fontFamily: "'Georgia', serif" }}>
+          <h2 className="theme-text text-base font-semibold mb-3" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             Subtopics {totalCount > 0 && <span className="theme-text-muted text-sm font-sans font-normal">({totalCount})</span>}
           </h2>
 
@@ -171,7 +171,7 @@ export default function CourseDetailPage() {
             <div className="theme-bg-elevated border theme-border rounded-2xl p-10 text-center"
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
               <Clock className="w-10 h-10 text-[#E8E2D9] mx-auto mb-3" />
-              <p className="theme-text text-sm font-semibold mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+              <p className="theme-text text-sm font-semibold mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                 No subtopics yet
               </p>
               <p className="theme-text-muted text-xs font-sans">
@@ -209,7 +209,7 @@ export default function CourseDetailPage() {
                     <div className="flex-1 min-w-0">
                       <div className={`text-sm font-semibold truncate ${
                         isDone ? "text-green-700" : isNext ? "theme-text" : "theme-text-muted"
-                      }`} style={{ fontFamily: "'Georgia', serif" }}>
+                      }`} style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                         {sub.title}
                       </div>
                       <div className="flex items-center gap-2 mt-0.5">

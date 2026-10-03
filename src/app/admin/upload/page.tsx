@@ -312,7 +312,7 @@ export default function CourseBuilderPage() {
     <AdminShell>
       <div className="max-w-2xl space-y-5">
         <div>
-          <h1 className="text-2xl font-medium text-white mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-medium text-white mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             Course Builder
           </h1>
           <p className="text-white/35 text-sm font-sans">Add subtopics with video, audio or slides. Upload course resources of any type.</p>

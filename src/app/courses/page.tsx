@@ -3,7 +3,8 @@ import Navbar from "@/components/layout/Navbar";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowRight, Lock } from "lucide-react";
+import { ArrowRight, Lock } from "@phosphor-icons/react";
+import LineField from "@/components/LineField";
 
 const rise = (delay = 0) => ({
   hidden:  { opacity: 0, y: 28, filter: "blur(4px)" },
@@ -31,27 +32,26 @@ const year2 = [
 
 export default function CoursesPage() {
   return (
-    <div className="bg-[#080C14] text-white min-h-screen" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>
+    <div className="bg-[#0B0612] text-white min-h-screen" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
       <Navbar />
 
       {/* ── PAGE HERO ─────────────────────────────────────────────────── */}
-      <section className="relative pt-28 pb-20 px-6 overflow-hidden">
-        {/* Background texture */}
-        <div className="absolute inset-0 opacity-5"
-          style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #D4A85C 0%, transparent 50%), radial-gradient(circle at 80% 20%, #D4A85C 0%, transparent 40%)" }} />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/8" />
+      <section className="relative pt-28 pb-20 px-6 overflow-hidden grad-hero">
+        {/* drifting line-fields */}
+        <div className="absolute inset-0 line-drift opacity-80"><LineField stroke="#ffffff" /></div>
+        <div className="absolute inset-0 line-drift2 opacity-40"><LineField stroke="#E0A64E" count={18} /></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0612]/50 via-transparent to-[#0B0612]" />
 
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto relative z-10">
           <motion.div variants={rise(0.1)} initial="hidden" animate="visible">
             <div className="flex items-center gap-3 mb-6">
-              <div className="h-px w-10 bg-[#D4A85C]/40" />
-              <span className="text-[#D4A85C] text-xs tracking-[0.25em] uppercase font-sans">The Curriculum</span>
+              <div className="h-px w-10 bg-white/50" />
+              <span className="text-white/80 text-xs tracking-[0.25em] uppercase font-sans">The Curriculum</span>
             </div>
-            <h1 className="text-5xl sm:text-6xl font-medium tracking-tight mb-5 leading-[1.04]"
-              style={{ letterSpacing: "-0.02em" }}>
-              Two Years.<br />Eleven Courses.
+            <h1 className="kinetic-display text-5xl sm:text-7xl mb-5 text-white">
+              Two Years.<br /><span className="accent-cycle">Eleven Courses.</span>
             </h1>
-            <p className="text-white/45 text-lg font-sans font-light max-w-xl leading-relaxed">
+            <p className="text-white/70 text-lg font-sans font-light max-w-xl leading-relaxed">
               A comprehensive, Scripture-centred curriculum designed to ground, equip
               and activate every student in New Testament prophetic ministry.
             </p>
@@ -59,17 +59,16 @@ export default function CoursesPage() {
 
           {/* Summary bar */}
           <motion.div variants={rise(0.25)} initial="hidden" animate="visible"
-            className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-px bg-white/8 rounded-2xl overflow-hidden">
+            className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-px bg-white/15 rounded-2xl overflow-hidden backdrop-blur-sm">
             {[
               { value: "2", label: "Years" },
               { value: "11", label: "Courses" },
               { value: "28", label: "Total Credits" },
               { value: "Free", label: "Tuition" },
             ].map(s => (
-              <div key={s.label} className="bg-[#080C14] px-6 py-5 text-center">
-                <div className="text-2xl font-medium text-[#D4A85C] mb-1"
-                  style={{ fontFamily: "'Georgia', serif" }}>{s.value}</div>
-                <div className="text-white/30 text-xs tracking-widest uppercase font-sans">{s.label}</div>
+              <div key={s.label} className="bg-[#0B0612]/60 px-6 py-5 text-center">
+                <div className="kinetic-display text-3xl text-white mb-1">{s.value}</div>
+                <div className="text-white/50 text-xs tracking-widest uppercase font-sans">{s.label}</div>
               </div>
             ))}
           </motion.div>
@@ -86,7 +85,7 @@ export default function CoursesPage() {
                 <div className="h-px w-8 bg-[#D4A85C]/40" />
                 <span className="text-[#D4A85C] text-xs tracking-[0.25em] uppercase font-sans">Year One</span>
               </div>
-              <h2 className="text-3xl font-medium tracking-tight" style={{ letterSpacing: "-0.01em" }}>
+              <h2 className="kinetic-display text-3xl text-white">
                 Certificate in Prophetic Ministry
               </h2>
             </div>
@@ -108,7 +107,7 @@ export default function CoursesPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4 mb-2">
                         <h3 className="text-base font-medium text-white/90 leading-snug"
-                          style={{ fontFamily: "'Georgia', serif" }}>
+                          style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                           {course.title}
                         </h3>
                         <div className="flex items-center gap-3 flex-shrink-0">
@@ -144,7 +143,7 @@ export default function CoursesPage() {
                 <div className="h-px w-8 bg-[#D4A85C]/40" />
                 <span className="text-[#D4A85C] text-xs tracking-[0.25em] uppercase font-sans">Year Two</span>
               </div>
-              <h2 className="text-3xl font-medium tracking-tight" style={{ letterSpacing: "-0.01em" }}>
+              <h2 className="kinetic-display text-3xl text-white">
                 Diploma in New Testament Prophecy
               </h2>
             </div>
@@ -168,7 +167,7 @@ export default function CoursesPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4 mb-2">
                         <h3 className="text-base font-medium text-white/80 leading-snug"
-                          style={{ fontFamily: "'Georgia', serif" }}>
+                          style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                           {course.title}
                         </h3>
                         <div className="flex items-center gap-3 flex-shrink-0">
@@ -199,22 +198,22 @@ export default function CoursesPage() {
           className="max-w-2xl mx-auto text-center">
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-px w-10 bg-[#D4A85C]/40" />
-            <span className="text-[#D4A85C] text-xs tracking-[0.25em] uppercase font-sans">2026 Cohort — Now Open</span>
+            <span className="text-[#D4A85C] text-xs tracking-[0.25em] uppercase font-sans">Cohort 0.2 — Now Open</span>
             <div className="h-px w-10 bg-[#D4A85C]/40" />
           </div>
-          <h2 className="text-4xl font-medium tracking-tight mb-4" style={{ letterSpacing: "-0.02em" }}>
-            Ready to Begin?
+          <h2 className="kinetic-display text-5xl mb-4 text-white">
+            Ready to <span className="accent-cycle">begin?</span>
           </h2>
-          <p className="text-white/40 text-base font-sans leading-relaxed mb-10">
+          <p className="text-white/50 text-base font-sans leading-relaxed mb-10">
             All 11 courses are included in your free enrolment. No selection required —
             Year 1 begins immediately, Year 2 unlocks after completion.
           </p>
           <Link href="/apply"
-            className="inline-flex items-center gap-2.5 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14]
+            className="inline-flex items-center gap-2.5 grad-hero text-white
               font-bold text-sm px-9 py-4 rounded-full transition-all duration-300 font-sans
-              hover:shadow-[0_0_40px_rgba(212,168,92,0.35)] hover:-translate-y-0.5">
+              hover:shadow-[0_0_40px_rgba(124,58,237,0.45)] hover:-translate-y-0.5">
             Apply Now — It&apos;s Free
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4" weight="bold" />
           </Link>
         </motion.div>
       </section>

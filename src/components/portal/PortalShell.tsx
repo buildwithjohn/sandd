@@ -100,7 +100,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="min-h-screen theme-bg" style={{ fontFamily: "Arial, sans-serif" }}>
+    <div className="min-h-screen theme-bg" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
 
       {/* Ambient aurora depth (behind everything) */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
@@ -123,7 +123,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
           <Link href="/portal/dashboard" className="flex items-center gap-2 flex-shrink-0">
             <Image src="/assets/logo.png" alt="S&D" width={30} height={30} className="rounded-lg flex-shrink-0" />
             <div className="hidden sm:block whitespace-nowrap">
-              <div className="theme-text text-sm font-semibold leading-tight" style={{ fontFamily: "'Georgia', serif" }}>
+              <div className="theme-text text-sm font-semibold leading-tight" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                 S&D Prophetic School
               </div>
               <div className="text-[9px] theme-accent mt-0.5 tracking-wide uppercase">Student Portal</div>
@@ -173,7 +173,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                   }
                 </div>
                 <div>
-                  <div className="text-white text-sm font-semibold" style={{ fontFamily: "'Georgia', serif" }}>{profile.name}</div>
+                  <div className="text-white text-sm font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{profile.name}</div>
                   <div className="theme-accent text-xs mt-0.5">{profile.church || "Student"}</div>
                   <div className="text-white/40 text-[10px] mt-0.5">Year {profile.year}</div>
                 </div>
@@ -200,10 +200,10 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                   <Link key={l.href} href={l.href}
                     className={`flex items-center gap-3 px-4 py-3.5 rounded-xl mb-1 transition-all ${
                       active
-                        ? "bg-royal-700 text-white"
+                        ? "grad-hero text-white shadow-md"
                         : "theme-text-muted hover:bg-ivory-200"
                     }`}>
-                    <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "theme-accent" : "theme-accent"}`} />
+                    <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "text-white" : "theme-accent"}`} />
                     <span className="text-sm font-medium">{l.label}</span>
                   </Link>
                 );
@@ -255,7 +255,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                   }
                 </div>
                 <div className="min-w-0">
-                  <div className="theme-text text-sm font-semibold truncate" style={{ fontFamily: "'Georgia', serif" }}>
+                  <div className="theme-text text-sm font-semibold truncate" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                     {profile.name.split(" ")[0]}
                   </div>
                   <div className="text-[10px] theme-accent mt-0.5">{profile.church || "Student"}</div>
@@ -275,9 +275,9 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                 return (
                   <Link key={l.href} href={l.href}
                     className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                      active ? "bg-[var(--primary)] text-white font-medium" : "theme-text-faint hover:bg-ivory-200 hover:theme-text"
+                      active ? "grad-hero text-white font-semibold shadow-md" : "theme-text-faint hover:bg-ivory-200 hover:theme-text"
                     }`}>
-                    <l.icon className={`w-4 h-4 ${active ? "theme-accent" : ""}`} />
+                    <l.icon className={`w-4 h-4 ${active ? "text-white" : ""}`} />
                     {l.label}
                   </Link>
                 );

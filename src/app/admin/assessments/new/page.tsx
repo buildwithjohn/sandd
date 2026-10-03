@@ -189,7 +189,7 @@ export default function NewAssessmentPage() {
       <div className="max-w-3xl space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-medium text-white" style={{ fontFamily: "'Georgia', serif" }}>
+            <h1 className="text-2xl font-medium text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Create Assessment
             </h1>
             <p className="text-white/35 text-sm font-sans mt-1">Build an exam with objective and theory sections.</p>

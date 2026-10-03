@@ -48,7 +48,7 @@ export default function AssessmentDetailPage() {
       <div className="max-w-3xl space-y-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-medium text-white" style={{ fontFamily: "'Georgia', serif" }}>{assessment?.title}</h1>
+            <h1 className="text-2xl font-medium text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{assessment?.title}</h1>
             <p className="text-white/35 text-sm font-sans mt-1">{assessment?.courses?.title} · {assessment?.total_marks} marks</p>
           </div>
           <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export default function AssessmentDetailPage() {
             { label: "Graded", value: graded },
           ].map(s => (
             <div key={s.label} className="glass-dark border border-white/[0.07] rounded-2xl p-4 text-center">
-              <div className="text-[#D4A85C] text-xl font-bold" style={{ fontFamily: "'Georgia', serif" }}>{s.value}</div>
+              <div className="text-[#D4A85C] text-xl font-bold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{s.value}</div>
               <div className="text-white/30 text-[10px] font-sans mt-1">{s.label}</div>
             </div>
           ))}

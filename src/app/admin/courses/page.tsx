@@ -141,7 +141,7 @@ export default function CourseManagerPage() {
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-medium text-white mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+            <h1 className="text-2xl font-medium text-white mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Course Manager
             </h1>
             <p className="text-white/35 text-sm font-sans">View and manage all courses, subtopics, materials and assignments.</p>
@@ -179,7 +179,7 @@ export default function CourseManagerPage() {
                           </span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-white font-semibold text-sm truncate" style={{ fontFamily: "'Georgia', serif" }}>
+                          <div className="text-white font-semibold text-sm truncate" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                             {course.title}
                           </div>
                           <div className="flex items-center gap-2 sm:gap-3 mt-1 flex-wrap">

@@ -93,7 +93,7 @@ export default function AdminAssessmentsListPage() {
         {/* Header */}
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-medium text-white" style={{ fontFamily: "'Georgia', serif" }}>
+            <h1 className="text-2xl font-medium text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               Assessments
             </h1>
             <p className="text-white/35 text-sm font-sans mt-1">
@@ -115,7 +115,7 @@ export default function AdminAssessmentsListPage() {
             { label: "Pending Grade",     value: totalPending,        color: totalPending > 0 ? "text-orange-400" : "text-white/40" },
           ].map(s => (
             <div key={s.label} className="glass-dark border border-white/[0.07] rounded-2xl p-4">
-              <div className={`text-2xl font-bold ${s.color}`} style={{ fontFamily: "'Georgia', serif" }}>{s.value}</div>
+              <div className={`text-2xl font-bold ${s.color}`} style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{s.value}</div>
               <div className="text-white/30 text-[10px] uppercase tracking-widest font-sans mt-1">{s.label}</div>
             </div>
           ))}
@@ -177,7 +177,7 @@ export default function AdminAssessmentsListPage() {
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start gap-2 flex-wrap mb-1">
-                          <h3 className="text-white text-sm font-semibold font-sans truncate" style={{ fontFamily: "'Georgia', serif" }}>
+                          <h3 className="text-white text-sm font-semibold font-sans truncate" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                             {a.title}
                           </h3>
                           {!a.is_published && (

@@ -57,7 +57,7 @@ export default function AutomationsPage() {
             <Zap className="w-5 h-5 text-[#D4A85C]" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "'Georgia', serif" }}>Automations</h1>
+            <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>Automations</h1>
             <p className="text-white/40 text-sm font-sans">Scheduled emails. Run automatically once a day — only the ones switched on.</p>
           </div>
         </div>

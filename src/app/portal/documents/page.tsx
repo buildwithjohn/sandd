@@ -42,7 +42,7 @@ export default function DocumentsPage() {
     <PortalShell>
       <div className="space-y-5">
         <motion.div variants={rise()} initial="hidden" animate="visible">
-          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "'Georgia', serif" }}>
+          <h1 className="text-2xl font-semibold theme-text mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             School Documents
           </h1>
           <p className="theme-text-muted text-sm font-sans">Download official school documents and your admission letter.</p>
@@ -57,7 +57,7 @@ export default function DocumentsPage() {
                   <doc.icon className={`w-5 h-5 ${doc.color}`} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="theme-text text-sm font-semibold mb-0.5" style={{ fontFamily: "'Georgia', serif" }}>
+                  <div className="theme-text text-sm font-semibold mb-0.5" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                     {doc.title}
                   </div>
                   <p className="theme-text-muted text-xs font-sans leading-relaxed">{doc.desc}</p>
@@ -80,7 +80,7 @@ export default function DocumentsPage() {
 
         <motion.div variants={rise(0.3)} initial="hidden" animate="visible"
           className="rounded-2xl border border-[#D4A85C]/20 bg-[#D4A85C]/[0.04] p-5 text-center">
-          <p className="text-[#5C4A2A] text-xs font-sans leading-relaxed" style={{ fontFamily: "'Georgia', serif" }}>
+          <p className="text-[#5C4A2A] text-xs font-sans leading-relaxed" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             All documents are official publications of the Sons and Daughters of Prophets Prophetic Training School.<br />
             For enquiries contact the Registrar: <a href="mailto:sandd@abiodunsule.uk" className="theme-accent hover:underline">sandd@abiodunsule.uk</a>
           </p>

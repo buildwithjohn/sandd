@@ -106,7 +106,7 @@ export default function CohortsPage() {
             <Users className="w-5 h-5 text-[#D4A85C]" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "'Georgia', serif" }}>Cohorts</h1>
+            <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>Cohorts</h1>
             <p className="text-white/40 text-sm font-sans">Open intake, admit the waitlist, and track each year's students.</p>
           </div>
         </div>
@@ -122,13 +122,13 @@ export default function CohortsPage() {
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <Star className="w-4 h-4 text-[#D4A85C]" fill="currentColor" />
-                      <span className="text-white/90 text-lg font-semibold" style={{ fontFamily: "'Georgia', serif" }}>{current.name}</span>
+                      <span className="text-white/90 text-lg font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{current.name}</span>
                       <span className={`text-[10px] px-2 py-0.5 rounded-full border font-sans ${STATUS_STYLE[current.status] || STATUS_STYLE.draft}`}>{current.status}</span>
                     </div>
                     <div className="text-white/40 text-xs font-sans">Current intake · starts {fmt(current.starts_at)}</div>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-semibold text-white tabular-nums" style={{ fontFamily: "'Georgia', serif" }}>{current.student_count}</div>
+                    <div className="text-2xl font-semibold text-white tabular-nums" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{current.student_count}</div>
                     <div className="text-white/40 text-[10px] uppercase tracking-wider font-sans">Students</div>
                   </div>
                 </div>
@@ -216,7 +216,7 @@ export default function CohortsPage() {
                   <div key={c.id} className="glass-dark glass-edge rounded-xl p-4 flex items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-white/90 text-sm font-semibold font-sans" style={{ fontFamily: "'Georgia', serif" }}>{c.name}</span>
+                        <span className="text-white/90 text-sm font-semibold font-sans" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{c.name}</span>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full border font-sans ${STATUS_STYLE[c.status] || STATUS_STYLE.draft}`}>{c.status}</span>
                         {c.is_current && <span className="text-[10px] text-[#D4A85C] flex items-center gap-0.5 font-sans"><Star className="w-3 h-3" fill="currentColor" /> current</span>}
                       </div>
