@@ -220,3 +220,44 @@ html.dark {
 @media (prefers-reduced-motion: reduce) {
   .grad-hero, .grad-band, .line-drift, .line-drift2, .accent-cycle { animation: none !important; }
 }
+
+/* ============================================================
+   KINETIC POLISH — bring the landing's vibrancy to data screens
+   ============================================================ */
+/* gradient-filled text for hero numbers / accent words */
+.grad-text {
+  background: linear-gradient(120deg, #7C3AED 0%, #C026A3 55%, #E0A64E 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
+/* premium stat / content card: crisp surface, gradient hairline on top,
+   lift + brand glow on hover. Works on light and dark. */
+.kcard {
+  position: relative;
+  background: color-mix(in srgb, var(--bg-elevated) 88%, transparent);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.kcard::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 2px;
+  border-radius: 1rem 1rem 0 0;
+  background: linear-gradient(90deg, #7C3AED, #C026A3, #E0A64E);
+  opacity: .35; transition: opacity .25s ease;
+}
+.kcard:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, #C026A3 45%, var(--border));
+  box-shadow: 0 18px 40px -18px rgba(124,58,237,.5);
+}
+.kcard:hover::before { opacity: 1; }
+/* reusable gradient pill button */
+.grad-btn {
+  background: linear-gradient(120deg, #4C1D95 0%, #7C3AED 45%, #C026A3 100%);
+  background-size: 180% 180%;
+  color: #fff;
+  transition: box-shadow .25s ease, filter .25s ease;
+}
+.grad-btn:hover { box-shadow: 0 0 30px rgba(124,58,237,.45); filter: brightness(1.05); }

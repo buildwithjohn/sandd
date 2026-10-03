@@ -124,13 +124,10 @@ export default function AdminDashboard() {
             { icon: BookOpen, label: "Active Cohorts",     value: stats.cohorts,      gold: false },
           ].map((s, i) => (
             <motion.div key={s.label} variants={rise(i * 0.08)} initial="hidden" animate="visible">
-              <div className={`rounded-2xl border p-5 ${
-                s.gold ? "bg-[#D4A85C]/5 border-[#D4A85C]/20" : "glass-dark border-white/[0.07]"
-              }`}>
-                <s.icon className={`w-4 h-4 mb-3 ${s.gold ? "text-[#D4A85C]" : "text-white/30"}`} />
-                <div className={`text-3xl font-semibold mb-1 ${s.gold ? "text-[#D4A85C]" : "text-white"}`}
-                  style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{s.value}</div>
-                <div className="text-white/30 text-xs font-sans">{s.label}</div>
+              <div className="kcard p-5">
+                <s.icon className={`w-4 h-4 mb-3 ${s.gold ? "text-[#E0A64E]" : "text-white/40"}`} />
+                <div className="grad-text kinetic-display text-4xl mb-1">{s.value}</div>
+                <div className="text-white/50 text-xs font-sans">{s.label}</div>
               </div>
             </motion.div>
           ))}
@@ -144,11 +141,11 @@ export default function AdminDashboard() {
               <Link key={a.label} href={a.href}
                 className={`group flex items-center gap-3 p-4 rounded-2xl border transition-all ${
                   a.gold
-                    ? "bg-[#D4A85C] border-[#D4A85C] hover:bg-[#C49848] hover:border-[#C49848]"
+                    ? "grad-btn border-transparent"
                     : "glass-dark border-white/[0.07] hover:border-white/20 hover:bg-white/[0.04]"
                 }`}>
-                <a.icon className={`w-4 h-4 flex-shrink-0 ${a.gold ? "text-[#1A1A2E]" : "text-white/40 group-hover:text-white"}`} />
-                <span className={`text-sm font-medium ${a.gold ? "text-[#1A1A2E]" : "text-white/60 group-hover:text-white"}`}>
+                <a.icon className={`w-4 h-4 flex-shrink-0 ${a.gold ? "text-white" : "text-white/40 group-hover:text-white"}`} />
+                <span className={`text-sm font-medium ${a.gold ? "text-white" : "text-white/60 group-hover:text-white"}`}>
                   {a.label}
                 </span>
               </Link>

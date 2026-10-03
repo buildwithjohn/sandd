@@ -177,21 +177,18 @@ export default function StudentDashboard() {
             { label: stats.assessmentCount > 0 ? "Overall Grade" : "No Grades", sublabel: stats.assessmentCount > 0 ? `Avg of ${stats.assessmentCount} exam${stats.assessmentCount !== 1 ? "s" : ""}` : "yet",
               value: stats.assessmentAvg > 0 ? `${stats.assessmentAvg}` : "—", suffix: stats.assessmentAvg > 0 ? "%" : null },
           ].map((s, i) => (
-            <div key={i}
-              className="theme-bg-elevated border theme-border rounded-2xl p-5 hover:border-[var(--accent)] transition-all group">
+            <div key={i} className="kcard p-5">
               <div className="flex items-baseline gap-1.5 mb-2">
-                <span className="theme-text tabular-nums leading-none"
-                  style={{ fontFamily: "var(--font-display), Georgia, serif", fontWeight: 600 }}>
+                <span className="grad-text tabular-nums leading-none kinetic-display text-4xl">
                   {s.value}
                 </span>
                 {s.suffix && (
-                  <span className="theme-text-muted text-base"
-                    style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
+                  <span className="theme-text-muted text-base font-display font-bold">
                     {typeof s.suffix === "number" ? `/ ${s.suffix}` : s.suffix}
                   </span>
                 )}
               </div>
-              <div className="border-t theme-border pt-2.5">
+              <div className="border-t theme-border-soft pt-2.5">
                 <div className="theme-text text-xs font-medium" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
                   {s.label}
                 </div>
@@ -243,9 +240,9 @@ export default function StudentDashboard() {
                 style={{ background: "radial-gradient(ellipse at right, rgba(201, 169, 97, 0.15) 0%, transparent 70%)" }} />
 
               <div className="relative flex flex-col sm:flex-row sm:items-center gap-5">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-royal-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform"
-                  style={{ boxShadow: "0 8px 24px -8px rgba(45, 27, 94, 0.4)" }}>
-                  <Play className="w-5 h-5 sm:w-6 sm:h-6 text-gilt-400" fill="currentColor" />
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl grad-hero flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform"
+                  style={{ boxShadow: "0 8px 24px -8px rgba(124,58,237,0.5)" }}>
+                  <Play className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="currentColor" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="theme-accent text-[10px] uppercase tracking-[0.3em] font-medium mb-2" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
@@ -293,7 +290,7 @@ export default function StudentDashboard() {
                       {a.total_marks} marks{a.due_date && ` · Due ${new Date(a.due_date).toLocaleDateString("en-NG", { dateStyle: "medium" })}`}
                     </div>
                   </div>
-                  <span className="bg-[var(--primary)] text-white text-xs font-medium px-4 py-2 rounded-full flex-shrink-0 group-hover:bg-royal-800 transition-colors" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
+                  <span className="grad-btn text-white text-xs font-semibold px-4 py-2 rounded-full flex-shrink-0" style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}>
                     Take
                   </span>
                 </Link>
