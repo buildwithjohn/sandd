@@ -241,6 +241,37 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── SCHOOL ADMINISTRATION / REGISTRAR ───────────── */}
+      <section className="bg-[#0B0612] border-t border-white/10">
+        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-16">
+          <motion.div variants={rise()} initial="hidden" whileInView="visible" viewport={{ once: true }}
+            className="flex flex-col sm:flex-row items-center gap-6 rounded-2xl px-8 py-7 border border-white/10 bg-white/[0.03] backdrop-blur-sm">
+            {/* Label */}
+            <div className="flex-shrink-0 hidden sm:block">
+              <div className="h-px w-8 bg-[#E0A64E]/50 mb-3" />
+              <span className="text-[#E0A64E] text-[10px] tracking-[0.25em] uppercase font-sans">A Word from the Registrar</span>
+            </div>
+            <div className="w-px h-12 bg-white/10 hidden sm:block flex-shrink-0" />
+            {/* Registrar */}
+            <div className="flex items-center gap-4 flex-1">
+              <div className="w-14 h-14 rounded-xl overflow-hidden border border-white/15 flex-shrink-0">
+                <Image src="/assets/registrar.jpg" alt="John Ayomide Akinola"
+                  width={56} height={56} className="w-full h-full object-cover object-top" />
+              </div>
+              <div>
+                <div className="font-display text-white text-base font-bold">John Ayomide Akinola</div>
+                <div className="text-white/50 text-xs font-sans mt-0.5">Registrar, S&D Prophetic Training School</div>
+              </div>
+            </div>
+            {/* Contact */}
+            <a href="mailto:sandd@abiodunsule.uk"
+              className="text-[#E0A64E]/80 hover:text-white hover:grad-hero text-xs font-sans transition-all flex-shrink-0 border border-[#E0A64E]/30 hover:border-transparent px-4 py-2 rounded-full">
+              sandd@abiodunsule.uk
+            </a>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── CTA (animated gradient) ─────────────────────── */}
       <section className={`grad-hero ${anim} relative overflow-hidden`}>
         <div className={`line-drift2 ${anim} absolute inset-0 pointer-events-none`}><LineField stroke="#ffffff" className="" /></div>
