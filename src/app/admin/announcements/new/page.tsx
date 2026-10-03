@@ -58,7 +58,7 @@ export default function NewAnnouncementPage() {
             <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{body || "No content yet."}</p>
           </div>
         ) : (
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-5">
+          <div className="ksurface-d p-6 space-y-5">
             <div>
               <label className="text-xs text-gray-400 uppercase tracking-wide block mb-1.5">Title *</label>
               <input value={title} onChange={e => setTitle(e.target.value)}

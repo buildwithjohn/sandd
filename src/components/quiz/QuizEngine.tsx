@@ -95,7 +95,7 @@ export default function QuizEngine({
         )}
         <button
           onClick={() => setState("taking")}
-          className="bg-brand-700 hover:bg-brand-800 text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-colors"
+          className="grad-btn text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-colors"
         >
           {previousAttempt ? "Retake Quiz" : "Start Quiz"}
         </button>
@@ -266,7 +266,7 @@ export default function QuizEngine({
           <button
             onClick={submitQuiz}
             disabled={!allAnswered || loading}
-            className="bg-brand-700 hover:bg-brand-800 disabled:opacity-50 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition-colors flex items-center gap-2"
+            className="grad-btn disabled:opacity-50 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition-colors flex items-center gap-2"
           >
             {loading ? "Submitting..." : "Submit Quiz"}
             <CheckCircle className="w-4 h-4" />
@@ -275,7 +275,7 @@ export default function QuizEngine({
           <button
             onClick={() => setCurrentQ(Math.min(questions.length - 1, currentQ + 1))}
             disabled={selectedAnswer === null}
-            className="bg-brand-700 hover:bg-brand-800 disabled:opacity-50 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition-colors flex items-center gap-2"
+            className="grad-btn disabled:opacity-50 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition-colors flex items-center gap-2"
           >
             Next <ChevronRight className="w-4 h-4" />
           </button>

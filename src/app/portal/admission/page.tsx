@@ -52,14 +52,14 @@ export default function AdmissionLetterPage() {
             href={`/portal/admission/print?id=${student.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-[#1A1A2E] hover:bg-[#2A2A4E] text-white text-xs font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">
+            className="flex items-center gap-2 grad-btn text-white text-xs font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">
             <Printer className="w-3.5 h-3.5" /> Open & Print / Save PDF
           </a>
         </div>
 
         {/* Preview card */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-          className="theme-bg-elevated rounded-2xl border theme-border overflow-hidden"
+          className="ksurface overflow-hidden"
           style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
           <LetterPreview student={student} admissionDate={admissionDate} studentNumber={studentNumber} />
         </motion.div>

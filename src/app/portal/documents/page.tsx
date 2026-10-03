@@ -51,7 +51,7 @@ export default function DocumentsPage() {
         <div className="space-y-3">
           {docs.map((doc, i) => (
             <motion.div key={doc.title} variants={rise(i * 0.1)} initial="hidden" animate="visible">
-              <div className="theme-bg-elevated rounded-2xl border theme-border p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 transition-all"
+              <div className="ksurface p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 transition-all"
                 style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
                 <div className={`w-12 h-12 rounded-xl border flex items-center justify-center flex-shrink-0 ${doc.bg}`}>
                   <doc.icon className={`w-5 h-5 ${doc.color}`} />
@@ -64,12 +64,12 @@ export default function DocumentsPage() {
                 </div>
                 {doc.isInternal ? (
                   <a href={doc.url}
-                    className="flex-shrink-0 flex items-center gap-1.5 bg-[#1A1A2E] hover:bg-[#2A2A4E] text-white text-xs font-semibold font-sans px-4 py-2.5 rounded-xl transition-all">
+                    className="flex-shrink-0 flex items-center gap-1.5 grad-btn text-white text-xs font-semibold font-sans px-4 py-2.5 rounded-xl transition-all">
                     <FileDown className="w-3.5 h-3.5" /> View
                   </a>
                 ) : (
                   <a href={doc.url} download
-                    className="flex-shrink-0 flex items-center gap-1.5 bg-[#1A1A2E] hover:bg-[#2A2A4E] text-white text-xs font-semibold font-sans px-4 py-2.5 rounded-xl transition-all">
+                    className="flex-shrink-0 flex items-center gap-1.5 grad-btn text-white text-xs font-semibold font-sans px-4 py-2.5 rounded-xl transition-all">
                     <FileDown className="w-3.5 h-3.5" /> Download
                   </a>
                 )}

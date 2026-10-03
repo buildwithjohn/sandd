@@ -99,7 +99,7 @@ export default function AdminProfilePage() {
         </div>
 
         {/* Photo card */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 flex items-center gap-5">
+        <div className="ksurface-d p-6 flex items-center gap-5">
           <div className="relative flex-shrink-0">
             <div className="w-20 h-20 rounded-2xl overflow-hidden bg-brand-800 border-2 border-gray-700 flex items-center justify-center">
               {avatarUrl
@@ -131,7 +131,7 @@ export default function AdminProfilePage() {
         </button>
 
         {/* Personal info */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
+        <div className="ksurface-d p-6 space-y-4">
           <h2 className="font-display text-white text-lg font-medium">Personal Information</h2>
           <div>
             <label className="text-xs text-gray-400 uppercase tracking-wide block mb-1.5">Full Name</label>
@@ -167,7 +167,7 @@ export default function AdminProfilePage() {
         </div>
 
         {/* Change password */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
+        <div className="ksurface-d p-6 space-y-4">
           <h2 className="font-display text-white text-lg font-medium">Change Password</h2>
           <div>
             <label className="text-xs text-gray-400 uppercase tracking-wide block mb-1.5">New Password</label>

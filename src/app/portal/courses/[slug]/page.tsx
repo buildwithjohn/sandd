@@ -133,7 +133,7 @@ export default function CourseDetailPage() {
                   <span className="theme-accent text-xs font-sans font-semibold">{pct}%</span>
                 </div>
                 <div className="w-full bg-white/10 rounded-full h-1.5">
-                  <div className="bg-[#D4A85C] h-1.5 rounded-full transition-all duration-500"
+                  <div className="grad-hero h-1.5 rounded-full transition-all duration-500"
                     style={{ width: `${pct}%` }} />
                 </div>
               </div>
@@ -145,8 +145,7 @@ export default function CourseDetailPage() {
         {course.notes_url && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <a href={course.notes_url} target="_blank" rel="noopener noreferrer" download
-              className="flex items-center gap-4 theme-bg-elevated border theme-border rounded-2xl p-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all group"
-              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+              className="kcard flex items-center gap-4 p-4 group">
               <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
                 <FileDown className="w-5 h-5 theme-accent" />
               </div>
@@ -168,8 +167,7 @@ export default function CourseDetailPage() {
           </h2>
 
           {subtopics.length === 0 ? (
-            <div className="theme-bg-elevated border theme-border rounded-2xl p-10 text-center"
-              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+            <div className="ksurface p-10 text-center">
               <Clock className="w-10 h-10 text-[#E8E2D9] mx-auto mb-3" />
               <p className="theme-text text-sm font-semibold mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                 No subtopics yet
@@ -179,8 +177,7 @@ export default function CourseDetailPage() {
               </p>
             </div>
           ) : (
-            <div className="theme-bg-elevated rounded-2xl border theme-border overflow-hidden"
-              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+            <div className="ksurface overflow-hidden">
               {subtopics.map((sub, i) => {
                 const isDone = progress[sub.id] === "completed";
                 const isNext = !isDone && subtopics.slice(0, i).every(s => progress[s.id] === "completed");
@@ -259,10 +256,9 @@ export default function CourseDetailPage() {
         {assessment && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Link href={`/portal/assessments/${assessment.id}`}
-              className="flex items-center gap-4 theme-bg-elevated border border-[#D4A85C]/25 rounded-2xl p-5 hover:border-[#D4A85C]/50 hover:shadow-md transition-all group"
-              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-              <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
-                <Star className="w-5 h-5 theme-accent" />
+              className="kcard flex items-center gap-4 p-5 group">
+              <div className="w-10 h-10 rounded-xl grad-hero flex items-center justify-center flex-shrink-0">
+                <Star className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="theme-accent text-[10px] uppercase tracking-widest font-sans mb-0.5">Course Assessment</div>

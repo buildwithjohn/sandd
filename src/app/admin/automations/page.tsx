@@ -68,7 +68,7 @@ export default function AutomationsPage() {
           <>
             <div className="space-y-2">
               {AUTOMATIONS.map(a => (
-                <div key={a.key} className="glass-dark glass-edge rounded-2xl p-4 flex items-center gap-4">
+                <div key={a.key} className="ksurface-d p-4 flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center flex-shrink-0">
                     <a.icon className="w-4 h-4 text-[#D4A85C]" />
                   </div>
@@ -96,7 +96,7 @@ export default function AutomationsPage() {
             </div>
 
             {report && (
-              <div className="glass-dark glass-edge rounded-2xl p-5">
+              <div className="ksurface-d p-5">
                 <div className="text-white/50 text-xs tracking-[0.15em] uppercase font-sans mb-3">
                   {reportMode === "dryrun" ? "Dry run — what would send now" : "Run complete"}
                 </div>

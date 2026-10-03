@@ -102,7 +102,7 @@ export default function StudentsPage() {
         </div>
 
         {loading ? (
-          <div className="glass-dark border border-white/[0.07] rounded-2xl p-12 text-center">
+          <div className="ksurface-d p-12 text-center">
             <p className="text-white/30 text-sm font-sans">Loading students...</p>
           </div>
         ) : error ? (
@@ -111,14 +111,14 @@ export default function StudentsPage() {
             <p className="text-red-400/60 text-xs font-sans mt-2">Make sure SUPABASE_SERVICE_ROLE_KEY is set in Vercel</p>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="glass-dark border border-white/[0.07] rounded-2xl p-12 text-center">
+          <div className="ksurface-d p-12 text-center">
             <Users className="w-10 h-10 text-white/10 mx-auto mb-3" />
             <p className="text-white/30 text-sm font-sans">
               {students.length === 0 ? "No students registered yet." : "No students match your search."}
             </p>
           </div>
         ) : (
-          <div className="glass-dark border border-white/[0.07] rounded-2xl overflow-hidden">
+          <div className="ksurface-d overflow-hidden">
             {filtered.map((s, i) => (
               <div key={s.id}>
                 <div className={`flex items-center gap-4 px-5 py-4 hover:bg-white/[0.02] transition-colors

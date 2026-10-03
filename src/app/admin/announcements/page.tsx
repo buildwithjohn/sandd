@@ -58,7 +58,7 @@ export default function AnnouncementsPage() {
         {loading ? (
           <div className="text-gray-500 text-sm">Loading...</div>
         ) : announcements.length === 0 ? (
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-10 text-center">
+          <div className="ksurface-d p-10 text-center">
             <p className="text-gray-500 text-sm">No announcements yet.</p>
             <Link href="/admin/announcements/new"
               className="inline-flex items-center gap-2 mt-4 text-brand-400 hover:text-brand-300 text-sm font-medium">
@@ -68,7 +68,7 @@ export default function AnnouncementsPage() {
         ) : (
           <div className="space-y-3">
             {announcements.map(a => (
-              <div key={a.id} className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+              <div key={a.id} className="ksurface-d p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">

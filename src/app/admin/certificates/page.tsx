@@ -67,7 +67,7 @@ export default function CertificatesPage() {
             {loading ? (
               <div className="text-gray-500 text-sm">Loading...</div>
             ) : filtered.length === 0 ? (
-              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 text-center">
+              <div className="ksurface-d p-8 text-center">
                 <Award className="w-8 h-8 text-gray-700 mx-auto mb-2" />
                 <p className="text-gray-500 text-sm">No Year 1 graduates yet.</p>
                 <p className="text-gray-600 text-xs mt-1">Students appear here after completing all Year 1 courses.</p>
@@ -110,7 +110,7 @@ export default function CertificatesPage() {
                 />
               </div>
             ) : (
-              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-10 text-center">
+              <div className="ksurface-d p-10 text-center">
                 <Award className="w-10 h-10 text-gray-700 mx-auto mb-3" />
                 <p className="text-gray-500 text-sm">Select a student to preview their certificate</p>
               </div>

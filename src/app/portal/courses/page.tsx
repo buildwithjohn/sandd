@@ -69,7 +69,7 @@ export default function CoursesPortalPage() {
         </motion.div>
 
         {loading ? (
-          <div className="theme-bg-elevated rounded-2xl border theme-border p-12 text-center">
+          <div className="ksurface p-12 text-center">
             <p className="theme-text-muted text-sm font-sans">Loading courses...</p>
           </div>
         ) : (
@@ -85,7 +85,7 @@ export default function CoursesPortalPage() {
                 {year1.map((course, i) => (
                   <motion.div key={course.id} variants={rise(i * 0.06)} initial="hidden" animate="visible">
                     <Link href={`/portal/courses/${course.slug}`}
-                      className="group theme-bg-elevated rounded-2xl border theme-border p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all block"
+                      className="group ksurface p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all block"
                       style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
                       <div className="w-10 h-10 rounded-xl theme-bg-subtle border theme-border flex items-center justify-center flex-shrink-0">
                         <span className="theme-accent text-xs font-mono font-semibold">
@@ -114,7 +114,7 @@ export default function CoursesPortalPage() {
                 <div className="h-px flex-1 bg-[#E8E2D9]" />
               </div>
               {currentYear < 2 ? (
-                <div className="theme-bg-elevated rounded-2xl border theme-border p-8 text-center"
+                <div className="ksurface p-8 text-center"
                   style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
                   <Lock className="w-8 h-8 text-[#D4D0C8] mx-auto mb-3" />
                   <p className="theme-text text-sm font-semibold mb-1" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>

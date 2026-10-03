@@ -71,11 +71,11 @@ export default function AssignmentsPage() {
         </motion.div>
 
         {loading ? (
-          <div className="theme-bg-elevated rounded-2xl border theme-border p-12 text-center">
+          <div className="ksurface p-12 text-center">
             <p className="theme-text-faint text-sm font-sans">Loading...</p>
           </div>
         ) : assignments.length === 0 ? (
-          <div className="theme-bg-elevated rounded-2xl border theme-border p-12 text-center"
+          <div className="ksurface p-12 text-center"
             style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
             <FileText className="w-10 h-10 theme-text-faint mx-auto mb-3" />
             <p className="theme-text-faint text-sm font-sans">No assignments yet.</p>
@@ -142,7 +142,7 @@ export default function AssignmentsPage() {
                         <button
                           onClick={() => handleSubmit(a.id)}
                           disabled={submitting === a.id}
-                          className="mt-3 bg-royal-700 hover:bg-royal-800 disabled:opacity-50 text-white text-xs font-semibold font-sans px-5 py-2.5 rounded-xl transition-all flex items-center gap-2">
+                          className="mt-3 grad-btn disabled:opacity-50 text-white text-xs font-semibold font-sans px-5 py-2.5 rounded-xl transition-all flex items-center gap-2">
                           <Upload className="w-3.5 h-3.5" />
                           {submitting === a.id ? "Submitting..." : "Submit Assignment"}
                         </button>

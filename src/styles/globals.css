@@ -253,6 +253,46 @@ html.dark {
   box-shadow: 0 18px 40px -18px rgba(124,58,237,.5);
 }
 .kcard:hover::before { opacity: 1; }
+/* static premium surface: same gradient hairline, no hover lift (for info
+   cards, panels, list containers that aren't themselves clickable) */
+.ksurface {
+  position: relative;
+  background: color-mix(in srgb, var(--bg-elevated) 88%, transparent);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+}
+.ksurface::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 2px;
+  border-radius: 1rem 1rem 0 0;
+  background: linear-gradient(90deg, #7C3AED, #C026A3, #E0A64E);
+  opacity: .3;
+}
+/* FIXED-DARK kinetic surfaces for the admin area (always dark regardless of
+   the global light/dark toggle, like .glass-dark) + gradient hairline. */
+.ksurface-d, .kcard-d {
+  position: relative;
+  background: linear-gradient(158deg, rgba(44,34,74,0.60), rgba(14,11,26,0.66) 70%);
+  backdrop-filter: blur(20px) saturate(130%);
+  -webkit-backdrop-filter: blur(20px) saturate(130%);
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 1rem;
+}
+.ksurface-d::before, .kcard-d::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 2px;
+  border-radius: 1rem 1rem 0 0;
+  background: linear-gradient(90deg, #7C3AED, #C026A3, #E0A64E);
+  opacity: .32; transition: opacity .25s ease;
+}
+.kcard-d { transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+.kcard-d:hover {
+  transform: translateY(-3px);
+  border-color: rgba(192,38,163,0.5);
+  box-shadow: 0 18px 40px -18px rgba(124,58,237,.5);
+}
+.kcard-d:hover::before { opacity: 1; }
+
 /* reusable gradient pill button */
 .grad-btn {
   background: linear-gradient(120deg, #4C1D95 0%, #7C3AED 45%, #C026A3 100%);

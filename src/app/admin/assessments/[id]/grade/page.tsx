@@ -153,7 +153,7 @@ export default function GradeAssessmentPage() {
           </div>
           {submissions.some(s => s.status !== "graded") && (
             <button onClick={bulkReleaseObjOnly}
-              className="flex items-center gap-1.5 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] text-xs font-bold font-sans px-4 py-2.5 rounded-full transition-all">
+              className="flex items-center gap-1.5 grad-btn text-white text-xs font-bold font-sans px-4 py-2.5 rounded-full transition-all">
               <Zap className="w-3.5 h-3.5" /> Release Obj Scores
             </button>
           )}
@@ -304,7 +304,7 @@ export default function GradeAssessmentPage() {
 
                       {!isGraded && (
                         <button onClick={() => saveGrade(sub.id)} disabled={saving === sub.id}
-                          className="w-full flex items-center justify-center gap-2 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans disabled:opacity-50">
+                          className="w-full flex items-center justify-center gap-2 grad-btn text-white font-bold text-sm py-3.5 rounded-full transition-all font-sans disabled:opacity-50">
                           {saving === sub.id
                             ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
                             : <><Send className="w-4 h-4" /> Submit Grade &amp; Release Results</>
@@ -342,7 +342,7 @@ export default function GradeAssessmentPage() {
                             Cancel
                           </button>
                           <button onClick={() => { saveGrade(sub.id); setEditingId(null); }} disabled={saving === sub.id}
-                            className="flex-1 flex items-center justify-center gap-2 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] font-bold text-sm py-3 rounded-full transition-all font-sans disabled:opacity-50">
+                            className="flex-1 flex items-center justify-center gap-2 grad-btn text-white font-bold text-sm py-3 rounded-full transition-all font-sans disabled:opacity-50">
                             {saving === sub.id
                               ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
                               : <><Send className="w-4 h-4" /> Update Grade</>

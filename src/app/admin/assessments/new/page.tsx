@@ -202,7 +202,7 @@ export default function NewAssessmentPage() {
         </div>
 
         {/* Basic info */}
-        <div className="glass-dark border border-white/[0.07] rounded-2xl p-6 space-y-4">
+        <div className="ksurface-d p-6 space-y-4">
           <h2 className="text-white text-sm font-semibold font-sans">Assessment Details</h2>
           <div>
             <label className="text-white/40 text-xs tracking-widest uppercase font-sans block mb-2">Course *</label>
@@ -234,7 +234,7 @@ export default function NewAssessmentPage() {
         </div>
 
         {/* Part A — Objectives */}
-        <div className="glass-dark border border-white/[0.07] rounded-2xl p-6 space-y-4">
+        <div className="ksurface-d p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-white text-sm font-semibold font-sans">Part A — Objectives</h2>
@@ -296,7 +296,7 @@ Correct: C`}</pre>
 
               <div className="flex items-center gap-3">
                 <button onClick={handleImport} disabled={!importText.trim()}
-                  className="flex items-center gap-2 bg-[#D4A85C] hover:bg-[#C49848] disabled:opacity-40 text-[#080C14] font-bold text-sm px-6 py-2.5 rounded-full transition-all font-sans">
+                  className="flex items-center gap-2 grad-btn text-white disabled:opacity-40 text-[#080C14] font-bold text-sm px-6 py-2.5 rounded-full transition-all font-sans">
                   Import Questions
                   Import Questions
                   Import Questions
@@ -369,7 +369,7 @@ Correct: C`}</pre>
         </div>
 
         {/* Part B — Theory */}
-        <div className="glass-dark border border-white/[0.07] rounded-2xl p-6 space-y-4">
+        <div className="ksurface-d p-6 space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-white text-sm font-semibold font-sans">Part B — Theory</h2>
@@ -413,7 +413,7 @@ Correct: C`}</pre>
             {saving ? "Saving..." : "Save as Draft"}
           </button>
           <button onClick={() => handleSave(true)} disabled={saving}
-            className="flex-1 flex items-center justify-center gap-2 bg-[#D4A85C] hover:bg-[#C49848] text-[#080C14] font-bold text-sm py-3.5 rounded-full transition-all font-sans disabled:opacity-40 hover:shadow-[0_0_30px_rgba(212,168,92,0.3)]">
+            className="flex-1 flex items-center justify-center gap-2 grad-btn text-white font-bold text-sm py-3.5 rounded-full transition-all font-sans disabled:opacity-40 hover:shadow-[0_0_30px_rgba(212,168,92,0.3)]">
             {saving ? <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</> : "Publish Assessment"}
           </button>
         </div>

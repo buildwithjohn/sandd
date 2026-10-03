@@ -135,7 +135,7 @@ export default function LessonPage() {
 
         {/* Description / Outline */}
         {lesson.description && (
-          <div className="theme-bg-elevated border theme-border rounded-2xl p-5 sm:p-6">
+          <div className="ksurface p-5 sm:p-6">
             <div className="theme-text-faint text-[10px] uppercase tracking-widest font-sans mb-3">In this lesson</div>
             <div className="theme-text text-sm font-sans leading-relaxed whitespace-pre-wrap">
               {lesson.description}
@@ -212,7 +212,7 @@ export default function LessonPage() {
         {/* Per-subtopic attachment */}
         {lesson.attachment_url && (
           <a href={lesson.attachment_url} target="_blank" rel="noopener noreferrer" download
-            className="flex items-center gap-3 theme-bg-elevated border theme-border rounded-2xl p-4 hover:border-[var(--accent)] transition-all group">
+            className="flex items-center gap-3 ksurface p-4 hover:border-[var(--accent)] transition-all group">
             <div className="w-10 h-10 rounded-xl theme-accent-bg flex items-center justify-center flex-shrink-0">
               <svg className="w-4 h-4 theme-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             </div>
@@ -228,7 +228,7 @@ export default function LessonPage() {
         {/* Mark complete */}
         {!completed && (
           <button onClick={markComplete} disabled={marking}
-            className="w-full flex items-center justify-center gap-2 bg-[#1A1A2E] hover:bg-[#2A2A4E] disabled:opacity-50 text-white font-semibold text-sm py-4 rounded-xl transition-all font-sans">
+            className="w-full flex items-center justify-center gap-2 grad-btn disabled:opacity-50 text-white font-semibold text-sm py-4 rounded-xl transition-all font-sans">
             {marking
               ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</>
               : <><CheckCircle className="w-4 h-4 theme-accent" /> Mark as Complete</>
@@ -279,7 +279,7 @@ export default function LessonPage() {
         <div className="grid grid-cols-2 gap-3 pt-2">
           {prevLesson ? (
             <Link href={`/portal/lessons/${prevLesson.id}`}
-              className="theme-bg-elevated border theme-border rounded-2xl p-4 hover:border-[#D4A85C]/40 transition-all group">
+              className="ksurface p-4 hover:border-[#D4A85C]/40 transition-all group">
               <div className="theme-text-muted text-[10px] uppercase tracking-widest font-sans mb-1 flex items-center gap-1">
                 <ChevronLeft className="w-3 h-3" /> Previous
               </div>
@@ -291,7 +291,7 @@ export default function LessonPage() {
 
           {nextLesson ? (
             <Link href={`/portal/lessons/${nextLesson.id}`}
-              className="theme-bg-elevated border theme-border rounded-2xl p-4 hover:border-[#D4A85C]/40 transition-all group text-right">
+              className="ksurface p-4 hover:border-[#D4A85C]/40 transition-all group text-right">
               <div className="theme-text-muted text-[10px] uppercase tracking-widest font-sans mb-1 flex items-center gap-1 justify-end">
                 Next <ChevronRight className="w-3 h-3" />
               </div>
