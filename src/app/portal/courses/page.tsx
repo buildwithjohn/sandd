@@ -85,7 +85,7 @@ export default function CoursesPortalPage() {
                 {year1.map((course, i) => (
                   <motion.div key={course.id} variants={rise(i * 0.06)} initial="hidden" animate="visible">
                     <Link href={`/portal/courses/${course.slug}`}
-                      className="group ksurface p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all block"
+                      className="group ksurface p-5 flex items-center gap-4 hover:border-[#E0A64E]/40 hover:shadow-md transition-all block"
                       style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
                       <div className="w-10 h-10 rounded-xl theme-bg-subtle border theme-border flex items-center justify-center flex-shrink-0">
                         <span className="theme-accent text-xs font-mono font-semibold">
@@ -128,9 +128,9 @@ export default function CoursesPortalPage() {
                 <div className="space-y-2">
                   {year2.map((course, i) => (
                     <Link key={course.id} href={`/portal/courses/${course.slug}`}
-                      className="group theme-bg-elevated rounded-2xl border border-[#D4A85C]/15 p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 hover:shadow-md transition-all block"
+                      className="group theme-bg-elevated rounded-2xl border border-[#E0A64E]/15 p-5 flex items-center gap-4 hover:border-[#E0A64E]/40 hover:shadow-md transition-all block"
                       style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
-                      <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/8 border border-[#D4A85C]/15 flex items-center justify-center flex-shrink-0">
+                      <div className="w-10 h-10 rounded-xl bg-[#E0A64E]/8 border border-[#E0A64E]/15 flex items-center justify-center flex-shrink-0">
                         <span className="theme-accent text-xs font-mono font-semibold">
                           {String(i + 7).padStart(2, "0")}
                         </span>

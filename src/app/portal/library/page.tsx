@@ -80,8 +80,8 @@ export default function LibraryPage() {
                           style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
                           {/* Header */}
                           <button onClick={() => setActive(isOpen ? null : item.id)}
-                            className="w-full flex items-center gap-4 p-5 text-left hover:bg-[#D4A85C]/[0.03] transition-all">
-                            <div className="w-12 h-12 rounded-xl border flex items-center justify-center flex-shrink-0 bg-[#D4A85C]/10 border-[#D4A85C]/20">
+                            className="w-full flex items-center gap-4 p-5 text-left hover:bg-[#E0A64E]/[0.03] transition-all">
+                            <div className="w-12 h-12 rounded-xl border flex items-center justify-center flex-shrink-0 bg-[#E0A64E]/10 border-[#E0A64E]/20">
                               {item.youtube_video_id ? <PlayCircle className="w-5 h-5 theme-accent" />
                                 : item.audio_url ? <Music className="w-5 h-5 theme-accent" />
                                 : <FileDown className="w-5 h-5 theme-accent" />}
@@ -119,7 +119,7 @@ export default function LibraryPage() {
                                   <div className="theme-text-muted text-xs tracking-[0.1em] uppercase font-sans">Reading materials</div>
                                   {item.materials!.map(m => (
                                     <a key={m.id} href={m.file_url} target="_blank" rel="noopener noreferrer" download
-                                      className="flex items-center gap-3 rounded-xl border theme-border p-3 hover:border-[#D4A85C]/40 transition-all">
+                                      className="flex items-center gap-3 rounded-xl border theme-border p-3 hover:border-[#E0A64E]/40 transition-all">
                                       <FileDown className="w-4 h-4 theme-accent flex-shrink-0" />
                                       <span className="flex-1 theme-text text-sm font-sans truncate">{m.title}</span>
                                       <span className="theme-text-muted text-xs font-sans">Download</span>

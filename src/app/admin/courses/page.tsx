@@ -127,7 +127,7 @@ export default function CourseManagerPage() {
   if (loading) return (
     <AdminShell>
       <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#D4A85C]/30 border-t-[#D4A85C] rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[#E0A64E]/30 border-t-[#E0A64E] rounded-full animate-spin" />
       </div>
     </AdminShell>
   );
@@ -157,7 +157,7 @@ export default function CourseManagerPage() {
           <div key={group.label}>
             <div className="flex items-center gap-3 mb-3">
               <div className="h-px flex-1 bg-white/[0.08]" />
-              <span className="text-[#D4A85C] text-xs tracking-[0.2em] uppercase font-sans">{group.label}</span>
+              <span className="text-[#E0A64E] text-xs tracking-[0.2em] uppercase font-sans">{group.label}</span>
               <div className="h-px flex-1 bg-white/[0.08]" />
             </div>
 
@@ -173,8 +173,8 @@ export default function CourseManagerPage() {
                       <button
                         onClick={() => setExpanded(e => ({ ...e, [course.id]: !e[course.id] }))}
                         className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0 text-left">
-                        <div className="w-8 h-8 rounded-lg bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
-                          <span className="text-[#D4A85C] text-xs font-mono font-bold">
+                        <div className="w-8 h-8 rounded-lg bg-[#E0A64E]/10 border border-[#E0A64E]/20 flex items-center justify-center flex-shrink-0">
+                          <span className="text-[#E0A64E] text-xs font-mono font-bold">
                             {String(course.order_index || ci + 1).padStart(2,"0")}
                           </span>
                         </div>
@@ -197,7 +197,7 @@ export default function CourseManagerPage() {
                               </span>
                             )}
                             {course.assessments.length > 0 && (
-                              <span className="text-[#D4A85C] text-[10px] font-sans flex items-center gap-1">
+                              <span className="text-[#E0A64E] text-[10px] font-sans flex items-center gap-1">
                                 <Star className="w-2.5 h-2.5" /> {course.assessments.length}
                               </span>
                             )}
@@ -235,14 +235,14 @@ export default function CourseManagerPage() {
 
                           {course.subtopics.length === 0 ? (
                             <div className="text-white/20 text-xs font-sans py-2 pl-2">
-                              No subtopics yet. <Link href="/admin/upload" className="text-[#D4A85C]/60 hover:text-[#D4A85C]">Add one →</Link>
+                              No subtopics yet. <Link href="/admin/upload" className="text-[#E0A64E]/60 hover:text-[#E0A64E]">Add one →</Link>
                             </div>
                           ) : (
                             <div className="space-y-1.5">
                               {course.subtopics.map(sub => (
                                 <div key={sub.id}
                                   className="flex items-center gap-3 bg-white/[0.03] rounded-xl px-4 py-3 group">
-                                  <span className="text-[#D4A85C]/40 text-xs font-mono w-5 flex-shrink-0">
+                                  <span className="text-[#E0A64E]/40 text-xs font-mono w-5 flex-shrink-0">
                                     {String(sub.order_index).padStart(2,"0")}
                                   </span>
                                   <div className="flex-1 min-w-0">
@@ -265,12 +265,12 @@ export default function CourseManagerPage() {
                                         </span>
                                       )}
                                       {sub.attachment_url && (
-                                        <span className="text-[#D4A85C]/60 text-[10px] font-sans flex items-center gap-0.5">
+                                        <span className="text-[#E0A64E]/60 text-[10px] font-sans flex items-center gap-0.5">
                                           + File
                                         </span>
                                       )}
                                       {sub.scheduled_at && !sub.is_published && (
-                                        <span className="text-[#D4A85C]/60 text-[10px] font-sans flex items-center gap-0.5">
+                                        <span className="text-[#E0A64E]/60 text-[10px] font-sans flex items-center gap-0.5">
                                           <Calendar className="w-2.5 h-2.5" />
                                           {new Date(sub.scheduled_at).toLocaleString("en-NG")}
                                         </span>
@@ -282,7 +282,7 @@ export default function CourseManagerPage() {
                                     sub.is_published
                                       ? "bg-green-500/10 border border-green-500/20 text-green-400"
                                       : sub.scheduled_at
-                                        ? "bg-[#D4A85C]/10 border border-[#D4A85C]/20 text-[#D4A85C]"
+                                        ? "bg-[#E0A64E]/10 border border-[#E0A64E]/20 text-[#E0A64E]"
                                         : "bg-white/5 border border-white/10 text-white/30"
                                   }`}>
                                     {sub.is_published ? "Live" : sub.scheduled_at ? "Scheduled" : "Draft"}
@@ -329,7 +329,7 @@ export default function CourseManagerPage() {
                                 </a>
                               </div>
                               <Link href="/admin/upload"
-                                className="text-[#D4A85C]/60 hover:text-[#D4A85C] text-[10px] font-sans transition-colors flex-shrink-0">
+                                className="text-[#E0A64E]/60 hover:text-[#E0A64E] text-[10px] font-sans transition-colors flex-shrink-0">
                                 Replace
                               </Link>
                             </div>
@@ -338,7 +338,7 @@ export default function CourseManagerPage() {
                               <FileText className="w-4 h-4 text-white/20 flex-shrink-0" />
                               <span className="text-white/25 text-xs font-sans">No material uploaded yet.</span>
                               <Link href="/admin/upload"
-                                className="text-[#D4A85C]/60 hover:text-[#D4A85C] text-[10px] font-sans transition-colors ml-auto flex-shrink-0">
+                                className="text-[#E0A64E]/60 hover:text-[#E0A64E] text-[10px] font-sans transition-colors ml-auto flex-shrink-0">
                                 Upload →
                               </Link>
                             </div>
@@ -352,7 +352,7 @@ export default function CourseManagerPage() {
                               <Star className="w-3 h-3" /> Assessments ({course.assessments.length})
                             </div>
                             <Link href="/admin/assessments/new"
-                              className="text-[#D4A85C]/60 hover:text-[#D4A85C] text-[10px] font-sans transition-colors">
+                              className="text-[#E0A64E]/60 hover:text-[#E0A64E] text-[10px] font-sans transition-colors">
                               + New →
                             </Link>
                           </div>
@@ -366,7 +366,7 @@ export default function CourseManagerPage() {
                               {course.assessments.map(a => (
                                 <div key={a.id}
                                   className="flex items-center gap-3 bg-white/[0.03] rounded-xl px-4 py-3 group">
-                                  <Star className="w-3.5 h-3.5 text-[#D4A85C]/60 flex-shrink-0" />
+                                  <Star className="w-3.5 h-3.5 text-[#E0A64E]/60 flex-shrink-0" />
                                   <div className="flex-1 min-w-0">
                                     <div className="text-white/75 text-xs font-semibold font-sans truncate">{a.title}</div>
                                     <div className="flex items-center gap-2 mt-0.5">
@@ -387,7 +387,7 @@ export default function CourseManagerPage() {
                                   </div>
                                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <Link href={`/admin/assessments/${a.id}`}
-                                      className="text-[10px] bg-[#D4A85C]/10 border border-[#D4A85C]/20 text-[#D4A85C] hover:bg-[#D4A85C]/20 px-2 py-1 rounded-lg font-sans transition-all">
+                                      className="text-[10px] bg-[#E0A64E]/10 border border-[#E0A64E]/20 text-[#E0A64E] hover:bg-[#E0A64E]/20 px-2 py-1 rounded-lg font-sans transition-all">
                                       View
                                     </Link>
                                     <button onClick={() => deleteAssessment(a.id, a.title)}

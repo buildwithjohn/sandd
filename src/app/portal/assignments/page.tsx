@@ -89,7 +89,7 @@ export default function AssignmentsPage() {
               return (
                 <motion.div key={a.id} variants={rise(i * 0.08)} initial="hidden" animate="visible">
                   <div className={`theme-bg-elevated rounded-2xl border p-6 ${
-                    isGraded ? "border-green-200" : isSubmitted ? "border-[#D4A85C]/30" : "theme-border"
+                    isGraded ? "border-green-200" : isSubmitted ? "border-[#E0A64E]/30" : "theme-border"
                   }`} style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
 
                     <div className="flex items-start justify-between gap-3 mb-3">
@@ -106,7 +106,7 @@ export default function AssignmentsPage() {
                           <CheckCircle className="w-3.5 h-3.5" /> Graded — {sub.grade}%
                         </div>
                       ) : isSubmitted ? (
-                        <div className="flex items-center gap-1.5 bg-[#D4A85C]/10 border border-[#D4A85C]/25 theme-accent text-xs font-semibold px-3 py-1.5 rounded-full font-sans flex-shrink-0">
+                        <div className="flex items-center gap-1.5 bg-[#E0A64E]/10 border border-[#E0A64E]/25 theme-accent text-xs font-semibold px-3 py-1.5 rounded-full font-sans flex-shrink-0">
                           <Clock className="w-3.5 h-3.5" /> Awaiting Grade
                         </div>
                       ) : (
@@ -137,7 +137,7 @@ export default function AssignmentsPage() {
                           onChange={e => setResponses(p => ({ ...p, [a.id]: e.target.value }))}
                           rows={5}
                           placeholder="Write your response here (minimum 50 characters)..."
-                          className="w-full theme-bg-subtle border theme-border rounded-xl px-4 py-3 text-sm theme-text font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-colors resize-none"
+                          className="w-full theme-bg-subtle border theme-border rounded-xl px-4 py-3 text-sm theme-text font-sans focus:outline-none focus:border-[#E0A64E]/50 transition-colors resize-none"
                         />
                         <button
                           onClick={() => handleSubmit(a.id)}

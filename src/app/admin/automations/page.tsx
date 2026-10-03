@@ -53,8 +53,8 @@ export default function AutomationsPage() {
     <AdminShell>
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center">
-            <Zap className="w-5 h-5 text-[#D4A85C]" />
+          <div className="w-10 h-10 rounded-xl bg-[#E0A64E]/10 border border-[#E0A64E]/20 flex items-center justify-center">
+            <Zap className="w-5 h-5 text-[#E0A64E]" />
           </div>
           <div>
             <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>Automations</h1>
@@ -70,14 +70,14 @@ export default function AutomationsPage() {
               {AUTOMATIONS.map(a => (
                 <div key={a.key} className="ksurface-d p-4 flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center flex-shrink-0">
-                    <a.icon className="w-4 h-4 text-[#D4A85C]" />
+                    <a.icon className="w-4 h-4 text-[#E0A64E]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-white/90 text-sm font-semibold font-sans">{a.title}</div>
                     <div className="text-white/40 text-xs font-sans mt-0.5">{a.desc}</div>
                   </div>
                   <button onClick={() => toggle(a.key, !sw[a.key])}
-                    className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${sw[a.key] ? "bg-[#D4A85C]" : "bg-white/15"}`}>
+                    className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${sw[a.key] ? "bg-[#E0A64E]" : "bg-white/15"}`}>
                     <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${sw[a.key] ? "left-[22px]" : "left-0.5"}`} />
                   </button>
                 </div>
@@ -90,7 +90,7 @@ export default function AutomationsPage() {
                 {busy === "dryrun" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Eye className="w-4 h-4" />} Preview (dry run)
               </button>
               <button onClick={() => act("run")} disabled={!!busy}
-                className="flex items-center gap-2 bg-[#D4A85C] hover:bg-[#c39a4f] disabled:opacity-50 text-[#0D1320] text-sm font-semibold font-sans px-4 py-2.5 rounded-xl transition-all">
+                className="flex items-center gap-2 bg-[#E0A64E] hover:bg-[#c39a4f] disabled:opacity-50 text-[#0D1320] text-sm font-semibold font-sans px-4 py-2.5 rounded-xl transition-all">
                 {busy === "run" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />} Run now
               </button>
             </div>

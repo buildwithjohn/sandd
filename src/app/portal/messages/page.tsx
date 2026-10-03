@@ -101,12 +101,12 @@ export default function MessagesPage() {
               <button onClick={() => setComposing(false)} className="theme-text-muted hover:theme-text"><X className="w-4 h-4" /></button>
             </div>
             <input value={subject} onChange={e => setSubject(e.target.value)} placeholder="Subject (optional)"
-              className="w-full theme-bg-subtle border theme-border rounded-xl px-4 py-2.5 text-sm theme-text font-sans focus:outline-none focus:border-[#D4A85C]/50" />
+              className="w-full theme-bg-subtle border theme-border rounded-xl px-4 py-2.5 text-sm theme-text font-sans focus:outline-none focus:border-[#E0A64E]/50" />
             <textarea value={firstMsg} onChange={e => setFirstMsg(e.target.value)} rows={5} placeholder="Write your message to the School Office…"
-              className="w-full theme-bg-subtle border theme-border rounded-xl px-4 py-3 text-sm theme-text font-sans focus:outline-none focus:border-[#D4A85C]/50 resize-none" />
+              className="w-full theme-bg-subtle border theme-border rounded-xl px-4 py-3 text-sm theme-text font-sans focus:outline-none focus:border-[#E0A64E]/50 resize-none" />
             <div className="flex justify-end">
               <button onClick={startConversation} disabled={sending}
-                className="flex items-center gap-2 bg-[#D4A85C] hover:bg-[#c39a4f] disabled:opacity-50 text-[#0D1320] text-sm font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">
+                className="flex items-center gap-2 bg-[#E0A64E] hover:bg-[#c39a4f] disabled:opacity-50 text-[#0D1320] text-sm font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />} Send
               </button>
             </div>
@@ -133,9 +133,9 @@ export default function MessagesPage() {
               <textarea value={reply} onChange={e => setReply(e.target.value)} rows={1}
                 onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
                 placeholder="Write a reply…"
-                className="flex-1 theme-bg-subtle border theme-border rounded-xl px-4 py-2.5 text-sm theme-text font-sans focus:outline-none focus:border-[#D4A85C]/50 resize-none" />
+                className="flex-1 theme-bg-subtle border theme-border rounded-xl px-4 py-2.5 text-sm theme-text font-sans focus:outline-none focus:border-[#E0A64E]/50 resize-none" />
               <button onClick={send} disabled={sending || !reply.trim()}
-                className="bg-[#D4A85C] hover:bg-[#c39a4f] disabled:opacity-40 text-[#0D1320] rounded-xl p-2.5 transition-all">
+                className="bg-[#E0A64E] hover:bg-[#c39a4f] disabled:opacity-40 text-[#0D1320] rounded-xl p-2.5 transition-all">
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </button>
             </div>
@@ -146,16 +146,16 @@ export default function MessagesPage() {
           <div className="ksurface p-10 text-center">
             <MessageSquare className="w-8 h-8 theme-text-muted mx-auto mb-3 opacity-40" />
             <p className="theme-text-muted text-sm font-sans mb-4">No messages yet.</p>
-            <button onClick={() => setComposing(true)} className="bg-[#D4A85C] hover:bg-[#c39a4f] text-[#0D1320] text-sm font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">Start a conversation</button>
+            <button onClick={() => setComposing(true)} className="bg-[#E0A64E] hover:bg-[#c39a4f] text-[#0D1320] text-sm font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">Start a conversation</button>
           </div>
         ) : (
           <div className="space-y-2">
             {convos.map(c => (
               <button key={c.id} onClick={() => openConvo(c)}
-                className="w-full text-left theme-bg-elevated rounded-xl border theme-border p-4 hover:border-[#D4A85C]/40 transition-all flex items-center gap-3">
+                className="w-full text-left theme-bg-elevated rounded-xl border theme-border p-4 hover:border-[#E0A64E]/40 transition-all flex items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    {c.student_unread && <span className="w-2 h-2 rounded-full bg-[#D4A85C] flex-shrink-0" />}
+                    {c.student_unread && <span className="w-2 h-2 rounded-full bg-[#E0A64E] flex-shrink-0" />}
                     <span className={`text-sm font-sans truncate ${c.student_unread ? "theme-text font-semibold" : "theme-text"}`}>{c.subject}</span>
                   </div>
                   {c.last_snippet && <div className="theme-text-muted text-xs font-sans truncate mt-0.5">{c.last_snippet}</div>}

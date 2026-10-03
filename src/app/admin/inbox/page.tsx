@@ -81,8 +81,8 @@ export default function AdminInboxPage() {
     <AdminShell>
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center">
-            <Mail className="w-5 h-5 text-[#D4A85C]" />
+          <div className="w-10 h-10 rounded-xl bg-[#E0A64E]/10 border border-[#E0A64E]/20 flex items-center justify-center">
+            <Mail className="w-5 h-5 text-[#E0A64E]" />
           </div>
           <div>
             <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>Inbox</h1>
@@ -103,7 +103,7 @@ export default function AdminInboxPage() {
                   <button key={c.id} onClick={() => openConvo(c)}
                     className={`w-full text-left px-4 py-3.5 hover:bg-white/[0.03] transition-colors ${active?.id === c.id ? "bg-white/[0.04]" : ""}`}>
                     <div className="flex items-center gap-2">
-                      {c.admin_unread && <span className="w-2 h-2 rounded-full bg-[#D4A85C] flex-shrink-0" />}
+                      {c.admin_unread && <span className="w-2 h-2 rounded-full bg-[#E0A64E] flex-shrink-0" />}
                       <span className={`text-sm font-sans truncate flex-1 ${c.admin_unread ? "text-white font-semibold" : "text-white/70"}`}>
                         {c.student?.full_name || c.student?.email || "Student"}
                       </span>
@@ -137,7 +137,7 @@ export default function AdminInboxPage() {
                   ) : messages.map(m => (
                     <div key={m.id} className={`flex ${m.sender_role === "admin" ? "justify-end" : "justify-start"}`}>
                       <div className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-sm font-sans leading-relaxed ${
-                        m.sender_role === "admin" ? "bg-[#D4A85C] text-[#0D1320]" : "bg-white/[0.06] text-white/85 border border-white/10"}`}>
+                        m.sender_role === "admin" ? "bg-[#E0A64E] text-[#0D1320]" : "bg-white/[0.06] text-white/85 border border-white/10"}`}>
                         <div className="whitespace-pre-wrap">{m.body}</div>
                         <div className={`text-[10px] mt-1 ${m.sender_role === "admin" ? "text-[#0D1320]/60" : "text-white/35"}`}>{timeAgo(m.created_at)}</div>
                       </div>
@@ -149,9 +149,9 @@ export default function AdminInboxPage() {
                   <textarea value={reply} onChange={e => setReply(e.target.value)} rows={1}
                     onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
                     placeholder="Write a reply… (emails the student)"
-                    className="flex-1 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white/90 font-sans placeholder-white/25 focus:outline-none focus:border-[#D4A85C]/50 resize-none" />
+                    className="flex-1 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white/90 font-sans placeholder-white/25 focus:outline-none focus:border-[#E0A64E]/50 resize-none" />
                   <button onClick={send} disabled={sending || !reply.trim()}
-                    className="bg-[#D4A85C] hover:bg-[#c39a4f] disabled:opacity-40 text-[#0D1320] rounded-xl p-2.5 transition-all">
+                    className="bg-[#E0A64E] hover:bg-[#c39a4f] disabled:opacity-40 text-[#0D1320] rounded-xl p-2.5 transition-all">
                     {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                   </button>
                 </div>

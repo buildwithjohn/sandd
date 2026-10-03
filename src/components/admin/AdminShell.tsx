@@ -15,6 +15,7 @@ import {
 , Send
 , Zap
 } from "lucide-react";
+import LineField from "@/components/LineField";
 
 const navLinks = [
   { href: "/admin/dashboard",     icon: LayoutDashboard, label: "Dashboard"     },
@@ -93,7 +94,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       </div>
 
       {/* ── TOP NAV ─────────────────────────────────────── */}
-      <nav className="bg-[#0D1320]/70 backdrop-blur-xl border-b border-white/[0.07] sticky top-0 z-50"
+      <nav className="bg-[#0B0612]/70 backdrop-blur-xl border-b border-white/[0.07] sticky top-0 z-50"
         style={{ boxShadow: "0 1px 0 rgba(255,255,255,0.04)" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
 
@@ -110,13 +111,13 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               <div className="text-white text-sm font-semibold leading-none" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
                 S&D Prophetic School
               </div>
-              <div className="text-[#D4A85C] text-[9px] tracking-[0.2em] uppercase mt-0.5">Admin Panel</div>
+              <div className="text-[#E0A64E] text-[9px] tracking-[0.2em] uppercase mt-0.5">Admin Panel</div>
             </div>
           </Link>
 
           {/* View as Student */}
           <Link href="/portal/dashboard"
-            className="hidden sm:flex items-center gap-1.5 bg-[#D4A85C]/10 hover:bg-[#D4A85C]/20 border border-[#D4A85C]/30 text-[#D4A85C] rounded-xl px-3 py-1.5 mr-2 transition-all">
+            className="hidden sm:flex items-center gap-1.5 bg-[#E0A64E]/10 hover:bg-[#E0A64E]/20 border border-[#E0A64E]/30 text-[#E0A64E] rounded-xl px-3 py-1.5 mr-2 transition-all">
             <Eye className="w-3.5 h-3.5" />
             <span className="text-xs font-semibold font-sans">View as Student</span>
           </Link>
@@ -134,7 +135,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               <span className="text-white/80 text-xs font-medium">{adminName}</span>
               <span className={`ml-2 text-[9px] px-1.5 py-0.5 rounded-full font-sans ${
                 isSuperAdmin
-                  ? "bg-[#D4A85C]/15 text-[#D4A85C] border border-[#D4A85C]/25"
+                  ? "bg-[#E0A64E]/15 text-[#E0A64E] border border-[#E0A64E]/25"
                   : "bg-white/8 text-white/40 border border-white/10"
               }`}>{isSuperAdmin ? "Super Admin" : "Admin"}</span>
             </div>
@@ -146,7 +147,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       {drawerOpen && (
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setDrawerOpen(false)}>
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          <div className="absolute top-14 left-0 bottom-0 w-72 bg-[#0D1320]/80 backdrop-blur-xl border-r border-white/[0.07] overflow-y-auto"
+          <div className="absolute top-14 left-0 bottom-0 w-72 bg-[#0B0612]/80 backdrop-blur-xl border-r border-white/[0.07] overflow-y-auto"
             onClick={e => e.stopPropagation()}>
 
             {/* Admin profile */}
@@ -160,7 +161,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 </div>
                 <div>
                   <div className="text-white text-sm font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{adminName}</div>
-                  <div className={`text-xs mt-0.5 ${isSuperAdmin ? "text-[#D4A85C]" : "text-white/40"}`}>
+                  <div className={`text-xs mt-0.5 ${isSuperAdmin ? "text-[#E0A64E]" : "text-white/40"}`}>
                     {isSuperAdmin ? "Super Admin" : "Admin"}
                   </div>
                 </div>
@@ -169,7 +170,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
             {/* View as Student button in mobile drawer */}
             <Link href="/portal/dashboard" onClick={() => setDrawerOpen(false)}
-              className="mx-3 mt-3 mb-1 flex items-center gap-3 px-4 py-3 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/30 text-[#D4A85C] hover:bg-[#D4A85C]/20 transition-all">
+              className="mx-3 mt-3 mb-1 flex items-center gap-3 px-4 py-3 rounded-xl bg-[#E0A64E]/10 border border-[#E0A64E]/30 text-[#E0A64E] hover:bg-[#E0A64E]/20 transition-all">
               <Eye className="w-5 h-5 flex-shrink-0" />
               <div className="flex-1">
                 <div className="text-sm font-semibold">View as Student</div>
@@ -212,24 +213,28 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         {/* Desktop Sidebar */}
         <aside className="w-52 flex-shrink-0 hidden lg:block">
           <div className="sticky top-20 space-y-2">
-            <div className="glass-dark glass-edge rounded-2xl p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl overflow-hidden bg-[#1A1A2E] flex items-center justify-center flex-shrink-0 border border-white/10">
+            {/* Admin card — gradient header + overlapping avatar */}
+            <div className="ksurface-d overflow-hidden">
+              <div className="grad-hero relative h-14">
+                <div className="absolute inset-0 line-drift opacity-50"><LineField stroke="#ffffff" count={8} /></div>
+              </div>
+              <div className="px-4 pb-4 -mt-7 relative">
+                <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#1A1230] flex items-center justify-center ring-2 ring-[#0B0612]">
                   {avatarUrl
                     ? <img src={avatarUrl} alt={adminName} className="w-full h-full object-cover" />
                     : <span className="text-white text-sm font-bold">{initials}</span>
                   }
                 </div>
-                <div className="min-w-0">
-                  <div className="text-white text-sm font-medium truncate" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{adminName}</div>
-                  <div className={`text-[10px] mt-0.5 ${isSuperAdmin ? "text-[#D4A85C]" : "text-white/35"}`}>
+                <div className="mt-2.5">
+                  <div className="kinetic-display text-white text-xl truncate">{adminName}</div>
+                  <div className={`text-[10px] mt-0.5 ${isSuperAdmin ? "text-[#E0A64E]" : "text-white/40"}`}>
                     {isSuperAdmin ? "Super Admin" : "Admin"}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="glass-dark glass-edge rounded-2xl p-2">
+            <div className="ksurface-d p-2">
               {navLinks.map(l => {
                 const active = pathname === l.href || (l.href !== "/admin/dashboard" && pathname.startsWith(l.href));
                 return (
@@ -261,7 +266,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       </div>
 
       {/* ── MOBILE BOTTOM NAV ────────────────────────────── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0D1320]/70 backdrop-blur-xl border-t border-white/[0.07]"
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0B0612]/70 backdrop-blur-xl border-t border-white/[0.07]"
         style={{ boxShadow: "0 -4px 20px rgba(0,0,0,0.4)" }}>
         <div className="flex items-center justify-around px-2 py-1">
           {bottomNav.map(l => {
@@ -269,9 +274,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             return (
               <Link key={l.href} href={l.href}
                 className="flex flex-col items-center gap-0.5 px-2 py-2 rounded-xl transition-all min-w-0 flex-1">
-                <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "text-[#D4A85C]" : "text-white/30"}`} />
-                <span className={`text-[10px] font-medium ${active ? "text-[#D4A85C]" : "text-white/30"}`}>{l.label}</span>
-                {active && <div className="w-1 h-1 rounded-full bg-[#D4A85C]" />}
+                <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "text-[#E0A64E]" : "text-white/30"}`} />
+                <span className={`text-[10px] font-medium ${active ? "text-[#E0A64E]" : "text-white/30"}`}>{l.label}</span>
+                {active && <div className="w-1 h-1 rounded-full bg-[#E0A64E]" />}
               </Link>
             );
           })}

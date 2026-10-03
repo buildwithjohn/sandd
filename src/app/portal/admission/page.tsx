@@ -28,7 +28,7 @@ export default function AdmissionLetterPage() {
   if (loading) return (
     <PortalShell>
       <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#D4A85C]/30 border-t-[#D4A85C] rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[#E0A64E]/30 border-t-[#E0A64E] rounded-full animate-spin" />
       </div>
     </PortalShell>
   );
@@ -88,15 +88,15 @@ function LetterPreview({ student, admissionDate, studentNumber }: any) {
           <div>
             <div style={{ color: "white", fontWeight: "700", fontSize: "13px" }}>Sons and Daughters of Prophets</div>
             <div style={{ color: "white", fontWeight: "700", fontSize: "13px" }}>Prophetic Training School</div>
-            <div style={{ color: "#D4A85C", fontSize: "10px", fontFamily: "Arial, sans-serif", marginTop: "2px" }}>Treasures in Clay Ministries</div>
+            <div style={{ color: "#E0A64E", fontSize: "10px", fontFamily: "Arial, sans-serif", marginTop: "2px" }}>Treasures in Clay Ministries</div>
           </div>
         </div>
         <div style={{ textAlign: "right" }}>
           <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "9px", fontFamily: "Arial", textTransform: "uppercase", letterSpacing: "2px" }}>Student Number</div>
-          <div style={{ color: "#D4A85C", fontSize: "12px", fontFamily: "monospace", marginTop: "2px" }}>{studentNumber}</div>
+          <div style={{ color: "#E0A64E", fontSize: "12px", fontFamily: "monospace", marginTop: "2px" }}>{studentNumber}</div>
         </div>
       </div>
-      <div style={{ height: "4px", background: "linear-gradient(to right, #D4A85C, #F5D4A0, #D4A85C)" }} />
+      <div style={{ height: "4px", background: "linear-gradient(to right, #E0A64E, #F5D4A0, #E0A64E)" }} />
 
       {/* Body */}
       <div style={{ padding: "32px 36px" }}>
@@ -104,7 +104,7 @@ function LetterPreview({ student, admissionDate, studentNumber }: any) {
         <p style={{ fontWeight: "700", fontSize: "14px", margin: "0 0 3px 0" }}>{student.full_name}</p>
         {student.church && <p style={{ color: "#555", fontSize: "12px", fontFamily: "Arial", margin: "0 0 2px 0" }}>{student.church}</p>}
         {student.city && <p style={{ color: "#555", fontSize: "12px", fontFamily: "Arial", margin: "0 0 20px 0" }}>{student.city}</p>}
-        <div style={{ borderLeft: "4px solid #D4A85C", paddingLeft: "12px", marginBottom: "24px" }}>
+        <div style={{ borderLeft: "4px solid #E0A64E", paddingLeft: "12px", marginBottom: "24px" }}>
           <p style={{ fontWeight: "700", fontSize: "13px", margin: "0 0 3px 0" }}>LETTER OF ADMISSION — 2026 COHORT</p>
           <p style={{ fontWeight: "700", fontSize: "13px", margin: "0" }}>SONS AND DAUGHTERS OF PROPHETS PROPHETIC TRAINING SCHOOL</p>
         </div>

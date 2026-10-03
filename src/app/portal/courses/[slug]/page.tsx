@@ -86,7 +86,7 @@ export default function CourseDetailPage() {
   if (loading) return (
     <PortalShell>
       <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#D4A85C]/30 border-t-[#D4A85C] rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[#E0A64E]/30 border-t-[#E0A64E] rounded-full animate-spin" />
       </div>
     </PortalShell>
   );
@@ -112,7 +112,7 @@ export default function CourseDetailPage() {
           className="bg-[#1A1A2E] rounded-2xl p-7 relative overflow-hidden"
           style={{ boxShadow: "0 8px 32px rgba(26,26,46,0.2)" }}>
           <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
-            style={{ background: "radial-gradient(circle, #D4A85C 0%, transparent 70%)", transform: "translate(30%,-40%)" }} />
+            style={{ background: "radial-gradient(circle, #E0A64E 0%, transparent 70%)", transform: "translate(30%,-40%)" }} />
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
               <span className="theme-accent text-xs font-sans tracking-[0.15em] uppercase">Year {course.year}</span>
@@ -146,7 +146,7 @@ export default function CourseDetailPage() {
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <a href={course.notes_url} target="_blank" rel="noopener noreferrer" download
               className="kcard flex items-center gap-4 p-4 group">
-              <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-[#E0A64E]/10 border border-[#E0A64E]/20 flex items-center justify-center flex-shrink-0">
                 <FileDown className="w-5 h-5 theme-accent" />
               </div>
               <div className="flex-1 min-w-0">

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase-admin";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { sendEmail } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -104,14 +105,26 @@ export async function POST() {
         // Remove from waitlist
         await admin.from("waitlist").delete().eq("id", entry.id);
 
-        enrolled.push({ name: entry.full_name, email: entry.email, studentNumber, password });
+        // Send the enrolment email automatically (login details + next steps)
+        let emailed = false; let emailError: string | undefined;
+        const name = entry.full_name || entry.email.split("@")[0];
+        const result = await sendEmail({
+          to: entry.email,
+          subject: "You're enrolled — S&D Prophetic School (Login Details Inside)",
+          html: buildEmail(name, entry.email, password, studentNumber),
+        });
+        emailed = result.ok;
+        if (!result.ok) emailError = result.error;
+
+        enrolled.push({ name: entry.full_name, email: entry.email, studentNumber, password, emailed, emailError });
 
       } catch (err: any) {
         failed.push({ email: entry.email, reason: err.message });
       }
     }
 
-    return NextResponse.json({ enrolled, failed, total: enrolled.length });
+    const emailsSent = enrolled.filter((e) => e.emailed).length;
+    return NextResponse.json({ enrolled, failed, total: enrolled.length, emailsSent });
 
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

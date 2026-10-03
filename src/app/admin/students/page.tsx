@@ -89,13 +89,13 @@ export default function StudentsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search by name, church, or email..."
-              className="w-full glass-dark border border-white/[0.08] rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#D4A85C]/40 font-sans" />
+              className="w-full glass-dark border border-white/[0.08] rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#E0A64E]/40 font-sans" />
           </div>
           <div className="flex gap-1 glass-dark border border-white/[0.08] rounded-xl p-1">
             {["all","active","suspended"].map(f => (
               <button key={f} onClick={() => setFilter(f)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all font-sans ${
-                  filter === f ? "bg-[#D4A85C] text-[#080C14]" : "text-white/40 hover:text-white"
+                  filter === f ? "bg-[#E0A64E] text-[#080C14]" : "text-white/40 hover:text-white"
                 }`}>{f}</button>
             ))}
           </div>
@@ -160,7 +160,7 @@ export default function StudentsPage() {
                     </div>
                     <div className="flex gap-3">
                       <a href={`mailto:${s.email}`}
-                        className="flex items-center gap-1.5 text-xs text-[#D4A85C]/70 hover:text-[#D4A85C] font-medium border border-[#D4A85C]/20 px-3 py-1.5 rounded-lg hover:bg-[#D4A85C]/5 transition-colors font-sans">
+                        className="flex items-center gap-1.5 text-xs text-[#E0A64E]/70 hover:text-[#E0A64E] font-medium border border-[#E0A64E]/20 px-3 py-1.5 rounded-lg hover:bg-[#E0A64E]/5 transition-colors font-sans">
                         <Mail className="w-3.5 h-3.5" /> Email Student
                       </a>
                       <button onClick={() => toggleStatus(s.id, s.enrollment_status || "active")} disabled={updating === s.id}

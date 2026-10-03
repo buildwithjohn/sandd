@@ -2,39 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Light mode (ministry theme) */
-  --bg:           #FAF9F6;
-  --bg-elevated: #FFFFFF;
-  --bg-subtle:   #F5F0E8;
-  --bg-muted:    #EDE6D7;
-  --border:      #EAE0CB;
-  --border-soft: #F0EDE8;
-  --text:        #1F1A2E;
-  --text-muted:  #6B6378;
-  --text-faint:  #9B9B9B;
-  --accent:      #C9A961;     /* gilt */
-  --accent-soft: #FAF6E8;
-  --primary:     #2D1B5E;     /* royal */
-  --primary-soft: #F5F1FA;
-  --shadow:      rgba(45, 27, 94, 0.08);
-}
-
-html.dark {
-  --bg:           #0A0612;
-  --bg-elevated: #14101F;
-  --bg-subtle:   #1A1530;
-  --bg-muted:    #221B3A;
-  --border:      #2D2548;
-  --border-soft: #1F1A35;
-  --text:        #EDE9F5;
-  --text-muted:  #A89FC0;
-  --text-faint:  #6B6378;
-  --accent:      #D4B570;     /* brighter gold for dark */
-  --accent-soft: rgba(212, 181, 112, 0.12);
-  --primary:     #5B3FA8;     /* lighter purple for dark */
-  --primary-soft: rgba(91, 63, 168, 0.15);
-  --shadow:      rgba(0, 0, 0, 0.4);
+/* ONE theme across the whole app — the landing page's deep-purple / gold
+   blend. No light/dark split: the portal and admin now read as a continuation
+   of the homepage. (html.dark kept as an identical alias so any `dark:`
+   Tailwind variants and html.dark selectors still resolve.) */
+:root, html.dark {
+  --bg:           #0B0612;   /* landing base */
+  --bg-elevated:  #17112A;   /* purple-tinted elevated surface */
+  --bg-subtle:    #1F1738;
+  --bg-muted:     #2A1F4A;
+  --border:       #342A54;
+  --border-soft:  #241C3C;
+  --text:         #F3EFFB;
+  --text-muted:   #B7AED0;
+  --text-faint:   #7E7498;
+  --accent:       #E0A64E;   /* landing gold */
+  --accent-soft:  rgba(224, 166, 78, 0.14);
+  --primary:      #7C3AED;   /* landing purple */
+  --primary-soft: rgba(124, 58, 237, 0.16);
+  --shadow:       rgba(0, 0, 0, 0.5);
 }
 
 * { box-sizing: border-box; }

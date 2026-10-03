@@ -74,7 +74,7 @@ export default function AnnouncementsPage() {
             {announcements.map((a, i) => (
               <motion.div key={a.id} variants={rise(i * 0.07)} initial="hidden" animate="visible">
                 <div className={`theme-bg-elevated rounded-2xl border p-6 ${
-                  a.is_pinned ? "border-[#D4A85C]/30" : "theme-border"
+                  a.is_pinned ? "border-[#E0A64E]/30" : "theme-border"
                 }`} style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
                   {a.is_pinned && (
                     <div className="flex items-center gap-1.5 mb-3">

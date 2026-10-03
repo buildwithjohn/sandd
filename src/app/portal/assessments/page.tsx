@@ -95,11 +95,11 @@ export default function AssessmentsListPage() {
                 <motion.div key={a.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
                   <Link href={`/portal/assessments/${a.id}`}
                     className={`block theme-bg-elevated border rounded-2xl p-5 hover:shadow-md transition-all group ${
-                      isGraded ? "border-green-200" : isSubmitted ? "border-[#D4A85C]/30" : "theme-border"
+                      isGraded ? "border-green-200" : isSubmitted ? "border-[#E0A64E]/30" : "theme-border"
                     }`} style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
                     <div className="flex items-start gap-4">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                        isGraded ? "bg-green-50 border border-green-200" : isSubmitted ? "bg-[#D4A85C]/10 border border-[#D4A85C]/20" : "theme-bg-subtle border theme-border"
+                        isGraded ? "bg-green-50 border border-green-200" : isSubmitted ? "bg-[#E0A64E]/10 border border-[#E0A64E]/20" : "theme-bg-subtle border theme-border"
                       }`}>
                         {isGraded ? <CheckCircle className="w-5 h-5 text-green-600" /> :
                          isSubmitted ? <Clock className="w-5 h-5 theme-accent" /> :

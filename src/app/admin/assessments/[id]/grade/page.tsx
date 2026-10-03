@@ -132,7 +132,7 @@ export default function GradeAssessmentPage() {
   if (loading) return (
     <AdminShell>
       <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#D4A85C]/30 border-t-[#D4A85C] rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[#E0A64E]/30 border-t-[#E0A64E] rounded-full animate-spin" />
       </div>
     </AdminShell>
   );
@@ -161,12 +161,12 @@ export default function GradeAssessmentPage() {
 
         {/* Info banner */}
         {submissions.some(s => s.status !== "graded") && (
-          <div className="bg-[#D4A85C]/[0.06] border border-[#D4A85C]/20 rounded-2xl px-5 py-4 flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#D4A85C]/15 flex items-center justify-center flex-shrink-0">
-              <Zap className="w-4 h-4 text-[#D4A85C]" />
+          <div className="bg-[#E0A64E]/[0.06] border border-[#E0A64E]/20 rounded-2xl px-5 py-4 flex items-start gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#E0A64E]/15 flex items-center justify-center flex-shrink-0">
+              <Zap className="w-4 h-4 text-[#E0A64E]" />
             </div>
             <div className="flex-1">
-              <p className="text-[#D4A85C] text-sm font-semibold font-sans">
+              <p className="text-[#E0A64E] text-sm font-semibold font-sans">
                 {theory.length === 0 ? "Objective-only assessment" : "Quick release available"}
               </p>
               <p className="text-white/50 text-xs font-sans mt-0.5">
@@ -184,7 +184,7 @@ export default function GradeAssessmentPage() {
           {[
             { label: "Submitted", value: submissions.length, color: "text-white" },
             { label: "Graded", value: graded, color: "text-green-400" },
-            { label: "Pending", value: submissions.length - graded, color: "text-[#D4A85C]" },
+            { label: "Pending", value: submissions.length - graded, color: "text-[#E0A64E]" },
           ].map(s => (
             <div key={s.label} className="glass-dark border border-white/[0.07] rounded-2xl p-4 text-center">
               <div className={`text-2xl font-bold ${s.color}`} style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{s.value}</div>
@@ -225,7 +225,7 @@ export default function GradeAssessmentPage() {
                     </div>
                     <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                       <div className="text-right">
-                        <div className="text-[#D4A85C] text-sm font-bold whitespace-nowrap">
+                        <div className="text-[#E0A64E] text-sm font-bold whitespace-nowrap">
                           {isGraded ? `${sub.total_score}` : `${sub.obj_score ?? 0}`}
                           <span className="text-white/30 text-xs">/{assessment?.total_marks}</span>
                         </div>
@@ -236,7 +236,7 @@ export default function GradeAssessmentPage() {
                       <span className={`text-[10px] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-sans whitespace-nowrap ${
                         isGraded
                           ? "bg-green-500/10 border border-green-500/20 text-green-400"
-                          : "bg-[#D4A85C]/10 border border-[#D4A85C]/20 text-[#D4A85C]"
+                          : "bg-[#E0A64E]/10 border border-[#E0A64E]/20 text-[#E0A64E]"
                       }`}>
                         {isGraded ? "Graded" : "Pending"}
                       </span>
@@ -283,7 +283,7 @@ export default function GradeAssessmentPage() {
                                         ...prev, [sub.id]: { ...prev[sub.id], [tq.id]: parseInt(e.target.value) || 0 }
                                       }))}
                                       disabled={isGraded && editingId !== sub.id}
-                                      className="w-full bg-white/[0.06] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-sans focus:outline-none focus:border-[#D4A85C]/50 disabled:opacity-40" />
+                                      className="w-full bg-white/[0.06] border border-white/10 rounded-xl px-3 py-2 text-sm text-white font-sans focus:outline-none focus:border-[#E0A64E]/50 disabled:opacity-40" />
                                   </div>
                                   <div className="col-span-2">
                                     <label className="text-white/30 text-[10px] uppercase tracking-widest font-sans block mb-1.5">Feedback (optional)</label>
@@ -293,7 +293,7 @@ export default function GradeAssessmentPage() {
                                       }))}
                                       disabled={isGraded && editingId !== sub.id}
                                       placeholder="Brief feedback..."
-                                      className="w-full bg-white/[0.06] border border-white/10 rounded-xl px-3 py-2 text-sm text-white/80 font-sans focus:outline-none focus:border-[#D4A85C]/50 disabled:opacity-40" />
+                                      className="w-full bg-white/[0.06] border border-white/10 rounded-xl px-3 py-2 text-sm text-white/80 font-sans focus:outline-none focus:border-[#E0A64E]/50 disabled:opacity-40" />
                                   </div>
                                 </div>
                               </div>
