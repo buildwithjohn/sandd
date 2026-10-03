@@ -90,7 +90,7 @@ export default function ProfilePage() {
     finally { setChangingPw(false); }
   }
 
-  const inp = "w-full theme-bg border theme-border rounded-xl px-4 py-3 text-sm theme-text font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-colors";
+  const inp = "w-full theme-bg border theme-border rounded-xl px-4 py-3 text-sm theme-text font-sans focus:outline-none focus:border-[#E0A64E]/50 transition-colors";
 
   return (
     <PortalShell>
@@ -134,7 +134,7 @@ export default function ProfilePage() {
         </motion.div>
 
         <button onClick={() => fileRef.current?.click()} disabled={uploading}
-          className="w-full flex items-center justify-center gap-2 theme-bg-elevated border theme-border hover:border-[#D4A85C]/40 theme-text-muted hover:theme-text font-sans text-sm py-3 rounded-xl transition-all"
+          className="w-full flex items-center justify-center gap-2 theme-bg-elevated border theme-border hover:border-[#E0A64E]/40 theme-text-muted hover:theme-text font-sans text-sm py-3 rounded-xl transition-all"
           style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
           <Camera className="w-4 h-4" /> {uploading ? "Uploading..." : "Change Profile Photo"}
         </button>
@@ -203,7 +203,7 @@ export default function ProfilePage() {
               )}
             </div>
             <button onClick={changePassword} disabled={changingPw || !pwNew || !pwConfirm}
-              className="w-full border theme-border hover:border-[#D4A85C]/40 theme-text-muted hover:theme-text disabled:opacity-40 font-semibold text-sm py-3 rounded-xl transition-all font-sans">
+              className="w-full border theme-border hover:border-[#E0A64E]/40 theme-text-muted hover:theme-text disabled:opacity-40 font-semibold text-sm py-3 rounded-xl transition-all font-sans">
               {changingPw ? "Updating..." : "Update Password"}
             </button>
           </div>

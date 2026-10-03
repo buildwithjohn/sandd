@@ -12,30 +12,17 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
-
+  // Single app-wide theme (the landing's deep-purple / gold blend).
+  // No light/dark split — `dark` is always applied so any `dark:` utilities
+  // resolve, and toggle/setTheme are kept as harmless no-ops for callers.
   useEffect(() => {
-    const saved = localStorage.getItem("sandd-theme") as Theme | null;
-    const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initial = saved ?? (prefers ? "dark" : "light");
-    setThemeState(initial);
-    document.documentElement.classList.toggle("dark", initial === "dark");
-    setMounted(true);
+    document.documentElement.classList.add("dark");
   }, []);
 
-  function setTheme(t: Theme) {
-    setThemeState(t);
-    document.documentElement.classList.toggle("dark", t === "dark");
-    localStorage.setItem("sandd-theme", t);
-  }
-
-  function toggle() {
-    setTheme(theme === "light" ? "dark" : "light");
-  }
+  const value: ThemeContextValue = { theme: "dark", toggle: () => {}, setTheme: () => {} };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggle, setTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );

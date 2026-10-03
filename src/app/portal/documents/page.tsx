@@ -19,7 +19,7 @@ const docs = [
     desc: "Complete overview of the school — vision, mission, curriculum, leadership, and how to get involved.",
     url: "/downloads/SandD-School-Brochure-2026.pdf",
     color: "theme-accent",
-    bg: "bg-[#D4A85C]/10 border-[#D4A85C]/20",
+    bg: "bg-[#E0A64E]/10 border-[#E0A64E]/20",
   },
   {
     icon: Award,
@@ -51,7 +51,7 @@ export default function DocumentsPage() {
         <div className="space-y-3">
           {docs.map((doc, i) => (
             <motion.div key={doc.title} variants={rise(i * 0.1)} initial="hidden" animate="visible">
-              <div className="ksurface p-5 flex items-center gap-4 hover:border-[#D4A85C]/40 transition-all"
+              <div className="ksurface p-5 flex items-center gap-4 hover:border-[#E0A64E]/40 transition-all"
                 style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
                 <div className={`w-12 h-12 rounded-xl border flex items-center justify-center flex-shrink-0 ${doc.bg}`}>
                   <doc.icon className={`w-5 h-5 ${doc.color}`} />
@@ -79,7 +79,7 @@ export default function DocumentsPage() {
         </div>
 
         <motion.div variants={rise(0.3)} initial="hidden" animate="visible"
-          className="rounded-2xl border border-[#D4A85C]/20 bg-[#D4A85C]/[0.04] p-5 text-center">
+          className="rounded-2xl border border-[#E0A64E]/20 bg-[#E0A64E]/[0.04] p-5 text-center">
           <p className="text-[#5C4A2A] text-xs font-sans leading-relaxed" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
             All documents are official publications of the Sons and Daughters of Prophets Prophetic Training School.<br />
             For enquiries contact the Registrar: <a href="mailto:sandd@abiodunsule.uk" className="theme-accent hover:underline">sandd@abiodunsule.uk</a>

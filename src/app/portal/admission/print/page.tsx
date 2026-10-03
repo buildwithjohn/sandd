@@ -75,12 +75,12 @@ function PrintContent() {
             <div>
               <div style={{ color: "white", fontWeight: "700", fontSize: "15px", lineHeight: 1.3 }}>Sons and Daughters of Prophets</div>
               <div style={{ color: "white", fontWeight: "700", fontSize: "15px", lineHeight: 1.3 }}>Prophetic Training School</div>
-              <div style={{ color: "#D4A85C", fontSize: "11px", fontFamily: "Arial, sans-serif", marginTop: "3px" }}>Treasures in Clay Ministries</div>
+              <div style={{ color: "#E0A64E", fontSize: "11px", fontFamily: "Arial, sans-serif", marginTop: "3px" }}>Treasures in Clay Ministries</div>
             </div>
           </div>
           <div style={{ textAlign: "right" }}>
             <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "9px", fontFamily: "Arial", textTransform: "uppercase", letterSpacing: "2px" }}>Student Number</div>
-            <div style={{ color: "#D4A85C", fontSize: "14px", fontFamily: "monospace", marginTop: "4px", fontWeight: "700" }}>{studentNumber}</div>
+            <div style={{ color: "#E0A64E", fontSize: "14px", fontFamily: "monospace", marginTop: "4px", fontWeight: "700" }}>{studentNumber}</div>
           </div>
         </div>
 

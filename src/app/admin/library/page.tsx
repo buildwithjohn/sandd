@@ -64,8 +64,8 @@ interface PendingMaterial { file: File; title: string; }
 
 const CATEGORIES = ["Live Class", "Teaching", "Extra Material", "Guest Session"];
 
-const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#D4A85C]/50 transition-all";
-const sel = "w-full bg-[#080C14] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-all";
+const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#E0A64E]/50 transition-all";
+const sel = "w-full bg-[#080C14] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans focus:outline-none focus:border-[#E0A64E]/50 transition-all";
 
 export default function AdminLibraryPage() {
   const [title, setTitle] = useState("");
@@ -180,8 +180,8 @@ export default function AdminLibraryPage() {
     <AdminShell>
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center">
-            <PlayCircle className="w-5 h-5 text-[#D4A85C]" />
+          <div className="w-10 h-10 rounded-xl bg-[#E0A64E]/10 border border-[#E0A64E]/20 flex items-center justify-center">
+            <PlayCircle className="w-5 h-5 text-[#E0A64E]" />
           </div>
           <div>
             <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>Library</h1>
@@ -241,7 +241,7 @@ export default function AdminLibraryPage() {
             ) : (
               <input ref={audioRef} type="file" accept="audio/*"
                 onChange={e => setAudioFile(e.target.files?.[0] ?? null)}
-                className="text-white/50 text-sm font-sans file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#D4A85C]/10 file:text-[#D4A85C] file:text-xs" />
+                className="text-white/50 text-sm font-sans file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#E0A64E]/10 file:text-[#E0A64E] file:text-xs" />
             )}
           </div>
 
@@ -272,11 +272,11 @@ export default function AdminLibraryPage() {
           <div className="flex items-center justify-between pt-2 border-t border-white/[0.07]">
             <label className="flex items-center gap-2 text-white/60 text-sm font-sans cursor-pointer">
               <input type="checkbox" checked={publish} onChange={e => setPublish(e.target.checked)}
-                className="accent-[#D4A85C] w-4 h-4" />
+                className="accent-[#E0A64E] w-4 h-4" />
               Visible to students now
             </label>
             <button onClick={handleSave} disabled={saving}
-              className="flex items-center gap-2 bg-[#D4A85C] hover:bg-[#c39a4f] disabled:opacity-50 text-[#0D1320] text-sm font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">
+              className="flex items-center gap-2 bg-[#E0A64E] hover:bg-[#c39a4f] disabled:opacity-50 text-[#0D1320] text-sm font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
               {saving ? "Uploading..." : "Add to Library"}
             </button>
@@ -286,7 +286,7 @@ export default function AdminLibraryPage() {
               <p className="text-white/50 text-xs font-sans flex items-center gap-1.5"><Upload className="w-3 h-3" /> {statusMsg}</p>
               {progress > 0 && (
                 <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#D4A85C] transition-all" style={{ width: `${progress}%` }} />
+                  <div className="h-full bg-[#E0A64E] transition-all" style={{ width: `${progress}%` }} />
                 </div>
               )}
             </div>
@@ -312,7 +312,7 @@ export default function AdminLibraryPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-white/90 text-sm font-semibold font-sans truncate" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{item.title}</span>
-                      <span className="text-[10px] bg-[#D4A85C]/10 text-[#D4A85C] px-1.5 py-0.5 rounded font-sans">{item.category}</span>
+                      <span className="text-[10px] bg-[#E0A64E]/10 text-[#E0A64E] px-1.5 py-0.5 rounded font-sans">{item.category}</span>
                       {item.is_published
                         ? <span className="text-[10px] text-green-400/80 flex items-center gap-0.5 font-sans"><Eye className="w-3 h-3" /> Live</span>
                         : <span className="text-[10px] text-white/30 flex items-center gap-0.5 font-sans"><EyeOff className="w-3 h-3" /> Hidden</span>}

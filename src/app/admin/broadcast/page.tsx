@@ -5,7 +5,7 @@ import AdminShell from "@/components/admin/AdminShell";
 import { toast } from "sonner";
 import { Megaphone, Send, Loader2, Users, CheckCircle, AlertCircle } from "lucide-react";
 
-const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/25 focus:outline-none focus:border-[#D4A85C]/50 transition-all";
+const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/25 focus:outline-none focus:border-[#E0A64E]/50 transition-all";
 
 export default function BroadcastPage() {
   const [subject, setSubject] = useState("");
@@ -36,8 +36,8 @@ export default function BroadcastPage() {
     <AdminShell>
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center">
-            <Megaphone className="w-5 h-5 text-[#D4A85C]" />
+          <div className="w-10 h-10 rounded-xl bg-[#E0A64E]/10 border border-[#E0A64E]/20 flex items-center justify-center">
+            <Megaphone className="w-5 h-5 text-[#E0A64E]" />
           </div>
           <div>
             <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>Email Students</h1>
@@ -47,7 +47,7 @@ export default function BroadcastPage() {
 
         <div className="ksurface-d p-5 space-y-4">
           <div className="flex items-center gap-2 text-white/60 text-sm font-sans bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2.5">
-            <Users className="w-4 h-4 text-[#D4A85C]" />
+            <Users className="w-4 h-4 text-[#E0A64E]" />
             {count === null ? "Counting recipients…" : <><span className="text-white font-semibold">{count}</span>&nbsp;student{count === 1 ? "" : "s"} will receive this</>}
           </div>
           <div>
@@ -61,7 +61,7 @@ export default function BroadcastPage() {
           </div>
           <div className="flex justify-end pt-1">
             <button onClick={send} disabled={sending || count === 0}
-              className="flex items-center gap-2 bg-[#D4A85C] hover:bg-[#c39a4f] disabled:opacity-50 text-[#0D1320] text-sm font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">
+              className="flex items-center gap-2 bg-[#E0A64E] hover:bg-[#c39a4f] disabled:opacity-50 text-[#0D1320] text-sm font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">
               {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               {sending ? "Sending…" : `Send to ${count ?? "all"} students`}
             </button>
@@ -70,7 +70,7 @@ export default function BroadcastPage() {
 
         {result && (
           <div className={`ksurface-d p-5 flex items-start gap-3 ${result.failed === 0 ? "border-green-500/20" : ""}`}>
-            {result.failed === 0 ? <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" /> : <AlertCircle className="w-5 h-5 text-[#D4A85C] flex-shrink-0 mt-0.5" />}
+            {result.failed === 0 ? <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" /> : <AlertCircle className="w-5 h-5 text-[#E0A64E] flex-shrink-0 mt-0.5" />}
             <div className="text-sm font-sans">
               <div className="text-white/90 font-semibold">{result.failed === 0 ? "All emails sent" : "Sent with some failures"}</div>
               <div className="text-white/50 mt-0.5">{result.sent} of {result.total} delivered{result.failed > 0 ? ` · ${result.failed} failed` : ""}.</div>

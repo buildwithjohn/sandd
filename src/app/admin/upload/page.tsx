@@ -79,8 +79,8 @@ async function uploadToStorage(
 type Tab = "subtopic" | "resources" | "manage";
 type ContentType = "video" | "audio" | "slides";
 
-const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#D4A85C]/50 transition-all";
-const sel = "w-full bg-[#080C14] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-all";
+const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#E0A64E]/50 transition-all";
+const sel = "w-full bg-[#080C14] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans focus:outline-none focus:border-[#E0A64E]/50 transition-all";
 
 export default function CourseBuilderPage() {
   const [tab, setTab] = useState<Tab>("subtopic");
@@ -324,10 +324,10 @@ export default function CourseBuilderPage() {
             <button key={t.id} onClick={() => setTab(t.id)}
               className={`rounded-2xl border p-3 sm:p-4 text-left transition-all ${
                 tab === t.id
-                  ? "bg-[#D4A85C]/10 border-[#D4A85C]/30"
+                  ? "bg-[#E0A64E]/10 border-[#E0A64E]/30"
                   : "glass-dark border-white/[0.07] hover:border-white/20"
               }`}>
-              <t.icon className={`w-4 h-4 mb-1.5 sm:mb-2 ${tab === t.id ? "text-[#D4A85C]" : "text-white/30"}`} />
+              <t.icon className={`w-4 h-4 mb-1.5 sm:mb-2 ${tab === t.id ? "text-[#E0A64E]" : "text-white/30"}`} />
               <div className={`text-[11px] sm:text-xs font-semibold font-sans ${tab === t.id ? "text-white" : "text-white/50"}`}>
                 {t.label}
               </div>
@@ -364,7 +364,7 @@ export default function CourseBuilderPage() {
             <div>
               <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subtopic Number</label>
               <input type="number" min="0" value={sOrderIndex} onChange={e => setSOrderIndex(e.target.value)}
-                className="w-28 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-sans focus:outline-none focus:border-[#D4A85C]/50" />
+                className="w-28 bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white font-sans focus:outline-none focus:border-[#E0A64E]/50" />
               <p className="text-white/20 text-xs font-sans mt-1">Auto-suggested based on existing subtopics</p>
             </div>
 
@@ -380,10 +380,10 @@ export default function CourseBuilderPage() {
                   <button key={c.id} type="button" onClick={() => setSContentType(c.id)}
                     className={`rounded-xl border p-3 transition-all ${
                       sContentType === c.id
-                        ? "bg-[#D4A85C]/10 border-[#D4A85C]/30"
+                        ? "bg-[#E0A64E]/10 border-[#E0A64E]/30"
                         : "bg-white/[0.04] border-white/10 hover:border-white/25"
                     }`}>
-                    <c.icon className={`w-4 h-4 mx-auto mb-1.5 ${sContentType === c.id ? "text-[#D4A85C]" : c.color}`} />
+                    <c.icon className={`w-4 h-4 mx-auto mb-1.5 ${sContentType === c.id ? "text-[#E0A64E]" : c.color}`} />
                     <div className={`text-xs font-semibold font-sans text-center ${sContentType === c.id ? "text-white" : "text-white/60"}`}>
                       {c.label}
                     </div>
@@ -473,14 +473,14 @@ export default function CourseBuilderPage() {
                 Attachment <span className="text-white/20 normal-case tracking-normal">(optional handout, PDF, image, etc)</span>
               </label>
               <div className={`border border-dashed rounded-xl p-3 text-center transition-all ${
-                sAttachment ? "border-[#D4A85C]/40 bg-[#D4A85C]/[0.03]" : "border-white/10 hover:border-white/25"
+                sAttachment ? "border-[#E0A64E]/40 bg-[#E0A64E]/[0.03]" : "border-white/10 hover:border-white/25"
               }`}>
                 <input ref={attachInputRef} type="file" accept=".pdf,.docx,.doc,.pptx,.ppt,.png,.jpg,.jpeg,.zip"
                   onChange={e => setSAttachment(e.target.files?.[0] || null)} className="hidden" id="attach-input" />
                 <label htmlFor="attach-input" className="cursor-pointer block py-1">
                   {sAttachment ? (
                     <div className="flex items-center justify-center gap-2 text-sm">
-                      <FileText className="w-4 h-4 text-[#D4A85C]" />
+                      <FileText className="w-4 h-4 text-[#E0A64E]" />
                       <span className="text-white/80 truncate font-sans">{sAttachment.name}</span>
                       <button type="button" onClick={(e) => { e.preventDefault(); setSAttachment(null); if (attachInputRef.current) attachInputRef.current.value = ""; }}
                         className="text-white/30 hover:text-red-400 ml-1">
@@ -501,7 +501,7 @@ export default function CourseBuilderPage() {
                   <button key={m} type="button" onClick={() => setSPublishMode(m)}
                     className={`py-2.5 rounded-xl text-xs font-semibold font-sans transition-all border flex items-center justify-center gap-2 ${
                       sPublishMode === m
-                        ? "bg-[#D4A85C] border-[#D4A85C] text-[#080C14]"
+                        ? "bg-[#E0A64E] border-[#E0A64E] text-[#080C14]"
                         : "bg-white/[0.04] border-white/10 text-white/50 hover:border-white/25"
                     }`}>
                     {m === "schedule" && <Calendar className="w-3.5 h-3.5" />}
@@ -517,14 +517,14 @@ export default function CourseBuilderPage() {
 
             {/* Progress bar shown during upload */}
             {sSaving && (
-              <div className="bg-[#D4A85C]/[0.05] border border-[#D4A85C]/20 rounded-xl p-4 space-y-2">
+              <div className="bg-[#E0A64E]/[0.05] border border-[#E0A64E]/20 rounded-xl p-4 space-y-2">
                 <div className="flex items-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin text-[#D4A85C]" />
-                  <span className="text-[#D4A85C] text-xs font-semibold font-sans">{sStatusMsg}</span>
+                  <Loader2 className="w-4 h-4 animate-spin text-[#E0A64E]" />
+                  <span className="text-[#E0A64E] text-xs font-semibold font-sans">{sStatusMsg}</span>
                   <span className="text-white/40 text-xs font-sans ml-auto tabular-nums">{sProgress}%</span>
                 </div>
                 <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                  <div className="h-full bg-[#D4A85C] transition-all duration-200 rounded-full"
+                  <div className="h-full bg-[#E0A64E] transition-all duration-200 rounded-full"
                     style={{ width: `${sProgress}%` }} />
                 </div>
               </div>
@@ -539,7 +539,7 @@ export default function CourseBuilderPage() {
                 </div>
                 {sSubtopics.map((l, i) => (
                   <div key={l.id} className={`flex items-center gap-3 px-4 py-3 ${i < sSubtopics.length - 1 ? "border-b border-white/[0.04]" : ""}`}>
-                    <span className="text-[#D4A85C]/40 text-xs font-mono w-5">{String(l.order_index).padStart(2, "0")}</span>
+                    <span className="text-[#E0A64E]/40 text-xs font-mono w-5">{String(l.order_index).padStart(2, "0")}</span>
                     <span className="text-white/60 text-xs font-sans flex-1 truncate">{l.title}</span>
                     <div className="flex gap-1 flex-shrink-0">
                       {l.youtube_video_id && <span className="text-[9px] bg-red-500/10 text-red-400 px-1.5 py-0.5 rounded">V</span>}
@@ -585,7 +585,7 @@ export default function CourseBuilderPage() {
                         <button key={c} type="button" onClick={() => setRCategory(c)}
                           className={`py-2 rounded-lg text-xs font-semibold font-sans transition-all border ${
                             rCategory === c
-                              ? "bg-[#D4A85C] border-[#D4A85C] text-[#080C14]"
+                              ? "bg-[#E0A64E] border-[#E0A64E] text-[#080C14]"
                               : "bg-white/[0.04] border-white/10 text-white/50 hover:border-white/25"
                           }`}>
                           {c}
@@ -596,12 +596,12 @@ export default function CourseBuilderPage() {
                   <div>
                     <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">File *</label>
                     <div className={`border-2 border-dashed rounded-xl p-4 text-center transition-all ${
-                      rFile ? "border-[#D4A85C]/40 bg-[#D4A85C]/[0.03]" : "border-white/10 hover:border-white/25"
+                      rFile ? "border-[#E0A64E]/40 bg-[#E0A64E]/[0.03]" : "border-white/10 hover:border-white/25"
                     }`}>
                       <input ref={resourceInputRef} type="file" accept=".pdf,.docx,.doc,.pptx,.ppt,.zip,.png,.jpg,.jpeg"
                         onChange={e => setRFile(e.target.files?.[0] || null)} className="hidden" id="res-input" />
                       <label htmlFor="res-input" className="cursor-pointer block">
-                        <Upload className={`w-7 h-7 mx-auto mb-2 ${rFile ? "text-[#D4A85C]" : "text-white/20"}`} />
+                        <Upload className={`w-7 h-7 mx-auto mb-2 ${rFile ? "text-[#E0A64E]" : "text-white/20"}`} />
                         {rFile ? (
                           <>
                             <p className="text-white/80 text-sm font-semibold font-sans truncate px-2">{rFile.name}</p>
@@ -618,14 +618,14 @@ export default function CourseBuilderPage() {
                   </div>
 
                   {rSaving && (
-                    <div className="bg-[#D4A85C]/[0.05] border border-[#D4A85C]/20 rounded-xl p-3 space-y-2">
+                    <div className="bg-[#E0A64E]/[0.05] border border-[#E0A64E]/20 rounded-xl p-3 space-y-2">
                       <div className="flex items-center gap-2">
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-[#D4A85C]" />
-                        <span className="text-[#D4A85C] text-xs font-semibold font-sans">Uploading...</span>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-[#E0A64E]" />
+                        <span className="text-[#E0A64E] text-xs font-semibold font-sans">Uploading...</span>
                         <span className="text-white/40 text-xs font-sans ml-auto tabular-nums">{rProgress}%</span>
                       </div>
                       <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                        <div className="h-full bg-[#D4A85C] transition-all duration-200 rounded-full"
+                        <div className="h-full bg-[#E0A64E] transition-all duration-200 rounded-full"
                           style={{ width: `${rProgress}%` }} />
                       </div>
                     </div>
@@ -645,13 +645,13 @@ export default function CourseBuilderPage() {
                       if (items.length === 0) return null;
                       return (
                         <div key={cat}>
-                          <div className="text-[#D4A85C] text-[10px] uppercase tracking-widest font-sans mb-2">{cat}</div>
+                          <div className="text-[#E0A64E] text-[10px] uppercase tracking-widest font-sans mb-2">{cat}</div>
                           <div className="space-y-1.5">
                             {items.map(r => (
                               <div key={r.id} className="flex items-center gap-3 bg-white/[0.03] rounded-lg px-3 py-2.5">
                                 <FileText className="w-3.5 h-3.5 text-white/40 flex-shrink-0" />
                                 <a href={r.file_url} target="_blank" rel="noopener noreferrer"
-                                  className="text-white/70 text-xs font-sans flex-1 truncate hover:text-[#D4A85C]">
+                                  className="text-white/70 text-xs font-sans flex-1 truncate hover:text-[#E0A64E]">
                                   {r.title}
                                 </a>
                                 <button onClick={() => handleDeleteResource(r.id)}
@@ -688,14 +688,14 @@ export default function CourseBuilderPage() {
               <div className="rounded-xl border border-white/[0.07] overflow-hidden">
                 {mSubtopics.map((l, i) => (
                   <div key={l.id} className={`flex items-center gap-3 px-4 py-3 ${i < mSubtopics.length - 1 ? "border-b border-white/[0.04]" : ""}`}>
-                    <span className="text-[#D4A85C]/40 text-xs font-mono w-5">{String(l.order_index).padStart(2, "0")}</span>
+                    <span className="text-[#E0A64E]/40 text-xs font-mono w-5">{String(l.order_index).padStart(2, "0")}</span>
                     <div className="flex-1 min-w-0">
                       <div className="text-white/80 text-sm font-sans truncate">{l.title}</div>
                       <div className="flex items-center gap-2 mt-1">
                         {l.youtube_video_id && <span className="text-[9px] bg-red-500/10 text-red-400 px-1.5 py-0.5 rounded font-sans">Video</span>}
                         {l.audio_url && <span className="text-[9px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded font-sans">Audio</span>}
                         {l.slides_url && <span className="text-[9px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded font-sans">Slides</span>}
-                        {l.attachment_url && <span className="text-[9px] bg-[#D4A85C]/10 text-[#D4A85C] px-1.5 py-0.5 rounded font-sans">+ File</span>}
+                        {l.attachment_url && <span className="text-[9px] bg-[#E0A64E]/10 text-[#E0A64E] px-1.5 py-0.5 rounded font-sans">+ File</span>}
                         <span className={`text-[9px] px-1.5 py-0.5 rounded font-sans ${l.is_published ? "bg-green-500/10 text-green-400" : "bg-white/5 text-white/30"}`}>
                           {l.is_published ? "Live" : "Draft"}
                         </span>

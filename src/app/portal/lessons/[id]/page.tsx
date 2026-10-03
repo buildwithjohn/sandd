@@ -245,8 +245,8 @@ export default function LessonPage() {
 
             {lesson.courses.notes_url && (
               <a href={lesson.courses.notes_url} target="_blank" rel="noopener noreferrer" download
-                className="flex items-center gap-3 theme-bg-elevated border theme-border rounded-xl px-4 py-3.5 hover:border-[#D4A85C]/40 transition-all group">
-                <div className="w-8 h-8 rounded-lg bg-[#D4A85C]/10 flex items-center justify-center flex-shrink-0">
+                className="flex items-center gap-3 theme-bg-elevated border theme-border rounded-xl px-4 py-3.5 hover:border-[#E0A64E]/40 transition-all group">
+                <div className="w-8 h-8 rounded-lg bg-[#E0A64E]/10 flex items-center justify-center flex-shrink-0">
                   <FileDown className="w-4 h-4 theme-accent" />
                 </div>
                 <div className="flex-1">
@@ -260,8 +260,8 @@ export default function LessonPage() {
 
             {assessment && (
               <Link href={`/portal/assessments/${assessment.id}`}
-                className="flex items-center gap-3 theme-bg-elevated border border-[#D4A85C]/20 rounded-xl px-4 py-3.5 hover:border-[#D4A85C]/50 transition-all group">
-                <div className="w-8 h-8 rounded-lg bg-[#D4A85C]/10 flex items-center justify-center flex-shrink-0">
+                className="flex items-center gap-3 theme-bg-elevated border border-[#E0A64E]/20 rounded-xl px-4 py-3.5 hover:border-[#E0A64E]/50 transition-all group">
+                <div className="w-8 h-8 rounded-lg bg-[#E0A64E]/10 flex items-center justify-center flex-shrink-0">
                   <Star className="w-4 h-4 theme-accent" />
                 </div>
                 <div className="flex-1">
@@ -279,7 +279,7 @@ export default function LessonPage() {
         <div className="grid grid-cols-2 gap-3 pt-2">
           {prevLesson ? (
             <Link href={`/portal/lessons/${prevLesson.id}`}
-              className="ksurface p-4 hover:border-[#D4A85C]/40 transition-all group">
+              className="ksurface p-4 hover:border-[#E0A64E]/40 transition-all group">
               <div className="theme-text-muted text-[10px] uppercase tracking-widest font-sans mb-1 flex items-center gap-1">
                 <ChevronLeft className="w-3 h-3" /> Previous
               </div>
@@ -291,7 +291,7 @@ export default function LessonPage() {
 
           {nextLesson ? (
             <Link href={`/portal/lessons/${nextLesson.id}`}
-              className="ksurface p-4 hover:border-[#D4A85C]/40 transition-all group text-right">
+              className="ksurface p-4 hover:border-[#E0A64E]/40 transition-all group text-right">
               <div className="theme-text-muted text-[10px] uppercase tracking-widest font-sans mb-1 flex items-center gap-1 justify-end">
                 Next <ChevronRight className="w-3 h-3" />
               </div>

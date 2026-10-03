@@ -166,7 +166,7 @@ export default function StudentAssessmentPage() {
   if (loading) return (
     <PortalShell>
       <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#D4A85C]/30 border-t-[#D4A85C] rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[#E0A64E]/30 border-t-[#E0A64E] rounded-full animate-spin" />
       </div>
     </PortalShell>
   );
@@ -201,7 +201,7 @@ export default function StudentAssessmentPage() {
   if (phase === "submitted") return (
     <PortalShell>
       <div className="max-w-lg mx-auto text-center py-12 space-y-5">
-        <div className="w-16 h-16 rounded-full bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center mx-auto">
+        <div className="w-16 h-16 rounded-full bg-[#E0A64E]/10 border border-[#E0A64E]/20 flex items-center justify-center mx-auto">
           <CheckCircle className="w-8 h-8 theme-accent" />
         </div>
         <h1 className="text-2xl font-semibold theme-text" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
@@ -430,7 +430,7 @@ export default function StudentAssessmentPage() {
                         : "theme-bg theme-border theme-text-muted hover:border-[#1A1A2E]/30"
                     }`}>
                     <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                      selected ? "bg-[#D4A85C] theme-text" : "theme-bg-elevated border theme-border theme-text-muted"
+                      selected ? "bg-[#E0A64E] theme-text" : "theme-bg-elevated border theme-border theme-text-muted"
                     }`}>{opt}</span>
                     <span className="text-sm font-sans">{text}</span>
                     {selected && <CheckCircle className="w-4 h-4 ml-auto theme-accent flex-shrink-0" />}
@@ -458,7 +458,7 @@ export default function StudentAssessmentPage() {
                       absIdx === currentQ
                         ? "bg-[#1A1A2E] text-white"
                         : isAnswered
-                        ? "bg-[#D4A85C]/20 theme-accent border border-[#D4A85C]/30"
+                        ? "bg-[#E0A64E]/20 theme-accent border border-[#E0A64E]/30"
                         : "bg-[#F0EDE8] theme-text-muted"
                     }`}>
                     {absIdx + 1}
@@ -474,12 +474,12 @@ export default function StudentAssessmentPage() {
               </button>
             ) : theory.length > 0 ? (
               <button onClick={() => setPhase("theory")}
-                className="flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#D4A85C] text-[#080C14] text-sm font-bold font-sans hover:bg-[#C49848] transition-all">
+                className="flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#E0A64E] text-[#080C14] text-sm font-bold font-sans hover:bg-[#C49848] transition-all">
                 Part B →
               </button>
             ) : (
               <button onClick={submitExam} disabled={submitting}
-                className="flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#D4A85C] text-[#080C14] text-sm font-bold font-sans hover:bg-[#C49848] disabled:opacity-50 transition-all">
+                className="flex items-center gap-1.5 px-5 py-3 rounded-full bg-[#E0A64E] text-[#080C14] text-sm font-bold font-sans hover:bg-[#C49848] disabled:opacity-50 transition-all">
                 {submitting
                   ? <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
                   : <><Send className="w-4 h-4" /> Submit Assessment</>

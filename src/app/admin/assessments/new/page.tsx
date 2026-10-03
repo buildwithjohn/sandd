@@ -14,8 +14,8 @@ interface Course { id: string; title: string; year: number; }
 const emptyObj = (): ObjQ => ({ question: "", a: "", b: "", c: "", d: "", correct: "A", marks: 1 });
 const emptyTheory = (): TheoryQ => ({ question: "", marks: 10 });
 
-const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#D4A85C]/50 transition-all";
-const sel = "bg-[#080C14] border border-white/10 rounded-xl px-3 py-2 text-sm text-white/90 font-sans focus:outline-none focus:border-[#D4A85C]/50 transition-all";
+const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#E0A64E]/50 transition-all";
+const sel = "bg-[#080C14] border border-white/10 rounded-xl px-3 py-2 text-sm text-white/90 font-sans focus:outline-none focus:border-[#E0A64E]/50 transition-all";
 
 export default function NewAssessmentPage() {
   const router = useRouter();
@@ -196,7 +196,7 @@ export default function NewAssessmentPage() {
           </div>
           <div className="flex items-center gap-2">
             <div className="text-white/30 text-xs font-sans">
-              Total: <span className="text-[#D4A85C]">{objMarksTotal + theoryMarksTotal} marks</span>
+              Total: <span className="text-[#E0A64E]">{objMarksTotal + theoryMarksTotal} marks</span>
             </div>
           </div>
         </div>
@@ -246,8 +246,8 @@ export default function NewAssessmentPage() {
               <button onClick={() => setShowImport(v => !v)}
                 className={`flex items-center gap-1.5 border text-xs font-sans px-3 py-2 rounded-xl transition-all ${
                   showImport
-                    ? "bg-[#D4A85C]/20 border-[#D4A85C]/40 text-[#D4A85C]"
-                    : "bg-[#D4A85C]/10 border-[#D4A85C]/25 text-[#D4A85C] hover:bg-[#D4A85C]/20"
+                    ? "bg-[#E0A64E]/20 border-[#E0A64E]/40 text-[#E0A64E]"
+                    : "bg-[#E0A64E]/10 border-[#E0A64E]/25 text-[#E0A64E] hover:bg-[#E0A64E]/20"
                 }`}>
                 <Zap className="w-3.5 h-3.5" /> Paste & Import
               </button>
@@ -260,9 +260,9 @@ export default function NewAssessmentPage() {
 
           {/* Paste & Import Panel */}
           {showImport && (
-            <div className="glass-dark border border-[#D4A85C]/25 rounded-xl p-5 space-y-4">
+            <div className="glass-dark border border-[#E0A64E]/25 rounded-xl p-5 space-y-4">
               <div>
-                <div className="text-[#D4A85C] text-sm font-semibold font-sans mb-1 flex items-center gap-1.5"><Zap className="w-3.5 h-3.5" /> Paste Raw Questions</div>
+                <div className="text-[#E0A64E] text-sm font-semibold font-sans mb-1 flex items-center gap-1.5"><Zap className="w-3.5 h-3.5" /> Paste Raw Questions</div>
                 <p className="text-white/40 text-xs font-sans leading-relaxed">
                   Paste questions in any format. The system will automatically detect each question, options A–D, and the correct answer. One question per block.
                 </p>
@@ -291,7 +291,7 @@ Correct: C`}</pre>
                 onChange={e => setImportText(e.target.value)}
                 rows={10}
                 placeholder="Paste your questions here — numbered list, Word doc content, any format..."
-                className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#D4A85C]/50 transition-all resize-none leading-relaxed"
+                className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#E0A64E]/50 transition-all resize-none leading-relaxed"
               />
 
               <div className="flex items-center gap-3">
@@ -314,7 +314,7 @@ Correct: C`}</pre>
               <button
                 onClick={() => setExpandedObj(expandedObj === i ? null : i)}
                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/[0.03] transition-colors text-left">
-                <span className="text-[#D4A85C] text-xs font-mono w-6 flex-shrink-0">Q{i + 1}</span>
+                <span className="text-[#E0A64E] text-xs font-mono w-6 flex-shrink-0">Q{i + 1}</span>
                 <span className="text-white/70 text-xs font-sans flex-1 truncate">
                   {q.question || "Click to expand..."}
                 </span>
@@ -386,7 +386,7 @@ Correct: C`}</pre>
           {theoryQuestions.map((q, i) => (
             <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[#D4A85C] text-xs font-mono">Q{i + 1}</span>
+                <span className="text-[#E0A64E] text-xs font-mono">Q{i + 1}</span>
                 <div className="flex items-center gap-2">
                   <label className="text-white/30 text-xs font-sans">Marks:</label>
                   <input type="number" min="1" value={q.marks}

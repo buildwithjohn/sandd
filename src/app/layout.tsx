@@ -27,16 +27,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning className={`${display.variable} ${sans.variable}`}>
       <head>
-        {/* Apply theme before paint to prevent flash */}
-        <script dangerouslySetInnerHTML={{ __html: `
-          (function() {
-            try {
-              var t = localStorage.getItem('sandd-theme');
-              var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
-              if (t === 'dark' || (!t && d)) document.documentElement.classList.add('dark');
-            } catch(e) {}
-          })();
-        `}} />
+        {/* Single app-wide theme (landing blend) — apply before paint */}
+        <script dangerouslySetInnerHTML={{ __html: `document.documentElement.classList.add('dark');` }} />
       </head>
       <body>
         <ThemeProvider>

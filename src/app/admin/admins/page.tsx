@@ -15,7 +15,7 @@ interface Admin {
   church?: string; role: "admin" | "super_admin"; created_at: string;
 }
 
-const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#D4A85C]/50 transition-all";
+const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#E0A64E]/50 transition-all";
 
 export default function AdminsPage() {
   const [admins, setAdmins] = useState<Admin[]>([]);
@@ -111,7 +111,7 @@ export default function AdminsPage() {
   if (loading) return (
     <AdminShell>
       <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#D4A85C]/30 border-t-[#D4A85C] rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[#E0A64E]/30 border-t-[#E0A64E] rounded-full animate-spin" />
       </div>
     </AdminShell>
   );
@@ -155,13 +155,13 @@ export default function AdminsPage() {
                 <span className="text-white/40 text-[10px] uppercase tracking-widest font-sans w-16">Email</span>
                 <code className="text-white text-xs flex-1 font-mono">{createdCreds.email}</code>
                 <button onClick={() => copyToClipboard(createdCreds.email, "Email")}
-                  className="text-white/40 hover:text-[#D4A85C]"><Copy className="w-3.5 h-3.5" /></button>
+                  className="text-white/40 hover:text-[#E0A64E]"><Copy className="w-3.5 h-3.5" /></button>
               </div>
               <div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2">
                 <span className="text-white/40 text-[10px] uppercase tracking-widest font-sans w-16">Password</span>
-                <code className="text-[#D4A85C] text-xs flex-1 font-mono font-bold">{createdCreds.password}</code>
+                <code className="text-[#E0A64E] text-xs flex-1 font-mono font-bold">{createdCreds.password}</code>
                 <button onClick={() => copyToClipboard(createdCreds.password, "Password")}
-                  className="text-white/40 hover:text-[#D4A85C]"><Copy className="w-3.5 h-3.5" /></button>
+                  className="text-white/40 hover:text-[#E0A64E]"><Copy className="w-3.5 h-3.5" /></button>
               </div>
             </div>
             <button onClick={() => setCreatedCreds(null)}
@@ -203,7 +203,7 @@ export default function AdminsPage() {
                   <button key={r} type="button" onClick={() => setRole(r)}
                     className={`py-2.5 px-4 rounded-xl text-xs font-semibold font-sans border transition-all flex items-center justify-center gap-2 ${
                       role === r
-                        ? "bg-[#D4A85C] border-[#D4A85C] text-[#080C14]"
+                        ? "bg-[#E0A64E] border-[#E0A64E] text-[#080C14]"
                         : "bg-white/[0.04] border-white/10 text-white/60 hover:border-white/25"
                     }`}>
                     {r === "super_admin" && <Crown className="w-3.5 h-3.5" />}
@@ -245,12 +245,12 @@ export default function AdminsPage() {
               return (
                 <div key={a.id} className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border ${
                   a.role === "super_admin"
-                    ? "bg-[#D4A85C]/[0.05] border-[#D4A85C]/20"
+                    ? "bg-[#E0A64E]/[0.05] border-[#E0A64E]/20"
                     : "bg-white/[0.02] border-white/[0.06]"
                 }`}>
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
                     a.role === "super_admin"
-                      ? "bg-[#D4A85C]/15 text-[#D4A85C] border border-[#D4A85C]/30"
+                      ? "bg-[#E0A64E]/15 text-[#E0A64E] border border-[#E0A64E]/30"
                       : "bg-white/[0.06] text-white/70"
                   }`}>
                     {initials}
@@ -263,14 +263,14 @@ export default function AdminsPage() {
                       {isMe && <span className="text-[9px] bg-white/[0.06] text-white/40 px-1.5 py-0.5 rounded font-sans">You</span>}
                       <span className={`text-[9px] uppercase tracking-widest font-sans px-1.5 py-0.5 rounded ${
                         a.role === "super_admin"
-                          ? "bg-[#D4A85C]/15 text-[#D4A85C] border border-[#D4A85C]/30"
+                          ? "bg-[#E0A64E]/15 text-[#E0A64E] border border-[#E0A64E]/30"
                           : "bg-white/[0.06] text-white/40 border border-white/10"
                       }`}>
                         {a.role === "super_admin" ? <><Crown className="w-2.5 h-2.5 inline mr-0.5" /> Super</> : "Admin"}
                       </span>
                     </div>
                     <div className="flex items-center gap-3 mt-1 flex-wrap text-[11px] text-white/40 font-sans">
-                      <a href={`mailto:${a.email}`} className="hover:text-[#D4A85C] truncate">
+                      <a href={`mailto:${a.email}`} className="hover:text-[#E0A64E] truncate">
                         {a.email}
                       </a>
                       {a.phone && <span className="hidden sm:inline">·</span>}
@@ -283,7 +283,7 @@ export default function AdminsPage() {
                     <div className="flex items-center gap-1 flex-shrink-0">
                       {a.role === "admin" ? (
                         <button onClick={() => handleAction(a.id, "promote", a.full_name)}
-                          className="text-[10px] font-semibold font-sans px-2.5 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 text-white/60 hover:bg-[#D4A85C]/10 hover:border-[#D4A85C]/30 hover:text-[#D4A85C] transition-all"
+                          className="text-[10px] font-semibold font-sans px-2.5 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 text-white/60 hover:bg-[#E0A64E]/10 hover:border-[#E0A64E]/30 hover:text-[#E0A64E] transition-all"
                           title="Promote to Super Admin">
                           <ArrowUp className="w-3 h-3 inline" />
                         </button>

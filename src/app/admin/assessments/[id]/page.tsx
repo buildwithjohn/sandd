@@ -39,7 +39,7 @@ export default function AssessmentDetailPage() {
     setAssessment((a: any) => ({ ...a, is_published: !a.is_published }));
   }
 
-  if (loading) return <AdminShell><div className="flex items-center justify-center py-20"><div className="w-6 h-6 border-2 border-[#D4A85C]/30 border-t-[#D4A85C] rounded-full animate-spin" /></div></AdminShell>;
+  if (loading) return <AdminShell><div className="flex items-center justify-center py-20"><div className="w-6 h-6 border-2 border-[#E0A64E]/30 border-t-[#E0A64E] rounded-full animate-spin" /></div></AdminShell>;
 
   const graded = submissions.filter(s => s.status === "graded").length;
 
@@ -76,7 +76,7 @@ export default function AssessmentDetailPage() {
             { label: "Graded", value: graded },
           ].map(s => (
             <div key={s.label} className="ksurface-d p-4 text-center">
-              <div className="text-[#D4A85C] text-xl font-bold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{s.value}</div>
+              <div className="text-[#E0A64E] text-xl font-bold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{s.value}</div>
               <div className="text-white/30 text-[10px] font-sans mt-1">{s.label}</div>
             </div>
           ))}
@@ -87,7 +87,7 @@ export default function AssessmentDetailPage() {
           <h2 className="text-white/60 text-xs uppercase tracking-widest font-sans mb-3">Part A — {questions.length} Objective Questions ({assessment?.obj_marks} marks)</h2>
           {questions.slice(0, 3).map((q, i) => (
             <div key={q.id} className="flex gap-3 py-2 border-b border-white/[0.04] last:border-0">
-              <span className="text-[#D4A85C]/50 text-xs font-mono w-5">Q{i+1}</span>
+              <span className="text-[#E0A64E]/50 text-xs font-mono w-5">Q{i+1}</span>
               <span className="text-white/60 text-xs font-sans">{q.question}</span>
             </div>
           ))}
@@ -98,7 +98,7 @@ export default function AssessmentDetailPage() {
           <h2 className="text-white/60 text-xs uppercase tracking-widest font-sans mb-3">Part B — {theory.length} Theory Questions ({assessment?.theory_marks} marks)</h2>
           {theory.map((q, i) => (
             <div key={q.id} className="flex gap-3 py-2 border-b border-white/[0.04] last:border-0">
-              <span className="text-[#D4A85C]/50 text-xs font-mono w-5">Q{i+1}</span>
+              <span className="text-[#E0A64E]/50 text-xs font-mono w-5">Q{i+1}</span>
               <span className="text-white/60 text-xs font-sans flex-1">{q.question}</span>
               <span className="text-white/25 text-xs font-sans flex-shrink-0">{q.marks}mk</span>
             </div>

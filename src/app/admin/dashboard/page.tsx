@@ -24,7 +24,7 @@ const quickActions = [
 ];
 
 const statusConfig: Record<string, { label: string; icon: any; cls: string }> = {
-  pending:  { label: "Pending",  icon: Clock,       cls: "bg-[#D4A85C]/10 text-[#D4A85C] border border-[#D4A85C]/20"   },
+  pending:  { label: "Pending",  icon: Clock,       cls: "bg-[#E0A64E]/10 text-[#E0A64E] border border-[#E0A64E]/20"   },
   accepted: { label: "Accepted", icon: CheckCircle, cls: "bg-green-500/10 text-green-400 border border-green-500/20"    },
   rejected: { label: "Rejected", icon: XCircle,     cls: "bg-red-500/10 text-red-400 border border-red-500/20"         },
 };
@@ -75,14 +75,15 @@ export default function AdminDashboard() {
   }
 
   async function enrollAllWaitlist() {
-    if (!confirm(`Enroll all ${waitlist.length} waitlist members? Their login details will be shown on screen for you to email manually.`)) return;
+    if (!confirm(`Enroll all ${waitlist.length} waitlist members? Each person's login details will be emailed to them automatically.`)) return;
     setEnrollingAll(true);
     try {
       const res = await fetch("/api/admin/enroll-waitlist", { method: "POST" });
       const data = await res.json();
       setEnrollResult(data);
       setWaitlist([]);
-      toast.success(`${data.total} students enrolled! Login details ready to copy below.`);
+      const sent = data.emailsSent ?? 0;
+      toast.success(`${data.total} enrolled · ${sent} welcome email${sent !== 1 ? "s" : ""} sent automatically.`);
     } catch (err: any) {
       toast.error("Enrollment failed: " + err.message);
     } finally {
@@ -201,8 +202,8 @@ export default function AdminDashboard() {
               {waitlist.map((w, i) => (
                 <div key={w.id} className={`flex items-center gap-4 px-5 py-3 hover:bg-white/[0.02] transition-colors
                   ${i < waitlist.length - 1 ? "border-b border-white/[0.05]" : ""}`}>
-                  <div className="w-7 h-7 rounded-full bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-3.5 h-3.5 text-[#D4A85C]" />
+                  <div className="w-7 h-7 rounded-full bg-[#E0A64E]/10 border border-[#E0A64E]/20 flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-3.5 h-3.5 text-[#E0A64E]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-white/70 text-xs font-sans truncate">{w.full_name || "—"}</div>
@@ -222,7 +223,7 @@ export default function AdminDashboard() {
           <motion.div variants={rise(0.3)} initial="hidden" animate="visible">
             <div className="flex items-center justify-between mb-3">
               <div className="text-green-400 text-xs tracking-[0.2em] uppercase font-sans flex items-center gap-1.5">
-                <CheckCircle className="w-3.5 h-3.5" /> {enrollResult.enrolled.length} Enrolled — Send them these login details
+                <CheckCircle className="w-3.5 h-3.5" /> {enrollResult.enrolled.length} Enrolled · {enrollResult.emailsSent ?? 0} emailed automatically
               </div>
               <button onClick={() => setEnrollResult(null)}
                 className="text-white/30 hover:text-white/60 text-xs font-sans transition-colors">
@@ -238,15 +239,18 @@ export default function AdminDashboard() {
                       <div className="text-white/40 text-xs font-sans mt-0.5">{s.email}</div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <div className="text-[#D4A85C] text-xs font-mono">{s.studentNumber}</div>
+                      <div className="text-[#E0A64E] text-xs font-mono">{s.studentNumber}</div>
                       <div className="text-white/50 text-xs font-mono mt-1 bg-white/[0.05] px-2 py-0.5 rounded">{s.password}</div>
+                      <div className={`text-[10px] font-sans mt-1 ${s.emailed ? "text-green-400" : "text-amber-400"}`}>
+                        {s.emailed ? "✓ Email sent" : "⚠ Email failed — send manually"}
+                      </div>
                     </div>
                   </div>
                 </div>
               ))}
-              <div className="px-5 py-3 border-t border-white/[0.05] bg-[#D4A85C]/[0.05]">
-                <p className="text-[#D4A85C]/70 text-xs font-sans">
-                  Copy each person&apos;s email + password and send from sandd@abiodunsule.uk · Portal: sandd.abiodunsule.uk
+              <div className="px-5 py-3 border-t border-white/[0.05] bg-[#E0A64E]/[0.05]">
+                <p className="text-[#E0A64E]/70 text-xs font-sans">
+                  Welcome emails with login details were sent automatically from sandd@abiodunsule.uk. Credentials are shown here as a backup only — resend manually to anyone marked &ldquo;Email failed&rdquo;.
                 </p>
               </div>
             </div>
@@ -257,7 +261,7 @@ export default function AdminDashboard() {
         <motion.div variants={rise(0.3)} initial="hidden" animate="visible">
           <div className="flex items-center justify-between mb-3">
             <div className="text-white/25 text-xs tracking-[0.2em] uppercase font-sans">Recent Applications</div>
-            <Link href="/admin/applications" className="text-[#D4A85C]/60 hover:text-[#D4A85C] text-xs font-sans transition-colors">
+            <Link href="/admin/applications" className="text-[#E0A64E]/60 hover:text-[#E0A64E] text-xs font-sans transition-colors">
               View all →
             </Link>
           </div>

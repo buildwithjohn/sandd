@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
-import ThemeToggle from "@/components/ThemeToggle";
+import LineField from "@/components/LineField";
 import {
   LogOut, LayoutDashboard, BookOpen,
   Megaphone, User, Award, FolderOpen, Menu, X, Star
@@ -138,14 +138,13 @@ export default function PortalShell({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-2 flex-shrink-0">
             {isAdmin && (
               <Link href="/admin/dashboard"
-                className="hidden sm:flex items-center gap-1.5 bg-[#D4A85C]/10 border border-[#D4A85C]/30 text-[#D4A85C] hover:bg-[#D4A85C]/20 px-3 py-1.5 rounded-full text-xs font-semibold font-sans transition-all">
+                className="hidden sm:flex items-center gap-1.5 bg-[#E0A64E]/10 border border-[#E0A64E]/30 text-[#E0A64E] hover:bg-[#E0A64E]/20 px-3 py-1.5 rounded-full text-xs font-semibold font-sans transition-all">
                 <Shield className="w-3.5 h-3.5" />
                 Admin
               </Link>
             )}
-            <ThemeToggle className="!w-9 !h-9" />
           <Link href="/portal/profile" className="flex-shrink-0">
-            <div className="w-8 h-8 rounded-full overflow-hidden bg-royal-700 flex items-center justify-center border-2 border-transparent hover:border-[#D4A85C] transition-all">
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-royal-700 flex items-center justify-center border-2 border-transparent hover:border-[#E0A64E] transition-all">
               {profile.avatarUrl
                 ? <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
                 : <span className="text-white text-[10px] font-bold">{profile.initials}</span>
@@ -164,7 +163,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
             onClick={e => e.stopPropagation()}>
 
             {/* Profile section */}
-            <div className="bg-royal-700 px-5 py-5">
+            <div className="grad-hero px-5 py-5">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-xl overflow-hidden bg-[#2A2A4E] flex items-center justify-center flex-shrink-0">
                   {profile.avatarUrl
@@ -183,7 +182,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
             {/* Admin switch button (for admins only) */}
             {isAdmin && (
               <Link href="/admin/dashboard" onClick={() => setDrawerOpen(false)}
-                className="mx-3 mt-3 mb-1 flex items-center gap-3 px-4 py-3 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/30 text-[#D4A85C] hover:bg-[#D4A85C]/20 transition-all">
+                className="mx-3 mt-3 mb-1 flex items-center gap-3 px-4 py-3 rounded-xl bg-[#E0A64E]/10 border border-[#E0A64E]/30 text-[#E0A64E] hover:bg-[#E0A64E]/20 transition-all">
                 <Shield className="w-5 h-5 flex-shrink-0" />
                 <div className="flex-1">
                   <div className="text-sm font-semibold">Switch to Admin</div>
@@ -201,7 +200,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                     className={`flex items-center gap-3 px-4 py-3.5 rounded-xl mb-1 transition-all ${
                       active
                         ? "grad-hero text-white shadow-md"
-                        : "theme-text-muted hover:bg-ivory-200"
+                        : "theme-text-muted hover:bg-white/5"
                     }`}>
                     <l.icon className={`w-5 h-5 flex-shrink-0 ${active ? "text-white" : "theme-accent"}`} />
                     <span className="text-sm font-medium">{l.label}</span>
@@ -229,7 +228,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                 </a>
               </div>
               <button onClick={signOut}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 w-full transition-all">
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 w-full transition-all">
                 <LogOut className="w-5 h-5" />
                 <span className="text-sm font-medium">Sign Out</span>
               </button>
@@ -244,38 +243,37 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         {/* Desktop Sidebar */}
         <aside className="w-52 flex-shrink-0 hidden lg:block">
           <div className="sticky top-20 space-y-2">
-            {/* Student card */}
-            <div className="theme-bg-elevated rounded-2xl border theme-border-soft p-4"
-              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl overflow-hidden bg-royal-700 flex items-center justify-center flex-shrink-0">
+            {/* Student card — gradient header + overlapping avatar */}
+            <div className="ksurface overflow-hidden">
+              <div className="grad-hero relative h-14">
+                <div className="absolute inset-0 line-drift opacity-50"><LineField stroke="#ffffff" count={8} /></div>
+              </div>
+              <div className="px-4 pb-4 -mt-7 relative">
+                <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#1A1230] flex items-center justify-center ring-2 ring-[#0B0612]">
                   {profile.avatarUrl
                     ? <img src={profile.avatarUrl} alt={profile.name} className="w-full h-full object-cover" />
-                    : <span className="text-white text-xs font-bold">{profile.initials}</span>
+                    : <span className="text-white text-sm font-bold">{profile.initials}</span>
                   }
                 </div>
-                <div className="min-w-0">
-                  <div className="theme-text text-sm font-semibold truncate" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
-                    {profile.name.split(" ")[0]}
-                  </div>
-                  <div className="text-[10px] theme-accent mt-0.5">{profile.church || "Student"}</div>
+                <div className="mt-2.5">
+                  <div className="kinetic-display text-white text-xl truncate">{profile.name.split(" ")[0]}</div>
+                  <div className="text-[10px] theme-accent mt-0.5 truncate">{profile.church || "Student"}</div>
                 </div>
-              </div>
-              <div className="theme-bg-subtle rounded-lg px-3 py-2 flex items-center justify-between">
-                <span className="theme-accent text-[10px] uppercase tracking-wide">Year</span>
-                <span className="theme-text text-xs font-bold">Year {profile.year}</span>
+                <div className="mt-3 grad-hero rounded-lg px-3 py-2 flex items-center justify-between">
+                  <span className="text-white/75 text-[10px] uppercase tracking-wide">Year</span>
+                  <span className="text-white text-xs font-bold">Year {profile.year}</span>
+                </div>
               </div>
             </div>
 
             {/* Nav */}
-            <div className="theme-bg-elevated rounded-2xl border theme-border-soft p-2"
-              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+            <div className="ksurface p-2">
               {navLinks.map(l => {
                 const active = pathname === l.href;
                 return (
                   <Link key={l.href} href={l.href}
                     className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                      active ? "grad-hero text-white font-semibold shadow-md" : "theme-text-faint hover:bg-ivory-200 hover:theme-text"
+                      active ? "grad-hero text-white font-semibold shadow-md" : "theme-text-faint hover:bg-white/5 hover:theme-text"
                     }`}>
                     <l.icon className={`w-4 h-4 ${active ? "text-white" : ""}`} />
                     {l.label}
@@ -284,19 +282,18 @@ export default function PortalShell({ children }: { children: React.ReactNode })
               })}
               <div className="border-t theme-border-soft mt-2 pt-2">
                 <button onClick={signOut}
-                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm theme-text-faint hover:text-red-500 hover:bg-red-50 w-full transition-all">
+                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm theme-text-faint hover:text-red-400 hover:bg-red-500/10 w-full transition-all">
                   <LogOut className="w-4 h-4" /> Sign Out
                 </button>
               </div>
             </div>
 
             {/* Registrar */}
-            <div className="theme-bg-elevated rounded-2xl border theme-border-soft p-3"
-              style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>
+            <div className="ksurface p-3">
               <div className="theme-text-faint text-[9px] uppercase tracking-widest mb-2.5">School Administration</div>
-              <div className="flex items-center gap-2.5 mb-2">
-                <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 border theme-border-soft">
-                  <Image src="/assets/registrar.jpg" alt="Registrar" width={32} height={32} className="w-full h-full object-cover object-top" />
+              <div className="flex items-center gap-2.5 mb-2.5">
+                <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0 ring-1 ring-white/10">
+                  <Image src="/assets/registrar.jpg" alt="Registrar" width={36} height={36} className="w-full h-full object-cover object-top" />
                 </div>
                 <div className="min-w-0">
                   <div className="theme-text text-xs font-semibold truncate">John Ayomide Akinola</div>
@@ -304,7 +301,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                 </div>
               </div>
               <a href="mailto:sandd@abiodunsule.uk"
-                className="block text-center theme-accent hover:theme-accent text-[10px] transition-colors bg-ivory-200 hover:theme-bg-muted rounded-lg py-1.5 px-2">
+                className="block text-center text-white/90 text-[10px] font-medium transition-all grad-hero hover:shadow-[0_0_20px_rgba(124,58,237,0.4)] rounded-lg py-2 px-2">
                 Contact Registrar
               </a>
             </div>
@@ -330,7 +327,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
                 <span className={`text-[10px] font-medium truncate ${active ? "theme-text" : "theme-text-faint"}`}>
                   {l.label}
                 </span>
-                {active && <div className="w-1 h-1 rounded-full bg-[#D4A85C]" />}
+                {active && <div className="w-1 h-1 rounded-full bg-[#E0A64E]" />}
               </Link>
             );
           })}

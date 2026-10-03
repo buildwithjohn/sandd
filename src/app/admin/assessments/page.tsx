@@ -81,7 +81,7 @@ export default function AdminAssessmentsListPage() {
   if (loading) return (
     <AdminShell>
       <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[#D4A85C]/30 border-t-[#D4A85C] rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-[#E0A64E]/30 border-t-[#E0A64E] rounded-full animate-spin" />
       </div>
     </AdminShell>
   );
@@ -110,7 +110,7 @@ export default function AdminAssessmentsListPage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
             { label: "Total Assessments", value: assessments.length, color: "text-white" },
-            { label: "Submissions",       value: totalSubs,           color: "text-[#D4A85C]" },
+            { label: "Submissions",       value: totalSubs,           color: "text-[#E0A64E]" },
             { label: "Graded",            value: totalGraded,         color: "text-green-400" },
             { label: "Pending Grade",     value: totalPending,        color: totalPending > 0 ? "text-orange-400" : "text-white/40" },
           ].map(s => (
@@ -132,7 +132,7 @@ export default function AdminAssessmentsListPage() {
             <button key={key} onClick={() => setFilter(key as any)}
               className={`text-xs font-semibold font-sans px-3.5 py-2 rounded-full border whitespace-nowrap transition-all ${
                 filter === key
-                  ? "bg-[#D4A85C] border-[#D4A85C] text-[#080C14]"
+                  ? "bg-[#E0A64E] border-[#E0A64E] text-[#080C14]"
                   : "bg-white/[0.04] border-white/10 text-white/50 hover:border-white/25"
               }`}>
               {label} <span className="opacity-60">({count})</span>
@@ -148,7 +148,7 @@ export default function AdminAssessmentsListPage() {
               {filter === "all" ? "No assessments yet" : `No ${filter} assessments`}
             </p>
             {filter === "all" && (
-              <Link href="/admin/assessments/new" className="text-[#D4A85C] text-xs font-sans hover:underline">
+              <Link href="/admin/assessments/new" className="text-[#E0A64E] text-xs font-sans hover:underline">
                 Create your first assessment →
               </Link>
             )}
@@ -170,9 +170,9 @@ export default function AdminAssessmentsListPage() {
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
                         hasPending
                           ? "bg-orange-500/10 border border-orange-500/20"
-                          : "bg-[#D4A85C]/10 border border-[#D4A85C]/20"
+                          : "bg-[#E0A64E]/10 border border-[#E0A64E]/20"
                       }`}>
-                        <Star className={`w-4 h-4 ${hasPending ? "text-orange-400" : "text-[#D4A85C]"}`} />
+                        <Star className={`w-4 h-4 ${hasPending ? "text-orange-400" : "text-[#E0A64E]"}`} />
                       </div>
 
                       <div className="flex-1 min-w-0">

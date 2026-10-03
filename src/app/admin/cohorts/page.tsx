@@ -16,11 +16,11 @@ interface Enrolled { name: string; email: string; studentNumber: string; passwor
 const STATUS_STYLE: Record<string, string> = {
   draft:        "bg-white/10 text-white/50 border-white/15",
   registration: "bg-green-500/15 text-green-300 border-green-500/30",
-  active:       "bg-[#D4A85C]/15 text-[#D4A85C] border-[#D4A85C]/30",
+  active:       "bg-[#E0A64E]/15 text-[#E0A64E] border-[#E0A64E]/30",
   closed:       "bg-white/10 text-white/40 border-white/15",
   graduated:    "bg-purple-500/15 text-purple-300 border-purple-500/30",
 };
-const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#D4A85C]/50 transition-all";
+const inp = "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white/90 font-sans placeholder-white/20 focus:outline-none focus:border-[#E0A64E]/50 transition-all";
 
 export default function CohortsPage() {
   const [cohorts, setCohorts] = useState<Cohort[]>([]);
@@ -102,8 +102,8 @@ export default function CohortsPage() {
     <AdminShell>
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#D4A85C]/10 border border-[#D4A85C]/20 flex items-center justify-center">
-            <Users className="w-5 h-5 text-[#D4A85C]" />
+          <div className="w-10 h-10 rounded-xl bg-[#E0A64E]/10 border border-[#E0A64E]/20 flex items-center justify-center">
+            <Users className="w-5 h-5 text-[#E0A64E]" />
           </div>
           <div>
             <h1 className="text-xl font-semibold text-white" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>Cohorts</h1>
@@ -121,7 +121,7 @@ export default function CohortsPage() {
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <Star className="w-4 h-4 text-[#D4A85C]" fill="currentColor" />
+                      <Star className="w-4 h-4 text-[#E0A64E]" fill="currentColor" />
                       <span className="text-white/90 text-lg font-semibold" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{current.name}</span>
                       <span className={`text-[10px] px-2 py-0.5 rounded-full border font-sans ${STATUS_STYLE[current.status] || STATUS_STYLE.draft}`}>{current.status}</span>
                     </div>
@@ -146,7 +146,7 @@ export default function CohortsPage() {
                     <button
                       onClick={() => act(current.id, registrationOpen ? "close_registration" : "open_registration", registrationOpen ? "Registration closed." : "Registration open!")}
                       disabled={busy === current.id + (registrationOpen ? "close_registration" : "open_registration")}
-                      className={`text-xs font-semibold font-sans px-3.5 py-2 rounded-full transition-all ${registrationOpen ? "bg-white/10 text-white/70 hover:bg-white/15" : "bg-[#D4A85C] text-[#0D1320] hover:bg-[#c39a4f]"}`}>
+                      className={`text-xs font-semibold font-sans px-3.5 py-2 rounded-full transition-all ${registrationOpen ? "bg-white/10 text-white/70 hover:bg-white/15" : "bg-[#E0A64E] text-[#0D1320] hover:bg-[#c39a4f]"}`}>
                       {registrationOpen ? "Close" : "Open intake"}
                     </button>
                   </div>
@@ -155,12 +155,12 @@ export default function CohortsPage() {
                   <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 flex items-center justify-between">
                     <div>
                       <div className="text-white/80 text-sm font-semibold font-sans flex items-center gap-1.5">
-                        <UserPlus className="w-3.5 h-3.5 text-[#D4A85C]" /> {waitlistCount} on waitlist
+                        <UserPlus className="w-3.5 h-3.5 text-[#E0A64E]" /> {waitlistCount} on waitlist
                       </div>
                       <div className="text-white/35 text-xs font-sans mt-0.5">Admit into {current.name}</div>
                     </div>
                     <button onClick={admitWaitlist} disabled={busy === "admit" || waitlistCount === 0}
-                      className="text-xs font-semibold font-sans px-3.5 py-2 rounded-full bg-[#D4A85C] text-[#0D1320] hover:bg-[#c39a4f] disabled:opacity-40 transition-all flex items-center gap-1.5">
+                      className="text-xs font-semibold font-sans px-3.5 py-2 rounded-full bg-[#E0A64E] text-[#0D1320] hover:bg-[#c39a4f] disabled:opacity-40 transition-all flex items-center gap-1.5">
                       {busy === "admit" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null} Admit all
                     </button>
                   </div>
@@ -168,7 +168,7 @@ export default function CohortsPage() {
               </div>
             ) : (
               <div className="ksurface-d p-6 text-center text-white/50 text-sm font-sans">
-                No current cohort set. Create one below (or run <code className="text-[#D4A85C]">cohort-schema.sql</code> if cohorts don't load), then mark it current.
+                No current cohort set. Create one below (or run <code className="text-[#E0A64E]">cohort-schema.sql</code> if cohorts don't load), then mark it current.
               </div>
             )}
 
@@ -186,7 +186,7 @@ export default function CohortsPage() {
                     <div key={e.email} className="flex items-center gap-3 text-xs font-sans bg-white/[0.03] rounded-lg px-3 py-2">
                       <span className="text-white/80 flex-1 truncate">{e.name || e.email}</span>
                       <span className="text-white/40 font-mono">{e.studentNumber}</span>
-                      <span className="text-[#D4A85C] font-mono">{e.password}</span>
+                      <span className="text-[#E0A64E] font-mono">{e.password}</span>
                       <button onClick={() => { navigator.clipboard?.writeText(`${e.email} / ${e.password}`); toast.success("Copied"); }}
                         className="text-white/30 hover:text-white/70"><Copy className="w-3 h-3" /></button>
                     </div>
@@ -202,7 +202,7 @@ export default function CohortsPage() {
                 <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. 2027 Cohort" className={inp} />
                 <input type="date" value={newStart} onChange={e => setNewStart(e.target.value)} className={`${inp} sm:w-48`} />
                 <button onClick={createCohort} disabled={creating}
-                  className="flex items-center justify-center gap-2 bg-[#D4A85C] hover:bg-[#c39a4f] disabled:opacity-50 text-[#0D1320] text-sm font-semibold font-sans px-5 py-3 rounded-xl transition-all whitespace-nowrap">
+                  className="flex items-center justify-center gap-2 bg-[#E0A64E] hover:bg-[#c39a4f] disabled:opacity-50 text-[#0D1320] text-sm font-semibold font-sans px-5 py-3 rounded-xl transition-all whitespace-nowrap">
                   {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Create
                 </button>
               </div>
@@ -218,14 +218,14 @@ export default function CohortsPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-white/90 text-sm font-semibold font-sans" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>{c.name}</span>
                         <span className={`text-[10px] px-2 py-0.5 rounded-full border font-sans ${STATUS_STYLE[c.status] || STATUS_STYLE.draft}`}>{c.status}</span>
-                        {c.is_current && <span className="text-[10px] text-[#D4A85C] flex items-center gap-0.5 font-sans"><Star className="w-3 h-3" fill="currentColor" /> current</span>}
+                        {c.is_current && <span className="text-[10px] text-[#E0A64E] flex items-center gap-0.5 font-sans"><Star className="w-3 h-3" fill="currentColor" /> current</span>}
                       </div>
                       <div className="text-white/35 text-xs font-sans mt-0.5">{c.student_count} student{c.student_count !== 1 ? "s" : ""} · starts {fmt(c.starts_at)}</div>
                     </div>
                     {!c.is_current && (
                       <button onClick={() => act(c.id, "set_current", `${c.name} is now the current cohort.`)}
                         disabled={busy === c.id + "set_current"}
-                        className="text-xs font-sans text-white/50 hover:text-[#D4A85C] border border-white/10 hover:border-[#D4A85C]/40 px-3 py-1.5 rounded-full transition-all whitespace-nowrap">
+                        className="text-xs font-sans text-white/50 hover:text-[#E0A64E] border border-white/10 hover:border-[#E0A64E]/40 px-3 py-1.5 rounded-full transition-all whitespace-nowrap">
                         Make current
                       </button>
                     )}
