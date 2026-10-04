@@ -10,6 +10,7 @@ import {
   ChevronLeft, ChevronRight, CheckCircle,
   Loader2, FileDown, Star
 } from "lucide-react";
+import { fetchCohortCourseStates } from "@/lib/courseState";
 
 interface Lesson {
   id: string; title: string; order_index: number;
@@ -50,6 +51,16 @@ export default function LessonPage() {
         .select("*, courses(id, title, slug, year, notes_url)")
         .eq("id", lessonId).single();
       if (!lessonData) { router.push("/portal/courses"); return; }
+
+      // Gate: a locked course's lessons are not accessible yet
+      const { data: prof } = await supabase.from("profiles").select("cohort_id").eq("id", user.id).single();
+      const states = await fetchCohortCourseStates(supabase, prof?.cohort_id);
+      const st = states.get(lessonData.course_id);
+      if (st && st.status === "locked") {
+        router.push(`/portal/courses/${lessonData.courses?.slug ?? ""}`);
+        return;
+      }
+
       setLesson(lessonData);
 
       // Progress

@@ -14,6 +14,7 @@ import {
 , Mail
 , Send
 , Zap
+, CalendarClock
 } from "lucide-react";
 import LineField from "@/components/LineField";
 
@@ -23,6 +24,7 @@ const navLinks = [
 
   { href: "/admin/applications",  icon: ClipboardList,   label: "Applications"  },
   { href: "/admin/cohorts",       icon: GraduationCap,   label: "Cohorts"       },
+  { href: "/admin/schedule",      icon: CalendarClock,   label: "Course Schedule"},
   { href: "/admin/students",      icon: Users,           label: "Students"      },
   { href: "/admin/admins",        icon: Shield,          label: "Admins"        },
   { href: "/admin/upload",        icon: Upload,          label: "Course Builder"},

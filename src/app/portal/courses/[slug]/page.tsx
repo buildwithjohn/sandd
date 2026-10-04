@@ -10,6 +10,7 @@ import {
   Play, FileDown, CheckCircle, Lock,
   ChevronRight, BookOpen, Star, Clock, Mic, Presentation
 } from "lucide-react";
+import { fetchCohortCourseStates, daysLeft, type CourseStatus } from "@/lib/courseState";
 
 interface Subtopic {
   id: string; title: string; order_index: number;
@@ -32,6 +33,8 @@ export default function CourseDetailPage() {
   const [resources, setResources] = useState<any[]>([]);
   const [loading, setLoading]     = useState(true);
   const [studentId, setStudentId] = useState("");
+  const [courseStatus, setCourseStatus] = useState<CourseStatus>("open");
+  const [closesAt, setClosesAt]   = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -45,6 +48,13 @@ export default function CourseDetailPage() {
         .from("courses").select("*").eq("slug", slug).single();
       if (!courseData) { router.push("/portal/courses"); return; }
       setCourse(courseData);
+
+      // Determine this course's drip status for the student's cohort
+      const { data: profile } = await supabase.from("profiles").select("cohort_id").eq("id", user.id).single();
+      const states = await fetchCohortCourseStates(supabase, profile?.cohort_id);
+      const st = states.get(courseData.id);
+      if (st) { setCourseStatus(st.status); setClosesAt(st.closes_at); }
+      else { setCourseStatus("open"); } // fallback when schedule not seeded
 
       // Load published subtopics
       const { data: subs } = await supabase
@@ -93,6 +103,32 @@ export default function CourseDetailPage() {
 
   if (!course) return null;
 
+  // Locked — not yet open for this cohort
+  if (courseStatus === "locked") {
+    return (
+      <PortalShell>
+        <div className="max-w-2xl space-y-5">
+          <Link href="/portal/courses"
+            className="inline-flex items-center gap-1.5 theme-text-muted hover:theme-text text-sm font-sans transition-colors">
+            ← My Courses
+          </Link>
+          <div className="ksurface p-12 text-center">
+            <div className="w-14 h-14 rounded-2xl theme-bg-subtle border theme-border flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-6 h-6 theme-text-faint" />
+            </div>
+            <h1 className="kinetic-display text-2xl theme-text mb-2">{course.title}</h1>
+            <p className="theme-text-muted text-sm font-sans max-w-sm mx-auto">
+              This course isn&apos;t open yet. It unlocks for your cohort once the current course closes. You&apos;ll see it here automatically.
+            </p>
+          </div>
+        </div>
+      </PortalShell>
+    );
+  }
+
+  const isClosed = courseStatus === "closed";
+  const dLeft    = daysLeft(closesAt);
+
   const completedCount = subtopics.filter(s => progress[s.id] === "completed").length;
   const totalCount     = subtopics.length;
   const pct            = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
@@ -114,10 +150,19 @@ export default function CourseDetailPage() {
           <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
             style={{ background: "radial-gradient(circle, #E0A64E 0%, transparent 70%)", transform: "translate(30%,-40%)" }} />
           <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
               <span className="theme-accent text-xs font-sans tracking-[0.15em] uppercase">Year {course.year}</span>
               <span className="text-white/20 text-xs">·</span>
               <span className="text-white/40 text-xs font-sans">{course.credits || 3} Credits</span>
+              {isClosed ? (
+                <span className="ml-1 text-[10px] font-sans px-2.5 py-1 rounded-full bg-green-500/15 text-green-300 border border-green-500/25 flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3" /> Completed · recordings available
+                </span>
+              ) : (
+                <span className="ml-1 text-[10px] font-sans px-2.5 py-1 rounded-full grad-hero text-white font-semibold">
+                  Active{dLeft != null ? ` · ${dLeft} day${dLeft === 1 ? "" : "s"} left` : ""}
+                </span>
+              )}
             </div>
             <h1 className="text-white text-2xl font-semibold mb-2" style={{ fontFamily: "var(--font-display), Georgia, serif" }}>
               {course.title}
