@@ -53,6 +53,13 @@ export default function CourseSchedulePage() {
   const done = rows.filter(r => r.status === "closed").length;
   const selCohort = cohorts.find(c => c.id === selected);
   const notStarted = !active && done === 0;
+  const nextLocked = rows.find(r => r.status === "locked");
+  const promoting = !!active && !!nextLocked && nextLocked.year > active.year;
+  const advanceMsg = !active
+    ? "Open the first course for this cohort?"
+    : promoting
+      ? `"${active.title}" is the last course of Year ${active.year}. Advancing PROMOTES this cohort to Year ${nextLocked!.year} (the Diploma). Continue?`
+      : `Close "${active.title}" and open the next course for this cohort?`;
 
   return (
     <AdminShell>
@@ -94,10 +101,9 @@ export default function CourseSchedulePage() {
                   {done} of {rows.length} completed{active && active.closes_at ? ` · ${daysLeft(active.closes_at)} days left` : ""}
                 </div>
               </div>
-              <button disabled={busy} onClick={() => act({ action: "advance", cohortId: selected },
-                active ? `Close "${active.title}" and open the next course for this cohort?` : "Open the first course for this cohort?")}
+              <button disabled={busy} onClick={() => act({ action: "advance", cohortId: selected }, advanceMsg)}
                 className="grad-btn text-white text-xs font-semibold font-sans px-5 py-2.5 rounded-full disabled:opacity-50 flex-shrink-0 flex items-center gap-1.5">
-                {active ? "Advance →" : "Start cohort"}
+                {promoting ? "Promote to Year 2 →" : active ? "Advance →" : "Start cohort"}
               </button>
             </div>
 
