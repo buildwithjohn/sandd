@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
     });
 
     let sent = 0;
+    const errors: string[] = [];
     for (let i = 0; i < emails.length; i += BATCH) {
       const chunk = emails.slice(i, i + BATCH);
       for (let attempt = 0; attempt < 3; attempt++) {
@@ -66,13 +67,14 @@ export async function POST(req: NextRequest) {
           body: JSON.stringify({ from: FROM, to: [auth.email], bcc: chunk, subject: subject.trim(), html }),
         });
         if (res.status === 429) { await new Promise(r => setTimeout(r, (attempt + 1) * 1500)); continue; }
-        if (res.ok) sent += chunk.length;
+        if (res.ok) { sent += chunk.length; }
+        else { const e = await res.json().catch(() => ({})); errors.push(e?.message || `HTTP ${res.status}`); }
         break;
       }
       if (i + BATCH < emails.length) await new Promise(r => setTimeout(r, 600));
     }
 
-    return NextResponse.json({ total: emails.length, sent, failed: emails.length - sent });
+    return NextResponse.json({ total: emails.length, sent, failed: emails.length - sent, errors: Array.from(new Set(errors)).slice(0, 3) });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
