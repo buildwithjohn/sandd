@@ -85,7 +85,11 @@ export default function AdminDashboard() {
       setEnrollResult(data);
       setWaitlist([]);
       const sent = data.emailsSent ?? 0;
-      toast.success(`${data.total} enrolled · ${sent} welcome email${sent !== 1 ? "s" : ""} sent automatically.`);
+      const skipped = data.skippedCount ?? 0;
+      toast.success(
+        `${data.total} enrolled · ${sent} welcome email${sent !== 1 ? "s" : ""} sent` +
+        (skipped ? ` · ${skipped} already had accounts (cleared from waitlist)` : "")
+      );
     } catch (err: any) {
       toast.error("Enrollment failed: " + err.message);
     } finally {
