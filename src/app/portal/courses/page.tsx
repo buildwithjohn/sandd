@@ -54,7 +54,8 @@ export default function CoursesPortalPage() {
           ? supabase.from("courses").select("id, title, slug, year, description, order_index").in("id", ids)
           : supabase.from("courses").select("id, title, slug, year, description, order_index").eq("year", profile?.current_year ?? 1);
         const { data: coursesData } = await q;
-        list = (coursesData ?? []).map((c: any, i: number) => ({ ...c, status: "open" as CourseStatus, closes_at: null, opens_at: null, position: i + 1 }));
+        const sorted = (coursesData ?? []).slice().sort((a: any, b: any) => (a.year - b.year) || (a.order_index - b.order_index));
+        list = sorted.map((c: any, i: number) => ({ ...c, status: "open" as CourseStatus, closes_at: null, opens_at: null, position: i + 1 }));
       }
 
       list.sort((a, b) => (a.position - b.position) || (a.year - b.year) || (a.order_index - b.order_index));
