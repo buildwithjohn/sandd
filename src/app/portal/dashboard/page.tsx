@@ -11,6 +11,7 @@ import {
   Star, GraduationCap, Megaphone, ArrowUpRight, TrendingUp
 } from "lucide-react";
 import LineField from "@/components/LineField";
+import { fetchCohortCourseStates } from "@/lib/courseState";
 
 const rise = (delay = 0) => ({
   hidden:  { opacity: 0, y: 16 },
@@ -74,8 +75,20 @@ export default function StudentDashboard() {
         if (lessons.length > 0 && lessons.every(l => completedLessonIds.has(l.id))) coursesCompleted++;
       });
 
+      // "Continue" should point at the active (open) course for the cohort,
+      // then any still-open/closed catch-up — never a locked future course.
+      const states = await fetchCohortCourseStates(supabase, profile.cohort_id);
+      const rank = (id: string) => {
+        const s = states.get(id)?.status;
+        if (s === "open") return 0;
+        if (s === "closed") return 1;
+        if (s === "locked") return 3;
+        return 2; // unscheduled (fallback)
+      };
+      const ordered = [...courses].sort((a, b) => rank(a.id) - rank(b.id));
       let nextSub: any = null;
-      for (const course of courses) {
+      for (const course of ordered) {
+        if (states.get(course.id)?.status === "locked") continue;
         const lessons = lessonsByCourse[course.id] || [];
         const next = lessons.find(l => !completedLessonIds.has(l.id));
         if (next) { nextSub = { ...next, courseTitle: course.title, courseSlug: course.slug }; break; }
