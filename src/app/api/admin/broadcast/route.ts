@@ -18,14 +18,18 @@ async function requireAdmin() {
   return { error: null, email: user.email! };
 }
 
-// GET — recipient count (for the composer)
-export async function GET() {
+// GET — recipient count + cohort list (for the composer)
+export async function GET(req: NextRequest) {
   const auth = await requireAdmin();
   if (auth.error) return NextResponse.json({ error: auth.error }, { status: auth.status });
   const admin = createAdminClient();
-  const { data } = await admin.from("profiles").select("email").eq("role", "student");
+  const cohortId = new URL(req.url).searchParams.get("cohortId");
+  let q = admin.from("profiles").select("email").eq("role", "student");
+  if (cohortId && cohortId !== "all") q = q.eq("cohort_id", cohortId);
+  const { data } = await q;
   const count = new Set((data ?? []).map(s => (s.email || "").trim().toLowerCase()).filter(Boolean)).size;
-  return NextResponse.json({ count });
+  const { data: cohorts } = await admin.from("cohorts").select("id, name").order("name");
+  return NextResponse.json({ count, cohorts: cohorts ?? [] });
 }
 
 // POST { subject, message } — email every student (BCC batches), copy to sender
@@ -35,11 +39,13 @@ export async function POST(req: NextRequest) {
   if (!process.env.RESEND_API_KEY) return NextResponse.json({ error: "Email is not configured." }, { status: 500 });
 
   try {
-    const { subject, message } = await req.json();
+    const { subject, message, cohortId } = await req.json();
     if (!subject?.trim() || !message?.trim()) return NextResponse.json({ error: "Subject and message are required." }, { status: 400 });
 
     const admin = createAdminClient();
-    const { data: students } = await admin.from("profiles").select("email").eq("role", "student");
+    let sq = admin.from("profiles").select("email").eq("role", "student");
+    if (cohortId && cohortId !== "all") sq = sq.eq("cohort_id", cohortId);
+    const { data: students } = await sq;
     const emails = Array.from(new Set((students ?? []).map(s => (s.email || "").trim().toLowerCase()).filter(Boolean)));
     if (emails.length === 0) return NextResponse.json({ error: "No student emails found." }, { status: 400 });
 
