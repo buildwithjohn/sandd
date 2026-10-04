@@ -5,11 +5,45 @@ import { createAdminClient } from "@/lib/supabase-admin";
  * (its exam locked, recordings kept), and the next locked course in that cohort
  * is opened for a fresh window. Idempotent — safe to run daily.
  */
-export async function runCourseDrip(): Promise<{ closed: string[]; opened: string[] }> {
+export async function runCourseDrip(): Promise<{ started: string[]; closed: string[]; opened: string[] }> {
   const admin = createAdminClient();
   const now = new Date();
+  const started: string[] = [];
   const closed: string[] = [];
   const opened: string[] = [];
+
+  async function openFirstLocked(cohortId: string): Promise<string | null> {
+    const { data: first } = await admin
+      .from("cohort_courses")
+      .select("id, duration_days")
+      .eq("cohort_id", cohortId)
+      .eq("status", "locked")
+      .order("position")
+      .limit(1);
+    if (!first || !first[0]) return null;
+    const days = first[0].duration_days ?? 14;
+    const opens = new Date();
+    const closesAt = new Date(opens.getTime() + days * 86_400_000);
+    await admin.from("cohort_courses")
+      .update({ status: "open", opens_at: opens.toISOString(), closes_at: closesAt.toISOString() })
+      .eq("id", first[0].id);
+    return first[0].id;
+  }
+
+  // 0) Auto-start cohorts whose scheduled start date has arrived and that
+  //    haven't begun yet (every course still locked).
+  const { data: startable } = await admin
+    .from("cohorts")
+    .select("id")
+    .not("scheduled_start_at", "is", null)
+    .lte("scheduled_start_at", now.toISOString());
+  for (const c of startable ?? []) {
+    const { data: active } = await admin
+      .from("cohort_courses").select("id").eq("cohort_id", c.id).neq("status", "locked").limit(1);
+    if (active && active.length) continue; // already started
+    const id = await openFirstLocked(c.id);
+    if (id) started.push(id);
+  }
 
   // Courses whose window has elapsed
   const { data: due } = await admin
@@ -43,5 +77,5 @@ export async function runCourseDrip(): Promise<{ closed: string[]; opened: strin
     }
   }
 
-  return { closed, opened };
+  return { started, closed, opened };
 }

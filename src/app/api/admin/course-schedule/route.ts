@@ -20,7 +20,7 @@ export async function GET() {
 
   const admin = createAdminClient();
   const [{ data: cohorts }, { data: rows }] = await Promise.all([
-    admin.from("cohorts").select("id, name, is_current, status").order("name"),
+    admin.from("cohorts").select("id, name, is_current, status, scheduled_start_at").order("name"),
     admin.from("cohort_courses")
       .select("id, cohort_id, course_id, position, status, opens_at, closes_at, duration_days, courses(title, year)")
       .order("position"),
@@ -70,6 +70,11 @@ export async function POST(req: NextRequest) {
         .select("id").eq("cohort_id", cohortId).eq("status", "locked").order("position").limit(1);
       if (next && next[0]) { await openRow(next[0].id); return NextResponse.json({ ok: true, opened: next[0].id }); }
       return NextResponse.json({ ok: true, opened: null, message: "No more courses to open — cohort has reached the end." });
+    }
+    if (action === "setStart") {
+      // Schedule (or clear) a cohort's auto-start date. body.startsAt = ISO string | null
+      await admin.from("cohorts").update({ scheduled_start_at: body.startsAt || null }).eq("id", body.cohortId);
+      return NextResponse.json({ ok: true });
     }
     if (action === "open")   { await openRow(body.id);  return NextResponse.json({ ok: true }); }
     if (action === "reopen") { await openRow(body.id);  return NextResponse.json({ ok: true }); }
