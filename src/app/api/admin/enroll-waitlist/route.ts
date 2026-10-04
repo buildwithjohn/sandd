@@ -57,6 +57,7 @@ export async function POST() {
 
     const enrolled: any[] = [];
     const failed: any[] = [];
+    const skipped: any[] = []; // already had an account — removed from waitlist
 
     for (const entry of waitlist) {
       try {
@@ -70,13 +71,23 @@ export async function POST() {
           user_metadata: { full_name: entry.full_name || "" },
         });
 
-        if (authErr) {
-          // If user already exists, just update their profile
-          if (!authErr.message.includes("already")) throw authErr;
+        // Already has an account → don't touch their existing profile/cohort
+        // (they may be an active student), just clear the stale waitlist entry
+        // so it stops reappearing.
+        if (authErr && authErr.message.toLowerCase().includes("already")) {
+          await admin.from("waitlist").delete().eq("id", entry.id);
+          skipped.push({ name: entry.full_name, email: entry.email });
+          continue;
         }
+        if (authErr) throw authErr;
 
         const userId = authData?.user?.id;
-        if (!userId) { failed.push({ email: entry.email, reason: "No user ID" }); continue; }
+        if (!userId) {
+          // Silent duplicate (no error, no user) — same handling.
+          await admin.from("waitlist").delete().eq("id", entry.id);
+          skipped.push({ name: entry.full_name, email: entry.email });
+          continue;
+        }
 
         const studentNumber = `SANDD/2026/${String(nextNum).padStart(4, "0")}`;
         nextNum++;
@@ -126,7 +137,7 @@ export async function POST() {
       if (!r?.ok) e.emailError = r?.error;
     }
 
-    return NextResponse.json({ enrolled, failed, total: enrolled.length, emailsSent: batch.sent });
+    return NextResponse.json({ enrolled, failed, skipped, total: enrolled.length, emailsSent: batch.sent, skippedCount: skipped.length });
 
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
