@@ -78,6 +78,10 @@ export default function StudentDashboard() {
       // "Continue" should point at the active (open) course for the cohort,
       // then any still-open/closed catch-up — never a locked future course.
       const states = await fetchCohortCourseStates(supabase, profile.cohort_id);
+      // Don't surface locked (not-yet-open) courses in the dashboard list either.
+      if (states.size > 0) {
+        setRecentCourses(courses.filter((c: any) => states.get(c.id)?.status !== "locked").slice(0, 4));
+      }
       const rank = (id: string) => {
         const s = states.get(id)?.status;
         if (s === "open") return 0;

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import PortalShell from "@/components/portal/PortalShell";
 import { motion } from "framer-motion";
-import { Lock, ChevronRight, CheckCircle, Play } from "lucide-react";
+import { Lock, ChevronRight, CheckCircle, Play, CalendarClock } from "lucide-react";
 import { fetchCohortCourseStates, statusLabel, type CourseStatus } from "@/lib/courseState";
 
 const rise = (delay = 0) => ({
@@ -24,6 +24,8 @@ export default function CoursesPortalPage() {
   const router = useRouter();
   const [courses, setCourses] = useState<TrackCourse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notStarted, setNotStarted] = useState(false);
+  const [cohortInfo, setCohortInfo] = useState<{ name?: string; starts_at?: string | null }>({});
 
   useEffect(() => {
     async function load() {
@@ -56,6 +58,15 @@ export default function CoursesPortalPage() {
       }
 
       list.sort((a, b) => (a.position - b.position) || (a.year - b.year) || (a.order_index - b.order_index));
+
+      // A scheduled-but-not-yet-started cohort (everything locked) should see a
+      // "class hasn't started" screen, not a list of locked courses.
+      if (states.size > 0 && !list.some(c => c.status !== "locked")) {
+        const { data: co } = await supabase.from("cohorts").select("name, starts_at").eq("id", profile!.cohort_id).single();
+        setCohortInfo(co ?? {});
+        setNotStarted(true);
+      }
+
       setCourses(list);
       setLoading(false);
     }
@@ -134,6 +145,18 @@ export default function CoursesPortalPage() {
           <div className="ksurface p-12 text-center">
             <p className="theme-text-muted text-sm font-sans">Loading your track…</p>
           </div>
+        ) : notStarted ? (
+          <motion.div variants={rise(0.1)} initial="hidden" animate="visible" className="ksurface p-12 text-center">
+            <div className="w-16 h-16 rounded-2xl grad-hero flex items-center justify-center mx-auto mb-5">
+              <CalendarClock className="w-7 h-7 text-white" />
+            </div>
+            <h2 className="kinetic-display text-2xl theme-text mb-2">Your class hasn&apos;t started yet</h2>
+            <p className="theme-text-muted text-sm font-sans max-w-sm mx-auto">
+              Welcome{cohortInfo.name ? ` to ${cohortInfo.name}` : ""}. Your courses will appear here the moment your cohort begins
+              {cohortInfo.starts_at ? ` on ${new Date(cohortInfo.starts_at).toLocaleDateString("en-NG", { dateStyle: "long" })}` : ""}.
+              Watch your email and announcements for the start date.
+            </p>
+          </motion.div>
         ) : (
           [{ y: 1, label: "Year One · Certificate" }, { y: 2, label: "Year Two · Diploma" }].map(group => {
             const rows = byYear(group.y);
