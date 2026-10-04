@@ -62,8 +62,8 @@ export default function CoursesPortalPage() {
       // A scheduled-but-not-yet-started cohort (everything locked) should see a
       // "class hasn't started" screen, not a list of locked courses.
       if (states.size > 0 && !list.some(c => c.status !== "locked")) {
-        const { data: co } = await supabase.from("cohorts").select("name, starts_at").eq("id", profile!.cohort_id).single();
-        setCohortInfo(co ?? {});
+        const { data: co } = await supabase.from("cohorts").select("name, starts_at, scheduled_start_at").eq("id", profile!.cohort_id).single();
+        setCohortInfo({ name: co?.name, starts_at: co?.scheduled_start_at ?? co?.starts_at });
         setNotStarted(true);
       }
 

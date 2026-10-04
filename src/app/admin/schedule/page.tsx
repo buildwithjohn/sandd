@@ -11,7 +11,7 @@ interface Row {
   id: string; course_id: string; position: number; status: "locked" | "open" | "closed";
   opens_at: string | null; closes_at: string | null; duration_days: number; title: string; year: number;
 }
-interface Cohort { id: string; name: string; is_current: boolean; status: string; }
+interface Cohort { id: string; name: string; is_current: boolean; status: string; scheduled_start_at?: string | null; }
 
 export default function CourseSchedulePage() {
   const [cohorts, setCohorts] = useState<Cohort[]>([]);
@@ -19,6 +19,7 @@ export default function CourseSchedulePage() {
   const [selected, setSelected] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [startDate, setStartDate] = useState("");
 
   async function load() {
     const res = await fetch("/api/admin/course-schedule");
@@ -50,6 +51,8 @@ export default function CourseSchedulePage() {
   const rows = (track[selected] ?? []).slice().sort((a, b) => a.position - b.position);
   const active = rows.find(r => r.status === "open");
   const done = rows.filter(r => r.status === "closed").length;
+  const selCohort = cohorts.find(c => c.id === selected);
+  const notStarted = !active && done === 0;
 
   return (
     <AdminShell>
@@ -97,6 +100,46 @@ export default function CourseSchedulePage() {
                 {active ? "Advance →" : "Start cohort"}
               </button>
             </div>
+
+            {/* Scheduled auto-start (only before a cohort has begun) */}
+            {notStarted && (
+              <div className="ksurface-d p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock className="w-3.5 h-3.5 text-[#E0A64E]" />
+                  <span className="text-white/50 text-[10px] uppercase tracking-widest font-sans">Auto-start</span>
+                </div>
+                {selCohort?.scheduled_start_at ? (
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="text-white/70 text-sm font-sans">
+                      Opens the first course automatically on{" "}
+                      <span className="text-white font-semibold">
+                        {new Date(selCohort.scheduled_start_at).toLocaleString("en-NG", { dateStyle: "long", timeStyle: "short" })}
+                      </span>.
+                    </p>
+                    <button disabled={busy}
+                      onClick={() => act({ action: "setStart", cohortId: selected, startsAt: null }, "Clear the scheduled start date?")}
+                      className="text-[10px] font-semibold font-sans px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 text-white/50 hover:text-white transition-all flex-shrink-0">
+                      Clear
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+                    <div className="flex-1">
+                      <p className="text-white/50 text-xs font-sans mb-2">
+                        Pick a date &amp; time and the cohort opens its first course on its own. Leave it and start manually anytime with &ldquo;Start cohort&rdquo;.
+                      </p>
+                      <input type="datetime-local" value={startDate} onChange={e => setStartDate(e.target.value)}
+                        className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white font-sans focus:outline-none focus:border-[#E0A64E]/50 [color-scheme:dark]" />
+                    </div>
+                    <button disabled={busy || !startDate}
+                      onClick={() => act({ action: "setStart", cohortId: selected, startsAt: new Date(startDate).toISOString() })}
+                      className="grad-btn text-white text-xs font-semibold font-sans px-5 py-2.5 rounded-full disabled:opacity-40 flex-shrink-0">
+                      Schedule start
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Track */}
             <div className="space-y-2">
