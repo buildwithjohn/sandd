@@ -48,7 +48,7 @@ export async function runCourseDrip(): Promise<{ started: string[]; closed: stri
   // Courses whose window has elapsed
   const { data: due } = await admin
     .from("cohort_courses")
-    .select("id, cohort_id, course_id, position, duration_days")
+    .select("id, cohort_id, course_id, position, duration_days, courses(year)")
     .eq("status", "open")
     .lte("closes_at", now.toISOString());
 
@@ -58,15 +58,20 @@ export async function runCourseDrip(): Promise<{ started: string[]; closed: stri
     await admin.from("assessments").update({ is_published: false }).eq("course_id", row.course_id);
     closed.push(row.id);
 
-    // Open the next locked course in this cohort
+    // Open the next locked course in this cohort — but NEVER auto-cross a year
+    // boundary. Year 2 (Diploma) only opens via an explicit admin promotion.
     const { data: next } = await admin
       .from("cohort_courses")
-      .select("id, duration_days")
+      .select("id, duration_days, courses(year)")
       .eq("cohort_id", row.cohort_id)
       .eq("status", "locked")
       .order("position")
       .limit(1);
-    if (next && next[0]) {
+    const closedYear = (row as any).courses?.year;
+    const nextYear = next && next[0] ? (next[0] as any).courses?.year : null;
+    const crossesYear = closedYear != null && nextYear != null && nextYear > closedYear;
+
+    if (next && next[0] && !crossesYear) {
       const days = next[0].duration_days ?? 14;
       const opens = new Date();
       const closesAt = new Date(opens.getTime() + days * 86_400_000);
@@ -75,6 +80,8 @@ export async function runCourseDrip(): Promise<{ started: string[]; closed: stri
         .eq("id", next[0].id);
       opened.push(next[0].id);
     }
+    // crossesYear === true → the cohort has completed the year; Year 2 stays
+    // locked until the admin promotes the cohort from the Course Schedule.
   }
 
   return { started, closed, opened };
