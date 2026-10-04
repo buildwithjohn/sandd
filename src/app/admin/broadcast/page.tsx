@@ -13,17 +13,26 @@ export default function BroadcastPage() {
   const [count, setCount] = useState<number | null>(null);
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<{ total: number; sent: number; failed: number } | null>(null);
+  const [cohorts, setCohorts] = useState<{ id: string; name: string }[]>([]);
+  const [audience, setAudience] = useState<string>("all");
 
   useEffect(() => {
-    fetch("/api/admin/broadcast").then(r => r.json()).then(d => { if (typeof d.count === "number") setCount(d.count); }).catch(() => {});
-  }, []);
+    setCount(null);
+    const q = audience === "all" ? "" : `?cohortId=${audience}`;
+    fetch(`/api/admin/broadcast${q}`).then(r => r.json()).then(d => {
+      if (typeof d.count === "number") setCount(d.count);
+      if (Array.isArray(d.cohorts) && cohorts.length === 0) setCohorts(d.cohorts);
+    }).catch(() => {});
+  }, [audience]);
+
+  const audienceLabel = audience === "all" ? "all students" : (cohorts.find(c => c.id === audience)?.name ?? "cohort");
 
   async function send() {
     if (!subject.trim() || !message.trim()) { toast.error("Enter a subject and message."); return; }
-    if (!confirm(`Email all ${count ?? ""} students now? This cannot be undone.`)) return;
+    if (!confirm(`Email ${count ?? ""} ${audienceLabel} now? This cannot be undone.`)) return;
     setSending(true); setResult(null);
     try {
-      const res = await fetch("/api/admin/broadcast", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ subject, message }) });
+      const res = await fetch("/api/admin/broadcast", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ subject, message, cohortId: audience }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to send");
       setResult(data);
@@ -46,9 +55,17 @@ export default function BroadcastPage() {
         </div>
 
         <div className="ksurface-d p-5 space-y-4">
+          <div>
+            <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Send to</label>
+            <select value={audience} onChange={e => setAudience(e.target.value)}
+              className={`${inp} [color-scheme:dark] cursor-pointer`}>
+              <option value="all">All students (every cohort)</option>
+              {cohorts.map(c => <option key={c.id} value={c.id}>{c.name} only</option>)}
+            </select>
+          </div>
           <div className="flex items-center gap-2 text-white/60 text-sm font-sans bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2.5">
             <Users className="w-4 h-4 text-[#E0A64E]" />
-            {count === null ? "Counting recipients…" : <><span className="text-white font-semibold">{count}</span>&nbsp;student{count === 1 ? "" : "s"} will receive this</>}
+            {count === null ? "Counting recipients…" : <><span className="text-white font-semibold">{count}</span>&nbsp;student{count === 1 ? "" : "s"} in <span className="text-white font-semibold">&nbsp;{audienceLabel}</span>&nbsp;will receive this</>}
           </div>
           <div>
             <label className="text-white/40 text-xs tracking-[0.15em] uppercase font-sans block mb-2">Subject *</label>
@@ -63,7 +80,7 @@ export default function BroadcastPage() {
             <button onClick={send} disabled={sending || count === 0}
               className="flex items-center gap-2 bg-[#E0A64E] hover:bg-[#c39a4f] disabled:opacity-50 text-[#0D1320] text-sm font-semibold font-sans px-5 py-2.5 rounded-xl transition-all">
               {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              {sending ? "Sending…" : `Send to ${count ?? "all"} students`}
+              {sending ? "Sending…" : `Send to ${count ?? ""} ${audienceLabel}`}
             </button>
           </div>
         </div>
